@@ -57,7 +57,7 @@
           "comment": "Se a pessoa esta ativa",
           "fieldName": "active",
           "fieldProperties": {
-            "fieldType": "boolean",
+            "fieldType": "status",
             "required": false,
             "valueDefault": "false"
           },
@@ -635,5 +635,13 @@
     }
   ],
   "endpoints": [],
-  "enums": []
+  "enums": [
+    {
+      "enumName": "Status",
+      "values": [
+        "ACTIVE",
+        "INACTIVE"
+      ]
+    }
+  ]
 }
