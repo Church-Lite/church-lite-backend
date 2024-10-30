@@ -55,7 +55,7 @@
         },
         {
           "comment": "Se a pessoa esta ativa",
-          "fieldName": "isActive",
+          "fieldName": "active",
           "fieldProperties": {
             "fieldType": "boolean",
             "required": false,

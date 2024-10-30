@@ -22,17 +22,17 @@ public class RabbitConfig {
     @Value("${rabbit.queue.name}")
     private String queueProductStock;
 
-    @Bean
+    //@Bean
     public TopicExchange productTopcExchange(){
         return new TopicExchange(exchange);
     }
 
-    @Bean
+    //@Bean
     public Queue productStockMq(){
         return new Queue(queueProductStock,true);
     }
 
-    @Bean
+    //@Bean
     public Binding productStockMqBinding(TopicExchange topicExchange){
         return BindingBuilder.bind(productStockMq())
                 .to(topicExchange)

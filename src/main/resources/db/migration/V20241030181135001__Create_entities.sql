@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS pessoa(
 
                                      id uuid,
                                      name varchar,
-                                     is_active boolean
+                                     active boolean
     --created_by varchar(80),
     --created_date timestamp,
     --last_modified_by varchar(80),
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS city(
                                    id uuid,
                                    name varchar,
                                    ibge varchar,
-                                   uf uuid
+                                   state uuid
     --created_by varchar(80),
     --created_date timestamp,
     --last_modified_by varchar(80),
@@ -73,18 +73,18 @@ CREATE TABLE IF NOT EXISTS pessoa_fisica(
 
 -- PKs
 
-ALTER TABLE pessoa  ADD CONSTRAINT ok_z1Vph9pfdCeuxNGvR4MB  PRIMARY KEY (id);
-ALTER TABLE pessoa_endereco  ADD CONSTRAINT ok_IF1E8ovLVYzFpI3TTd7H  PRIMARY KEY (id);
-ALTER TABLE city  ADD CONSTRAINT ok_BxsHQZnhvNjCgQKNPDuD  PRIMARY KEY (id);
-ALTER TABLE state  ADD CONSTRAINT ok_yo8jcmfgRUgxqamwYcYM  PRIMARY KEY (id);
-ALTER TABLE country  ADD CONSTRAINT ok_CQ810BR6WKIgL5aXkSXN  PRIMARY KEY (id);
-ALTER TABLE pessoa_fisica  ADD CONSTRAINT ok_LMcn7NJ24nxmTQg42YE4  PRIMARY KEY (id);
+ALTER TABLE pessoa  ADD CONSTRAINT pk_pessoa  PRIMARY KEY (id);
+ALTER TABLE pessoa_endereco  ADD CONSTRAINT pk_pessoa_endereco  PRIMARY KEY (id);
+ALTER TABLE city  ADD CONSTRAINT pk_city  PRIMARY KEY (id);
+ALTER TABLE state  ADD CONSTRAINT pk_state  PRIMARY KEY (id);
+ALTER TABLE country  ADD CONSTRAINT pk_country  PRIMARY KEY (id);
+ALTER TABLE pessoa_fisica  ADD CONSTRAINT pk_pessoa_fisica  PRIMARY KEY (id);
 -- Fks
 
-ALTER TABLE pessoa_endereco ADD CONSTRAINT fk_loLJTAXbLtylWxN8xnL0 FOREIGN KEY (person) REFERENCES pessoa(id);
-ALTER TABLE pessoa_endereco ADD CONSTRAINT fk_ncO8NPyao1BNXNgAe0qW FOREIGN KEY (city) REFERENCES city(id);
-ALTER TABLE city ADD CONSTRAINT fk_eBGhkShdR0mCl3vQaAy0 FOREIGN KEY (uf) REFERENCES state(id);
-ALTER TABLE state ADD CONSTRAINT fk_OuWAPeTLamLx8neKVYMC FOREIGN KEY (country) REFERENCES country(id);
-ALTER TABLE pessoa_fisica ADD CONSTRAINT fk_mBGt1rQl1O8MiwJ6SbbS FOREIGN KEY (person) REFERENCES pessoa(id);
+ALTER TABLE pessoa_endereco ADD CONSTRAINT fk_pessoa_endereco_pessoa_person FOREIGN KEY (person) REFERENCES pessoa(id);
+ALTER TABLE pessoa_endereco ADD CONSTRAINT fk_pessoa_endereco_city_city FOREIGN KEY (city) REFERENCES city(id);
+ALTER TABLE city ADD CONSTRAINT fk_city_state_state FOREIGN KEY (state) REFERENCES state(id);
+ALTER TABLE state ADD CONSTRAINT fk_state_country_country FOREIGN KEY (country) REFERENCES country(id);
+ALTER TABLE pessoa_fisica ADD CONSTRAINT fk_pessoa_fisica_pessoa_person FOREIGN KEY (person) REFERENCES pessoa(id);
 --RelationShips
 

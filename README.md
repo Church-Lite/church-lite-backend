@@ -1,6 +1,6 @@
 # Getting Started
 
-#### [Swagger](http://localhost:8081/basebackend/swagger-ui/index.html)
+#### [Swagger](http://localhost:5050/church-lite/swagger-ui/index.html)
 
 Ao copiar este projeto deve-se fazer as seguintes configurações:
 
