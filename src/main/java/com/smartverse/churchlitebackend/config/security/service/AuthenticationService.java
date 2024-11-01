@@ -72,6 +72,8 @@ public class AuthenticationService {
         user.setEmail(register.email());
         var pass = new BCryptPasswordEncoder().encode(register.password());
         user.setPassword(pass);
+        user.setUserConfirm(false);
+        user.setActive(false);
 
         authenticationRepository.save(user);
 
