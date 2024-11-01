@@ -134,7 +134,8 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": true
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true
     },
     {
       "entityName": "personAddress",
@@ -336,7 +337,8 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": true
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false
     },
     {
       "entityName": "city",
@@ -441,7 +443,8 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": true
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false
     },
     {
       "entityName": "state",
@@ -546,7 +549,8 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": true
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false
     },
     {
       "entityName": "country",
@@ -600,7 +604,8 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": true
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false
     },
     {
       "entityName": "personalDocs",
@@ -774,7 +779,8 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": true
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false
     }
   ],
   "endpoints": [
