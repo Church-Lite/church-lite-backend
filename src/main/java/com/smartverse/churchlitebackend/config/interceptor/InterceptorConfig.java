@@ -1,6 +1,7 @@
 package com.smartverse.churchlitebackend.config.interceptor;
 
 
+import com.potatotech.authorization.exception.ServiceException;
 import com.potatotech.authorization.security.Authenticate;
 import com.potatotech.authorization.tenant.TenantConfiguration;
 import com.potatotech.authorization.tenant.TenantContext;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -29,33 +31,44 @@ public class InterceptorConfig extends Authenticate implements HandlerIntercepto
 
         String uri = request.getRequestURI();
 
-        if(uri.startsWith("/basebackend/swagger-ui/") || uri.startsWith("/basebackend/v3/")) {
+        if(validateDomainsAllowAccess(uri)){
             return true;
         }
-
 
         if(isOptions(request)){
             return true;
         }
         var auth = request.getHeader(AUTHORIZATION);
         var tenant = request.getHeader(TENANT);
-        if(tenant == null){
-            tenant = "public";
+
+        if(!tenantConfiguration.validAnonymous(handler)){
+            var user = this.isAuthenticated(auth);
+            TenantContext.setCurrentTenant(user.getTenant());
+        } else {
+            if(tenant == null){
+                throw new ServiceException(HttpStatus.FORBIDDEN,"tenant is required");
+            }
+            TenantContext.setCurrentTenant(tenant);
         }
 
-//        if(!tenantConfiguration.validAnonymous(handler)){
-//            var user = this.isAuthenticated(auth);
-//            TenantContext.setCurrentTenant(user.getTenant());
-//        } else {
-//            if(tenant == null){
-//                throw new ServiceException(HttpStatus.FORBIDDEN,"tenant is required");
-//            }
-//            TenantContext.setCurrentTenant(tenant);
-//        }
-
-        TenantContext.setCurrentTenant("public");
         dbMigration.loadMigrateTenants(tenant);
         return true;
+    }
+
+    private boolean validateDomainsAllowAccess(String uri) {
+
+        // valida swagger
+        if(uri.startsWith("/church-lite/swagger-ui/") || uri.startsWith("/church-lite/v3/")) {
+            return true;
+        } // valida login e register
+        else if(uri.startsWith("/church-lite/authenticate") || uri.startsWith("/church-lite/authenticate/")) {
+
+            TenantContext.setCurrentTenant("admin");
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
 

@@ -24,6 +24,7 @@ public class DBMigration {
                 .dataSource(configContext.getUrl(),configContext.getUsername(),configContext.getPasswod())
                 .createSchemas(true)
                 .load();
+        fly.repair();
         fly.migrate();
 
     }
@@ -37,8 +38,9 @@ public class DBMigration {
                     .locations("classpath:db/migration")
                     .dataSource(configContext.getUrl(),configContext.getUsername(),configContext.getPasswod())
                     .createSchemas(true)
-                    .schemas(configContext.getDatabase().toUpperCase().concat("_").concat(tenant.toUpperCase()))
-                    .load();
+                    .schemas(configContext.getDatabase().toUpperCase().concat("_").concat(tenant.toUpperCase())).load();
+
+            fly.repair();
             fly.migrate();
 
             tenants.add(tenant);
