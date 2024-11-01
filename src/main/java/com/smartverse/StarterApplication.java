@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 //@EnableRabbit
-@SpringBootApplication(exclude = FlywayAutoConfiguration.class)
+@SpringBootApplication()
 @EnableFeignClients
 public class StarterApplication {
 	public static void main(String[] args) {

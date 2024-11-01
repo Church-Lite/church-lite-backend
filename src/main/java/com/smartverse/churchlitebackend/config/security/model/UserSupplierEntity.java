@@ -23,4 +23,9 @@ public class UserSupplierEntity {
 
     private String tenant;
 
+    private boolean active;
+
+    @Column(name = "user_confirm")
+    private boolean userConfirm;
+
 }

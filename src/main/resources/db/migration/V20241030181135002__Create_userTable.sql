@@ -4,5 +4,7 @@ CREATE TABLE IF NOT EXISTS pessoa_usuario(
      name varchar,
      email varchar,
      password varchar,
-     tenant varchar
+     tenant varchar,
+     active boolean,
+    user_confirm boolean
 );
