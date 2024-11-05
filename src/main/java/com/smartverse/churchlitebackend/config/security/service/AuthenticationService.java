@@ -8,6 +8,7 @@ import com.smartverse.churchlitebackend.config.security.model.RegisterDTO;
 import com.smartverse.churchlitebackend.config.security.model.UserSupplierDTO;
 import com.smartverse.churchlitebackend.config.security.model.UserSupplierEntity;
 import com.smartverse.churchlitebackend.config.security.repository.AuthenticationRepository;
+import com.smartverse.churchlitebackend.services.email.EmailService;
 import com.smartverse.churchlitebackend_gen.ResponseData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,9 @@ public class AuthenticationService {
 
     @Autowired
     Authenticate authenticate;
+
+    @Autowired
+    EmailService emailService;
 
     public String login(UserSupplierDTO userSupplierDTO){
         var tenant = userSupplierDTO.email().split("@")[1];
@@ -77,6 +81,7 @@ public class AuthenticationService {
 
         authenticationRepository.save(user);
 
+        emailService.loadAndSendEmail(user.getEmail(),"Teste de Email","new-churc");
 
         return true;
     }
