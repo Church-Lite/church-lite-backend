@@ -22,7 +22,7 @@ public class EmailService {
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(model, true);
-        helper.setFrom("geovane.araujo@outlook.pt");
+        helper.setFrom("geovane.araujo@dataon.com.br");
 
         mailSender.send(mimeMessage);
     }
