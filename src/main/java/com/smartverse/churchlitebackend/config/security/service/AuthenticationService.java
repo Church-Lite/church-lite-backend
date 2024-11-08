@@ -10,6 +10,8 @@ import com.smartverse.churchlitebackend.config.security.model.UserSupplierEntity
 import com.smartverse.churchlitebackend.config.security.repository.AuthenticationRepository;
 import com.smartverse.churchlitebackend.services.email.EmailService;
 import com.smartverse.churchlitebackend_gen.ResponseData;
+import com.smartverse.churchlitebackend_gen.UserConfirmationEntity;
+import com.smartverse.churchlitebackend_gen.UserConfirmationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,12 +20,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.UUID;
 
 @Service
 public class AuthenticationService {
 
     @Autowired
     AuthenticationRepository authenticationRepository;
+
+    @Autowired
+    UserConfirmationRepository userConfirmationRepository;
 
     @Autowired
     Authenticate authenticate;
@@ -71,6 +77,7 @@ public class AuthenticationService {
             throw new ServiceException(HttpStatus.FORBIDDEN,"Ja existe um email cadastrado!");
         }
 
+        var count = authenticationRepository.countAllBy();
         var user = new UserSupplierEntity();
         user.setName(register.name());
         user.setEmail(register.email());
@@ -78,10 +85,24 @@ public class AuthenticationService {
         user.setPassword(pass);
         user.setUserConfirm(false);
         user.setActive(false);
+        user.setTenant(String.format("SMARTVARSE_%s",count));
 
-        authenticationRepository.save(user);
+        user = authenticationRepository.save(user);
 
-        emailService.loadAndSendEmail(user.getEmail(),"Teste de Email","new-churc");
+        var userConfirmation = new UserConfirmationEntity();
+
+        userConfirmation.setUserId(user.getId());
+        userConfirmation.setHash(UUID.randomUUID().toString());
+        userConfirmation = userConfirmationRepository.save(userConfirmation);
+
+        var emailcontent = emailService.loadModel("new-churc");
+        emailcontent = emailcontent.replace("{{url}}",String.format("http://localhost:4200/#/register-church/%s",userConfirmation.getHash()));
+
+        try{
+            emailService.sendEmail(user.getEmail(),"Confirmação de email",emailcontent);
+        } catch (Exception e){
+            throw new ServiceException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
 
         return true;
     }

@@ -781,6 +781,84 @@
       "classExtends": "",
       "generateDefaultHandlers": true,
       "handlerAbstract": false
+    },
+    {
+      "entityName": "userConfirmation",
+      "tableName": "user_confirmation",
+      "generateDefaultHandlers": false,
+      "handlerAbstract": false,
+      "entityFields": [
+        {
+          "comment": "Identificação",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Id Usuario",
+          "fieldName": "userId",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Hash de confirmação",
+          "fieldName": "hash",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        }
+      ],
+      "classExtends": ""
     }
   ],
   "endpoints": [
@@ -830,7 +908,7 @@
             "list": false
           }
         ],
-        "anonymous": false
+        "anonymous": true
       }
     }
   ],

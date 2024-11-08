@@ -37,7 +37,8 @@ public class EmailService {
         }
     }
 
-    private String loadModel(String modelName){
+
+    public String loadModel(String modelName){
         return FileCommon.loadMod(modelName);
     }
 

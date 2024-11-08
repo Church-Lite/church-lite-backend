@@ -13,4 +13,6 @@ public interface AuthenticationRepository extends JpaRepository<UserSupplierEnti
     Optional<UserSupplierEntity> findOneByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    int countAllBy();
 }
