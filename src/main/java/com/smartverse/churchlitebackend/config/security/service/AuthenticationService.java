@@ -38,9 +38,7 @@ public class AuthenticationService {
     EmailService emailService;
 
     public String login(UserSupplierDTO userSupplierDTO){
-        var tenant = userSupplierDTO.email().split("@")[1];
-        tenant = tenant.replace(".","").toUpperCase();
-        TenantContext.setCurrentTenant(tenant);
+        TenantContext.setCurrentTenant("admin");
         var userSupplierEntity = authenticationRepository.findOneByEmail(userSupplierDTO.email());
         if(userSupplierEntity.isPresent() && new BCryptPasswordEncoder().matches(userSupplierDTO.password(),userSupplierEntity.get().getPassword())){
             return authenticate.generateToken(setUserSupplier(userSupplierEntity.get()));
