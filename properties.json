@@ -810,6 +810,28 @@
         ],
         "anonymous": false
       }
+    },
+    {
+      "methodName": "verifyURL",
+      "httpMethod": "GET",
+      "grouper": "",
+      "metadata": {
+        "input": [
+          {
+            "parameterName": "token",
+            "parameterType": "string",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "authorize",
+            "parameterType": "boolean",
+            "list": false
+          }
+        ],
+        "anonymous": false
+      }
     }
   ],
   "enums": [
