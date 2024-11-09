@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "pessoa_usuario")
+@Table(name = "user_access")
 public class UserSupplierEntity {
 
     @Id

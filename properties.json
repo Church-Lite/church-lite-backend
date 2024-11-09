@@ -5,7 +5,7 @@
   "entities": [
     {
       "entityName": "person",
-      "tableName": "pessoa",
+      "tableName": "person",
       "entityFields": [
         {
           "comment": "Identificação da pessoa",
@@ -139,7 +139,7 @@
     },
     {
       "entityName": "personAddress",
-      "tableName": "pessoa_endereco",
+      "tableName": "person_address",
       "entityFields": [
         {
           "comment": "Identificação",
@@ -601,6 +601,52 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "Codigo ISO",
+          "fieldName": "codeIso",
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "DDI",
+          "fieldName": "ddi",
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
         }
       ],
       "classExtends": "",
@@ -609,7 +655,7 @@
     },
     {
       "entityName": "personalDocs",
-      "tableName": "pessoa_documentos",
+      "tableName": "person_docs",
       "entityFields": [
         {
           "comment": "Identificação",

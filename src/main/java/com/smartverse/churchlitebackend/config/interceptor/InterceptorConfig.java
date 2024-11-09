@@ -44,6 +44,7 @@ public class InterceptorConfig extends Authenticate implements HandlerIntercepto
         if(!tenantConfiguration.validAnonymous(handler)){
             var user = this.isAuthenticated(auth);
             TenantContext.setCurrentTenant(user.getTenant());
+            tenant = user.getTenant();
         } else {
             if(tenant == null){
                 throw new ServiceException(HttpStatus.FORBIDDEN,"tenant is required");
