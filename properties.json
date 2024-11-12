@@ -135,7 +135,7 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": true
+      "handlerAbstract": false
     },
     {
       "entityName": "personAddress",
@@ -426,7 +426,7 @@
             "key": false
           },
           "relationShips": {
-            "fetchType": "EAGER",
+            "fetchType": "LAZY",
             "relationShip": "OneToOne",
             "bidirectional": false
           },
