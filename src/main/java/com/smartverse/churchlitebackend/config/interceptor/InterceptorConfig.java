@@ -77,7 +77,7 @@ public class InterceptorConfig extends Authenticate implements HandlerIntercepto
 
 
     private boolean isOptions(HttpServletRequest request){
-        return Request.HttpMethod.OPTIONS.equals(request.getMethod());
+        return Request.HttpMethod.OPTIONS.name().equals(request.getMethod());
     }
 
     @Override

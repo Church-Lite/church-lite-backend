@@ -191,7 +191,7 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": true
+      "handlerAbstract": false
     },
     {
       "entityName": "personAddress",
@@ -888,7 +888,7 @@
             "valueDefault": ""
           },
           "metadata": {
-            "nullable": false,
+            "nullable": true,
             "key": false
           },
           "list": false,
@@ -1026,7 +1026,7 @@
           },
           "relationShips": {
             "fetchType": "EAGER",
-            "relationShip": "OneToOne",
+            "relationShip": "ManyToOne",
             "bidirectional": false
           },
           "list": false,
