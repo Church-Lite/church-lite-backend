@@ -13,6 +13,8 @@ Definir as seguintes variaveis de ambiente
     SECRET_JWT=
     SERVER_PORT=5050
     SERVICE_NAME=church-lite
+    AWS_ACCESS=chave de acesso
+    AWS_SECRET=secret
 
 O projeto é configurado para ser multitenancy com locatarios usando schemas
 

@@ -1464,6 +1464,55 @@
         ],
         "anonymous": true
       }
+    },
+    {
+      "methodName": "RequestUpload",
+      "httpMethod": "GET",
+      "grouper": "",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "fileName",
+            "parameterType": "string",
+            "list": false
+          },
+          {
+            "parameterName": "fileType",
+            "parameterType": "string",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "url",
+            "parameterType": "string",
+            "list": false
+          }
+        ]
+      }
+    },
+    {
+      "methodName": "RequestUrl",
+      "httpMethod": "GET",
+      "grouper": "",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "fileName",
+            "parameterType": "string",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "url",
+            "parameterType": "string",
+            "list": false
+          }
+        ]
+      }
     }
   ],
   "enums": [

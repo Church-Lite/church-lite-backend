@@ -13,6 +13,7 @@
 	<version>0.0.1</version>
 	<name>church-lite-backend</name>
 	<description>church-lite-backend</description>
+
 	<properties>
 		<java.version>17</java.version>
 		<spring-cloud.version>2022.0.3</spring-cloud.version>
@@ -21,6 +22,11 @@
 		<entity-generatior.version>0.0.19-SNAPSHOT</entity-generatior.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.12.777</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
