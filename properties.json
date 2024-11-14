@@ -1466,7 +1466,7 @@
       }
     },
     {
-      "methodName": "RequestUpload",
+      "methodName": "requestUpload",
       "httpMethod": "GET",
       "grouper": "",
       "metadata": {
@@ -1478,8 +1478,8 @@
             "list": false
           },
           {
-            "parameterName": "fileType",
-            "parameterType": "string",
+            "parameterName": "expired",
+            "parameterType": "int",
             "list": false
           }
         ],
@@ -1493,7 +1493,7 @@
       }
     },
     {
-      "methodName": "RequestUrl",
+      "methodName": "requestUrl",
       "httpMethod": "GET",
       "grouper": "",
       "metadata": {
@@ -1502,6 +1502,11 @@
           {
             "parameterName": "fileName",
             "parameterType": "string",
+            "list": false
+          },
+          {
+            "parameterName": "expired",
+            "parameterType": "int",
             "list": false
           }
         ],
