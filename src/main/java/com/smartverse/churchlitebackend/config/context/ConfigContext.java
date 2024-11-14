@@ -6,6 +6,6 @@ public interface ConfigContext {
 
     String getUsername();
     String getPasswod();
-
+    String getHost();
     String getDatabase();
 }

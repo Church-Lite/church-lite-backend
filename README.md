@@ -15,6 +15,7 @@ Definir as seguintes variaveis de ambiente
     SERVICE_NAME=church-lite
     AWS_ACCESS=chave de acesso
     AWS_SECRET=secret
+    SERVER_HOST=localhost
 
 O projeto é configurado para ser multitenancy com locatarios usando schemas
 
