@@ -66,8 +66,8 @@ CREATE TABLE IF NOT EXISTS person_telphone(
 
                                               id uuid,
                                               person uuid,
-                                              fone varchar,
-                                              type varchar
+                                              phone varchar,
+                                              cell_phone varchar
 );
 
 CREATE TABLE IF NOT EXISTS person_email(

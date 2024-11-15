@@ -146,10 +146,10 @@
           },
           "relationShips": {
             "fetchType": "EAGER",
-            "relationShip": "OneToMany",
+            "relationShip": "OneToOne",
             "bidirectional": true
           },
-          "list": true,
+          "list": false,
           "frontendProperties": {
             "label": "",
             "size": 0,
@@ -1042,7 +1042,7 @@
         },
         {
           "comment": "Telefone",
-          "fieldName": "fone",
+          "fieldName": "phone",
           "list": false,
           "fieldProperties": {
             "fieldType": "string",
@@ -1064,11 +1064,11 @@
           }
         },
         {
-          "comment": "Tipo Telefone",
-          "fieldName": "type",
+          "comment": "Telefone Celular",
+          "fieldName": "cellPhone",
           "list": false,
           "fieldProperties": {
-            "fieldType": "typePhone",
+            "fieldType": "string",
             "required": false,
             "valueDefault": ""
           },
@@ -1533,13 +1533,6 @@
       "values": [
         "NATURAL_PERSON",
         "LEGAL_PERSON"
-      ]
-    },
-    {
-      "enumName": "TypePhone",
-      "values": [
-        "HOME_FONE",
-        "CELL_PHONE"
       ]
     },
     {
