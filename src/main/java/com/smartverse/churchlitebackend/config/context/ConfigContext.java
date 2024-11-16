@@ -8,4 +8,5 @@ public interface ConfigContext {
     String getPasswod();
     String getHost();
     String getDatabase();
+    String getDatabasePort();
 }

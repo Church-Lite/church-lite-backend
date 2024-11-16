@@ -16,6 +16,7 @@ Definir as seguintes variaveis de ambiente
     AWS_ACCESS=chave de acesso
     AWS_SECRET=secret
     SERVER_HOST=localhost
+    SERVER_PORT=5434
 
 O projeto é configurado para ser multitenancy com locatarios usando schemas
 
