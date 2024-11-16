@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS person(
 
                                      id uuid,
                                      name varchar,
-                                     active varchar
+                                     status varchar
 );
 
 CREATE TABLE IF NOT EXISTS person_address(
