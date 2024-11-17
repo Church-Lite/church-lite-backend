@@ -30,7 +30,7 @@
             padding: 10px;
         }
         .header h1 {
-            color: #4CAF50;
+            color: #B993D6;
         }
         .content {
             text-align: center;
@@ -45,7 +45,7 @@
             margin-top: 20px;
             padding: 12px 24px;
             color: #fff;
-            background-color: #4CAF50;
+            background: linear-gradient(to right, #8CA6DB, #B993D6);
             text-decoration: none;
             font-weight: bold;
             border-radius: 5px;
