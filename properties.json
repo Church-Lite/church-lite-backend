@@ -190,7 +190,7 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": false,
+      "generateDefaultHandlers": true,
       "handlerAbstract": false
     },
     {
@@ -605,7 +605,7 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": true,
+      "generateDefaultHandlers": false,
       "handlerAbstract": false
     },
     {
@@ -706,7 +706,7 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": true,
+      "generateDefaultHandlers": false,
       "handlerAbstract": false
     },
     {
