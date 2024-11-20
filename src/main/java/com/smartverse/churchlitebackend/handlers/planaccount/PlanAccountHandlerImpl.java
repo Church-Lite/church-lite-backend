@@ -28,7 +28,11 @@ public class PlanAccountHandlerImpl extends PlanAccountHandler {
     public void delete(UUID id) {
         var entity = repository.findById(id).orElse(null);
         if(entity != null){
-            repository.delete(entity);
+            if(entity.getParentCode() != null){
+                var parent = repository.findById(entity.getParentCode().getId()).orElse(null);
+                parent.getChildren().remove(entity);
+                entityManager.merge(parent);
+            }
         }
     }
 }
