@@ -1445,7 +1445,7 @@
       "entityName": "planAccount",
       "tableName": "plan_account",
       "generateDefaultHandlers": true,
-      "handlerAbstract": false,
+      "handlerAbstract": true,
       "entityFields": [
         {
           "comment": "Id",
