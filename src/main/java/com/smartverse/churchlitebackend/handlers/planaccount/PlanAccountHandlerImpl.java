@@ -2,8 +2,6 @@ package com.smartverse.churchlitebackend.handlers.planaccount;
 
 import com.smartverse.churchlitebackend_gen.PlanAccountDTO;
 import com.smartverse.churchlitebackend_gen.PlanAccountHandler;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -32,6 +30,8 @@ public class PlanAccountHandlerImpl extends PlanAccountHandler {
                 var parent = repository.findById(entity.getParentCode().getId()).orElse(null);
                 parent.getChildren().remove(entity);
                 entityManager.merge(parent);
+            } else {
+                entityManager.remove(entity);
             }
         }
     }
