@@ -187,6 +187,29 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "Se a pessoa esta ativa",
+          "fieldName": "type",
+          "fieldProperties": {
+            "fieldType": "typePersonChurch",
+            "required": false,
+            "valueDefault": "false"
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
         }
       ],
       "classExtends": "",
@@ -605,7 +628,7 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": true,
+      "generateDefaultHandlers": false,
       "handlerAbstract": false
     },
     {
@@ -706,7 +729,7 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": true,
+      "generateDefaultHandlers": false,
       "handlerAbstract": false
     },
     {
@@ -1440,6 +1463,379 @@
       "classExtends": "",
       "generateDefaultHandlers": true,
       "handlerAbstract": false
+    },
+    {
+      "entityName": "planAccount",
+      "tableName": "plan_account",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true,
+      "entityFields": [
+        {
+          "comment": "Id",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Descrição",
+          "fieldName": "description",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Código da arvore",
+          "fieldName": "codeTree",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Código da arvore",
+          "fieldName": "type",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "typePlanAccount",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Código Pai",
+          "fieldName": "parentCode",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "planAccount",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "ManyToOne",
+            "bidirectional": false,
+            "reference": true
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Arvore",
+          "fieldName": "children",
+          "list": true,
+          "fieldProperties": {
+            "fieldType": "planAccount",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "OneToMany",
+            "bidirectional": true,
+            "mappedBy": "parentCode"
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        }
+      ],
+      "classExtends": ""
+    },
+    {
+      "entityName": "costCenter",
+      "tableName": "cost_center",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true,
+      "entityFields": [
+        {
+          "comment": "Id",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Descrição",
+          "fieldName": "description",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Código da arvore",
+          "fieldName": "codeTree",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Código Pai",
+          "fieldName": "parentCode",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "costCenter",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "bidirectional": false,
+            "reference": true
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Arvore",
+          "fieldName": "children",
+          "list": true,
+          "fieldProperties": {
+            "fieldType": "costCenter",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "OneToMany",
+            "bidirectional": true,
+            "mappedBy": "parentCode"
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        }
+      ],
+      "classExtends": ""
+    },
+    {
+      "entityName": "bank",
+      "tableName": "bank",
+      "entityFields": [
+        {
+          "comment": "Campo identificação",
+          "fieldName": "id",
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Nome Banco",
+          "fieldName": "name",
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Código banco",
+          "fieldName": "code",
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        }
+      ],
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false
     }
   ],
   "endpoints": [
@@ -1536,13 +1932,20 @@
       ]
     },
     {
-      "enumName": "TypesMembers",
+      "enumName": "TypePersonChurch",
       "values": [
         "MEMBER",
         "SUPPLIER",
         "CHILD",
         "VISITOR",
         "NEW_CONVERT"
+      ]
+    },
+    {
+      "enumName": "TypePlanAccount",
+      "values": [
+        "ANALYTICAL",
+        "SYNTHETIC"
       ]
     }
   ]
