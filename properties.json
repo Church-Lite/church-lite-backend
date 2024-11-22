@@ -1836,6 +1836,160 @@
       "classExtends": "",
       "generateDefaultHandlers": true,
       "handlerAbstract": false
+    },
+    {
+      "entityName": "cash",
+      "tableName": "cash",
+      "entityFields": [
+        {
+          "comment": "Campo identificação",
+          "fieldName": "id",
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Descriçãop do caixa ou conta bancária",
+          "fieldName": "description",
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Tipo se é conta bancária ou caixa",
+          "fieldName": "typeCash",
+          "fieldProperties": {
+            "fieldType": "typeCash",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Caso seja banco fazer referencia ao cadastro de bancos",
+          "fieldName": "bank",
+          "fieldProperties": {
+            "fieldType": "bank",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "OneToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          }
+        },
+        {
+          "comment": "Numero da conta",
+          "fieldName": "numberAccount",
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Digito Conta",
+          "fieldName": "digit",
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        }
+      ],
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false
     }
   ],
   "endpoints": [
@@ -1946,6 +2100,13 @@
       "values": [
         "ANALYTICAL",
         "SYNTHETIC"
+      ]
+    },
+    {
+      "enumName": "typeCash",
+      "values": [
+        "CASH",
+        "BANK"
       ]
     }
   ]
