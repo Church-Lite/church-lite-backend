@@ -2712,6 +2712,28 @@
           }
         ]
       }
+    },
+    {
+      "methodName": "deleteObject",
+      "httpMethod": "GET",
+      "grouper": "",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "fileName",
+            "parameterType": "string",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "output",
+            "parameterType": "boolean",
+            "list": false
+          }
+        ]
+      }
     }
   ],
   "enums": [
