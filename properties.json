@@ -214,7 +214,7 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": false
+      "handlerAbstract": true
     },
     {
       "entityName": "personAddress",
@@ -1985,6 +1985,29 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "Status Caxa",
+          "fieldName": "status",
+          "fieldProperties": {
+            "fieldType": "transactionOperation",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
         }
       ],
       "classExtends": "",
@@ -2462,8 +2485,8 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": false,
-      "handlerAbstract": false
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true
     }
   ],
   "endpoints": [
