@@ -214,7 +214,7 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": true
+      "handlerAbstract": false
     },
     {
       "entityName": "personAddress",
@@ -2487,6 +2487,153 @@
       "classExtends": "",
       "generateDefaultHandlers": true,
       "handlerAbstract": true
+    },
+    {
+      "entityName": "userConfiguration",
+      "tableName": "user_configuration",
+      "entityFields": [
+        {
+          "comment": "Campo identificação",
+          "fieldName": "id",
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Nome do usuário",
+          "fieldName": "name",
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Foto Usuário",
+          "fieldName": "userPhoto",
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Tema",
+          "fieldName": "theme",
+          "fieldProperties": {
+            "fieldType": "theme",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Linguagem sistema",
+          "fieldName": "lang",
+          "fieldProperties": {
+            "fieldType": "language",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Email",
+          "fieldName": "email",
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        }
+      ],
+      "classExtends": "",
+      "generateDefaultHandlers": false,
+      "handlerAbstract": false
     }
   ],
   "endpoints": [
@@ -2614,12 +2761,27 @@
       ]
     },
     {
+      "enumName": "theme",
+      "values": [
+        "DARK",
+        "LIGHT"
+      ]
+    },
+    {
       "enumName": "transactionOperation",
       "values": [
         "OPEN_CASH",
         "CLOSE_CASH",
         "REVENUE",
         "EXPENSE"
+      ]
+    },
+    {
+      "enumName": "language",
+      "values": [
+        "PORTUGUESE",
+        "ENGLISH",
+        "SPANISH"
       ]
     }
   ]
