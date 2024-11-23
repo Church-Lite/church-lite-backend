@@ -1,4 +1,4 @@
-package com.smartverse.churchlitebackend.repository.userConfirmation;
+package com.smartverse.churchlitebackend.repository.userconfirmation;
 
 import com.smartverse.churchlitebackend_gen.UserConfirmationEntity;
 import com.smartverse.churchlitebackend_gen.UserConfirmationRepository;

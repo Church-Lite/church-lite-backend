@@ -3,7 +3,7 @@ package com.smartverse.churchlitebackend.handlers.verifyurlchurch;
 import com.potatotech.authorization.stereotype.Anonymous;
 import com.smartverse.churchlitebackend.config.migration.DBMigration;
 import com.smartverse.churchlitebackend.config.security.repository.AuthenticationRepository;
-import com.smartverse.churchlitebackend.repository.userConfirmation.UserConfirmationCustomRepository;
+import com.smartverse.churchlitebackend.repository.userconfirmation.UserConfirmationCustomRepository;
 import com.smartverse.churchlitebackend_gen.VerifyURL;
 import com.smartverse.churchlitebackend_gen.VerifyURLOutput;
 import org.springframework.beans.factory.annotation.Autowired;

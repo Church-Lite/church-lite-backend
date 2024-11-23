@@ -1,5 +1,6 @@
 package com.smartverse.churchlitebackend.services.transactions;
 
+import com.smartverse.churchlitebackend.repository.transactions.TransactionsCustomRepository;
 import com.smartverse.churchlitebackend_gen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class TransactionsService {
 
     @Autowired
-    private TransactionsRepository transactionsRepository;
+    private TransactionsCustomRepository transactionsRepository;
 
     public void save(FinancialEntity entity) {
 
@@ -29,5 +30,29 @@ public class TransactionsService {
             transactionsRepository.save(transaction);
         }
 
+    }
+
+    public void update(FinancialEntity entity) {
+
+        var transaction = transactionsRepository.findByFinancial(entity).orElse(null);
+
+        if(transaction != null){
+
+            if(entity.getPaymentReceiptDate() != null){
+                transaction.setPerson(entity.getPerson());
+                transaction.setFinancial(entity);
+                transaction.setValue(entity.getValue());
+                transactionsRepository.save(transaction);
+            } else {
+                transactionsRepository.delete(transaction);
+            }
+
+        } else{
+            this.save(entity);
+        }
+    }
+
+    public void delete(FinancialEntity entity) {
+        transactionsRepository.findByFinancial(entity).ifPresent(transaction -> transactionsRepository.delete(transaction));
     }
 }
