@@ -9,10 +9,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
-import software.amazon.awssdk.services.s3.model.CreateBucketResponse;
-import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
@@ -59,6 +56,17 @@ public class S3Service {
                         .getObjectRequest(gor -> gor.bucket(TenantContext.getCurrentTenant().replace("_","-").toLowerCase()).key(objectKey))
         );
         return presignedRequest.url();
+    }
+
+    public boolean requestDelete(String objectKey) {
+
+        DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                .bucket(TenantContext.getCurrentTenant().replace("_","-").toLowerCase())
+                .key(objectKey)
+                .build();
+
+        var output = s3Client.deleteObject(deleteRequest);
+        return output.sdkHttpResponse().isSuccessful();
     }
 
     public void createBucket() {
