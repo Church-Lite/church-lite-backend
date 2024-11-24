@@ -2629,11 +2629,34 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "ID do usuário",
+          "fieldName": "hash",
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": false,
-      "handlerAbstract": false
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true
     }
   ],
   "endpoints": [
@@ -2730,6 +2753,28 @@
           {
             "parameterName": "output",
             "parameterType": "boolean",
+            "list": false
+          }
+        ]
+      }
+    },
+    {
+      "methodName": "getUser",
+      "httpMethod": "GET",
+      "grouper": "",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "hash",
+            "parameterType": "uuid",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "output",
+            "parameterType": "userConfiguration",
             "list": false
           }
         ]
