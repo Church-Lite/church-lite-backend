@@ -2741,7 +2741,7 @@
             "valueDefault": ""
           },
           "metadata": {
-            "nullable": false,
+            "nullable": true,
             "key": false
           },
           "frontendProperties": {
@@ -2787,7 +2787,7 @@
             "valueDefault": ""
           },
           "metadata": {
-            "nullable": false,
+            "nullable": true,
             "key": false
           },
           "frontendProperties": {
@@ -2840,7 +2840,7 @@
             "valueDefault": ""
           },
           "metadata": {
-            "nullable": false,
+            "nullable": true,
             "key": false
           },
           "frontendProperties": {
