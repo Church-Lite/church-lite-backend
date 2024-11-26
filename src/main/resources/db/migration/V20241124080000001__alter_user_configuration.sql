@@ -1,0 +1,1 @@
+alter table user_configuration add hash uuid;

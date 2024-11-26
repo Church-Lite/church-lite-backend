@@ -24,3 +24,5 @@ sendo assim os schemas da base deven ser cirados usando o seguinte padrão:
 
 "NOMEBANCO_NOMESCHEMA" ambos em maiusculo, para manter um padrão, mas o nome do schema não precisa ser necessariamente maiusculo
 basta estar de acordo com o cadastrado na tabela user_supplier
+
+
