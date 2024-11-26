@@ -2,10 +2,7 @@ package com.smartverse.churchlitebackend.handlers.cashtransactions;
 
 import com.potatotech.authorization.exception.ServiceException;
 import com.smartverse.churchlitebackend.repository.cashtransactions.CashTransactionsCustomRepository;
-import com.smartverse.churchlitebackend_gen.GetIDCashTransaction;
-import com.smartverse.churchlitebackend_gen.GetIDCashTransactionOutput;
-import com.smartverse.churchlitebackend_gen.GetSumValuesCash;
-import com.smartverse.churchlitebackend_gen.GetSumValuesCashOutput;
+import com.smartverse.churchlitebackend_gen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +13,7 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*")
-public class CashTransactionsCustomHandler implements GetIDCashTransaction, GetSumValuesCash {
+public class CashTransactionsCustomHandler implements GetIDCashTransaction, GetSumValuesCash, GetBalanceBankAccount {
 
     @Autowired
     private CashTransactionsCustomRepository cashTransactionsCustomRepository;
@@ -43,6 +40,20 @@ public class CashTransactionsCustomHandler implements GetIDCashTransaction, GetS
             }
         }));
         output.initialBalance = cashTransactionsCustomRepository.getInitialBalance(cashTransaction);
+        return ResponseEntity.ok(output);
+    }
+
+    @Override
+    public ResponseEntity<GetBalanceBankAccountOutput> getBalanceBankAccount(UUID bankAccount) {
+        var output = new GetBalanceBankAccountOutput();
+        var values = cashTransactionsCustomRepository.getbalanceBankAccount(bankAccount);
+        values.ifPresent(item -> item.forEach(e -> {
+            if(e.get("type_financial").equals("0")){
+                output.revenues = Double.parseDouble(e.get("valor").toString());
+            } else if(e.get("type_financial").equals("1")){
+                output.expenses = Double.parseDouble(e.get("valor").toString());
+            }
+        }));
         return ResponseEntity.ok(output);
     }
 }

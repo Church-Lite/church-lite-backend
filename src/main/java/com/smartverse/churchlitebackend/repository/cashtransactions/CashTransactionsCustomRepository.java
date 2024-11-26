@@ -33,4 +33,11 @@ public interface CashTransactionsCustomRepository extends CashTransactionsReposi
             "WHERE cash_transactions.id = ?1 " +
             "limit 1")
     Double getInitialBalance(UUID id);
+
+    @Query(nativeQuery = true, value = "select sum(transactions.value) as valor, type_financial " +
+            "from transactions " +
+            "    inner join financial on financial.id = transactions.financial " +
+            "WHERE financial.cash = ?1 " +
+            "group by financial.type_financial ")
+    Optional<List<Map<String, Object>>> getbalanceBankAccount(UUID cashTransaction);
 }

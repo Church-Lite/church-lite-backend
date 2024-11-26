@@ -3033,6 +3033,33 @@
           }
         ]
       }
+    },
+    {
+      "methodName": "getBalanceBankAccount",
+      "httpMethod": "GET",
+      "grouper": "",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "bankAccount",
+            "parameterType": "uuid",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "revenues",
+            "parameterType": "decimal",
+            "list": false
+          },
+          {
+            "parameterName": "expenses",
+            "parameterType": "decimal",
+            "list": false
+          }
+        ]
+      }
     }
   ],
   "enums": [
