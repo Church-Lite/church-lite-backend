@@ -1,6 +1,7 @@
 package com.smartverse.churchlitebackend.handlers.userconfiguration;
 
 import com.smartverse.churchlitebackend.repository.userconfiguration.UserConfigurationCustomRepository;
+import com.smartverse.churchlitebackend.services.userconfiguration.UserConfigurationService;
 import com.smartverse.churchlitebackend_gen.GetUser;
 import com.smartverse.churchlitebackend_gen.GetUserOutput;
 import com.smartverse.churchlitebackend_gen.UserConfigurationDTOConverter;
@@ -21,13 +22,23 @@ public class UserConfigurationCustomHandlerImpl implements GetUser {
     @Autowired
     UserConfigurationDTOConverter userConfigurationDTOConverter;
 
+    @Autowired
+    UserConfigurationService userConfigurationService;
+
     @Override
     public ResponseEntity<GetUserOutput> getUser(UUID hash) {
-        var user = userConfigurationCustomRepository.findByHash(hash);
+
         var output = new GetUserOutput();
-        user.ifPresent(item -> {
-            output.output = userConfigurationDTOConverter.toDTO(item, null);
-        });
+        var user = userConfigurationCustomRepository.findByHash(hash);
+
+        if(user.isEmpty()) {
+            output.output = userConfigurationService.saveUserConfiguration(hash);
+        } else {
+            user.ifPresent(item -> {
+                output.output = userConfigurationDTOConverter.toDTO(item, null);
+            });
+
+        }
         return ResponseEntity.ok(output);
     }
 }
