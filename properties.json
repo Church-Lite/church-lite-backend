@@ -2979,6 +2979,28 @@
           }
         ]
       }
+    },
+    {
+      "methodName": "getIDCashTransaction",
+      "httpMethod": "GET",
+      "grouper": "",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "cash",
+            "parameterType": "uuid",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "cashTransaction",
+            "parameterType": "uuid",
+            "list": false
+          }
+        ]
+      }
     }
   ],
   "enums": [
