@@ -13,10 +13,16 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*")
-public class CashTransactionsCustomHandler implements GetIDCashTransaction, GetSumValuesCash, GetBalanceBankAccount {
+public class CashTransactionsCustomHandler implements GetIDCashTransaction, GetSumValuesCash, GetBalanceBankAccount,GetResumeTransaction {
 
     @Autowired
     private CashTransactionsCustomRepository cashTransactionsCustomRepository;
+
+    @Autowired
+    private CashTransactionsDTOConverter cashTransactionsDTOConverter;
+
+    @Autowired
+    private CashRepository cashRepository;
 
     @Override
     public ResponseEntity<GetIDCashTransactionOutput> getIDCashTransaction(UUID cash) {
@@ -55,5 +61,21 @@ public class CashTransactionsCustomHandler implements GetIDCashTransaction, GetS
             }
         }));
         return ResponseEntity.ok(output);
+    }
+
+    @Override
+    public ResponseEntity<GetResumeTransactionOutput> getResumeTransaction(UUID cash) {
+        var output = new GetResumeTransactionOutput();
+        var cashEntity = cashRepository.findById(cash);
+        if(cashEntity.isPresent()) {
+            var obj = cashTransactionsCustomRepository.findByCashAndEndDate(cashEntity.get(), null);
+            if(obj.isPresent()) {
+                output.output = cashTransactionsDTOConverter.toDTO(obj.get(),null);
+            }
+            return ResponseEntity.ok(output);
+        }
+
+        throw new ServiceException(HttpStatus.NOT_FOUND,"Caixa não encontrado");
+
     }
 }

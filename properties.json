@@ -3060,6 +3060,28 @@
           }
         ]
       }
+    },
+    {
+      "methodName": "getResumeTransaction",
+      "httpMethod": "GET",
+      "grouper": "",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "cash",
+            "parameterType": "uuid",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "output",
+            "parameterType": "cashTransactions",
+            "list": false
+          }
+        ]
+      }
     }
   ],
   "enums": [

@@ -29,7 +29,15 @@ public class CashTransactionsHandlerImpl extends CashTransactionsHandler {
             cash.setStatus(TransactionOperation.OPEN_CASH);
             cashRepository.save(cash);
             return dtoConverter.toDTO(entity, null);
-        } else {
+        }
+        else if(entity.getEndDate() != null){
+            entityManager.merge(entity);
+            var cash = entity.getCash();
+            cash.setStatus(TransactionOperation.CLOSE_CASH);
+            cashRepository.save(cash);
+            return dtoConverter.toDTO(entity, null);
+        }
+        else {
             throw new ServiceException(HttpStatus.BAD_REQUEST, "Já existe um caixa aberto");
         }
 
