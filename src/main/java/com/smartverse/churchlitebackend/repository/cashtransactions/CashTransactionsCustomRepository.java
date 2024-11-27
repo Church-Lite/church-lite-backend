@@ -1,20 +1,19 @@
 package com.smartverse.churchlitebackend.repository.cashtransactions;
 
+import com.smartverse.churchlitebackend_gen.CashEntity;
+import com.smartverse.churchlitebackend_gen.CashTransactionsEntity;
 import com.smartverse.churchlitebackend_gen.CashTransactionsRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 @Primary
 public interface CashTransactionsCustomRepository extends CashTransactionsRepository {
 
-    @Query(nativeQuery = true, value = " select exists (select  * from cash_transactions WHERE cash = ?1) ")
+    @Query(nativeQuery = true, value = " select exists (select  * from cash_transactions WHERE cash = ?1 and end_date is null) ")
     boolean existsByOpening(UUID id);
 
     @Query(nativeQuery = true, value = "SELECT ID FROM cash_transactions WHERE end_date is null and cash = ?1")
@@ -40,4 +39,6 @@ public interface CashTransactionsCustomRepository extends CashTransactionsReposi
             "WHERE financial.cash = ?1 " +
             "group by financial.type_financial ")
     Optional<List<Map<String, Object>>> getbalanceBankAccount(UUID cashTransaction);
+
+    Optional<CashTransactionsEntity> findByCashAndEndDate(CashEntity cash, Date endDate);
 }
