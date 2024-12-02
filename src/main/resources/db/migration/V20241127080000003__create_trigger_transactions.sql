@@ -14,14 +14,14 @@ BEGIN
         _transaction := old.cash_transaction;
 END IF;
 
-    sumRevenues := (select sum(transactions.value) as valor
+    sumRevenues := (select COALESCE(sum(transactions.value), 0) as valor
                         from transactions
                             inner join financial on financial.id = transactions.financial
                         WHERe transactions.cash_transaction = _transaction and type_financial = '0');
 
     RAISE NOTICE 'receitas %', sumRevenues;
 
-    sumExpenses := (select sum(transactions.value) as valor
+    sumExpenses := (select COALESCE(sum(transactions.value), 0) as valor
                     from transactions
                         inner join financial on financial.id = transactions.financial
                     WHERe transactions.cash_transaction = _transaction and type_financial = '1');
@@ -32,7 +32,6 @@ update cash_transactions set balance = (sumRevenues - sumExpenses) where id = _t
 RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
-
 
 
 CREATE OR REPLACE TRIGGER trg_transaction_balance
