@@ -851,7 +851,7 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": false,
+      "generateDefaultHandlers": true,
       "handlerAbstract": false
     },
     {
