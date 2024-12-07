@@ -210,6 +210,128 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "Sexo",
+          "fieldName": "gender",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "gender",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Nacionalidade",
+          "fieldName": "nationality",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "country",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "OneToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "estado civil",
+          "fieldName": "maritalStatus",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "maritalStatus",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Naturalidade",
+          "fieldName": "birthplace",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "foto",
+          "fieldName": "image",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
         }
       ],
       "classExtends": "",
@@ -729,7 +851,7 @@
         }
       ],
       "classExtends": "",
-      "generateDefaultHandlers": false,
+      "generateDefaultHandlers": true,
       "handlerAbstract": false
     },
     {
@@ -1439,6 +1561,29 @@
         {
           "comment": "Cor na agenda",
           "fieldName": "color",
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Descrição do evento",
+          "fieldName": "description",
           "fieldProperties": {
             "fieldType": "string",
             "required": true,
@@ -2857,6 +3002,167 @@
       "classExtends": "",
       "generateDefaultHandlers": true,
       "handlerAbstract": true
+    },
+    {
+      "entityName": "schedulerEvents",
+      "tableName": "scheduler_events",
+      "entityFields": [
+        {
+          "comment": "Campo identificação",
+          "fieldName": "id",
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Tipo de evento",
+          "fieldName": "schedulerType",
+          "fieldProperties": {
+            "fieldType": "schedulerType",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "OneToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          }
+        },
+        {
+          "comment": "Usuário",
+          "fieldName": "user",
+          "fieldProperties": {
+            "fieldType": "userConfiguration",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "OneToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          }
+        },
+        {
+          "comment": "Data inicial",
+          "fieldName": "initialDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "datetime",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Data final",
+          "fieldName": "finalDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "datetime",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Local",
+          "fieldName": "local",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        }
+      ],
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false
     }
   ],
   "endpoints": [
@@ -3106,7 +3412,8 @@
         "SUPPLIER",
         "CHILD",
         "VISITOR",
-        "NEW_CONVERT"
+        "NEW_CONVERT",
+        "CHURCH"
       ]
     },
     {
@@ -3152,6 +3459,24 @@
         "PORTUGUESE",
         "ENGLISH",
         "SPANISH"
+      ]
+    },
+    {
+      "enumName": "gender",
+      "values": [
+        "MALE",
+        "FEMALE"
+      ]
+    },
+    {
+      "enumName": "maritalStatus",
+      "values": [
+        "SINGLE",
+        "MARRIED",
+        "DIVORCED",
+        "WIDOWED",
+        "SEPARATED",
+        "CIVIL_UNION"
       ]
     }
   ]
