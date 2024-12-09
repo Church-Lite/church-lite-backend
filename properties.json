@@ -332,6 +332,34 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "Relacionamento Pessoa Mmebros",
+          "fieldName": "personMember",
+          "fieldProperties": {
+            "fieldType": "personMember",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "OneToOne",
+            "bidirectional": true
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
         }
       ],
       "classExtends": "",
@@ -3162,6 +3190,142 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
+      "handlerAbstract": false
+    },
+    {
+      "entityName": "personMember",
+      "tableName": "person_member",
+      "entityFields": [
+        {
+          "comment": "Identificação",
+          "fieldName": "id",
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Relacionamento com pessoa",
+          "fieldName": "person",
+          "fieldProperties": {
+            "fieldType": "person",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "OneToOne",
+            "bidirectional": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Data ingresso na igreja",
+          "fieldName": "entryDate",
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Data de batismo",
+          "fieldName": "dateBaptism",
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "list": false,
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Relacionamento com cargos",
+          "fieldName": "position",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "positions",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "OneToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        }
+      ],
+      "classExtends": "",
+      "generateDefaultHandlers": false,
       "handlerAbstract": false
     }
   ],
