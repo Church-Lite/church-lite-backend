@@ -3075,6 +3075,29 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "Descrição",
+          "fieldName": "description",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
         }
       ],
       "classExtends": "",
