@@ -2,6 +2,7 @@ HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
+!**/src/main/**/churchlitebackend_gen/
 !**/src/test/**/target/
 
 ### STS ###

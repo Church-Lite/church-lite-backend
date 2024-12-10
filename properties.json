@@ -1426,119 +1426,8 @@
       "handlerAbstract": false
     },
     {
-      "entityName": "appointments",
-      "tableName": "appointments",
-      "entityFields": [
-        {
-          "comment": "Campo identificação",
-          "fieldName": "id",
-          "fieldProperties": {
-            "fieldType": "uuid",
-            "required": true,
-            "valueDefault": ""
-          },
-          "metadata": {
-            "nullable": false,
-            "key": true
-          },
-          "list": false,
-          "frontendProperties": {
-            "label": "",
-            "size": 0,
-            "hidden": false,
-            "order": 0,
-            "guidance": "",
-            "reference": "",
-            "enableFieldsFilter": false
-          }
-        },
-        {
-          "comment": "Tipo de agendamento",
-          "fieldName": "schedulerType",
-          "list": false,
-          "fieldProperties": {
-            "fieldType": "schedulerType",
-            "required": false,
-            "valueDefault": ""
-          },
-          "metadata": {
-            "nullable": false,
-            "key": false
-          },
-          "relationShips": {
-            "fetchType": "EAGER",
-            "relationShip": "OneToOne",
-            "bidirectional": false
-          },
-          "frontendProperties": {
-            "label": "",
-            "size": 0,
-            "hidden": false,
-            "order": 0,
-            "guidance": "",
-            "reference": "",
-            "enableFieldsFilter": false
-          }
-        },
-        {
-          "comment": "Observações",
-          "fieldName": "obs",
-          "list": false,
-          "fieldProperties": {
-            "fieldType": "string",
-            "required": false,
-            "valueDefault": ""
-          },
-          "metadata": {
-            "nullable": false,
-            "key": false
-          },
-          "frontendProperties": {
-            "label": "",
-            "size": 0,
-            "hidden": false,
-            "order": 0,
-            "guidance": "",
-            "reference": "",
-            "enableFieldsFilter": false
-          }
-        },
-        {
-          "comment": "Relacionamento com pessoa Responsavel",
-          "fieldName": "person",
-          "list": false,
-          "fieldProperties": {
-            "fieldType": "person",
-            "required": false,
-            "valueDefault": ""
-          },
-          "metadata": {
-            "nullable": false,
-            "key": false
-          },
-          "relationShips": {
-            "fetchType": "EAGER",
-            "relationShip": "OneToOne",
-            "bidirectional": false
-          },
-          "frontendProperties": {
-            "label": "",
-            "size": 0,
-            "hidden": false,
-            "order": 0,
-            "guidance": "",
-            "reference": "",
-            "enableFieldsFilter": false
-          }
-        }
-      ],
-      "classExtends": "",
-      "generateDefaultHandlers": true,
-      "handlerAbstract": false
-    },
-    {
-      "entityName": "schedulerType",
-      "tableName": "scheduler_type",
+      "entityName": "eventsType",
+      "tableName": "events_type",
       "entityFields": [
         {
           "comment": "Campo identificação",
@@ -3032,8 +2921,8 @@
       "handlerAbstract": true
     },
     {
-      "entityName": "schedulerEvents",
-      "tableName": "scheduler_events",
+      "entityName": "appointments",
+      "tableName": "appointments",
       "entityFields": [
         {
           "comment": "Campo identificação",
@@ -3060,9 +2949,9 @@
         },
         {
           "comment": "Tipo de evento",
-          "fieldName": "schedulerType",
+          "fieldName": "eventsType",
           "fieldProperties": {
-            "fieldType": "schedulerType",
+            "fieldType": "eventsType",
             "required": true,
             "valueDefault": ""
           },
@@ -3175,6 +3064,29 @@
           },
           "metadata": {
             "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Descrição",
+          "fieldName": "description",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
             "key": false
           },
           "frontendProperties": {
