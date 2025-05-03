@@ -50,6 +50,7 @@ public class UserConfigurationService {
 
         return userConfigurationDTOConverter.toDTO(userConfiguration, null);
     }
+
     @Transactional
     public void updateMaster(UserConfigurationEntity entity) {
         var oldTEnant = TenantContext.getCurrentTenant();
