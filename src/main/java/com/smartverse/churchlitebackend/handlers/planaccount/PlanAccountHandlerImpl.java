@@ -2,11 +2,13 @@ package com.smartverse.churchlitebackend.handlers.planaccount;
 
 import com.smartverse.churchlitebackend_gen.PlanAccountDTO;
 import com.smartverse.churchlitebackend_gen.PlanAccountHandler;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
 @RestController
+@CrossOrigin(origins="*")
 public class PlanAccountHandlerImpl extends PlanAccountHandler {
 
 
