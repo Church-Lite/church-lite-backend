@@ -23,6 +23,8 @@ public class UserSupplierEntity {
 
     private String tenant;
 
+    private String phone;
+
     private boolean active;
 
     @Column(name = "user_confirm")

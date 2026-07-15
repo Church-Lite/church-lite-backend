@@ -2737,6 +2737,29 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "Telefone do usuário",
+          "fieldName": "phone",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "Telefone",
+            "size": 6,
+            "hidden": false,
+            "order": 4,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": true
+          }
         }
       ],
       "classExtends": "",
@@ -2971,15 +2994,15 @@
           },
           "relationShips": {
             "fetchType": "LAZY",
-            "relationShip": "OneToOne",
+            "relationShip": "ManyToOne",
             "mappedBy": "",
             "bidirectional": false,
             "reference": false
           }
         },
         {
-          "comment": "Usuário",
-          "fieldName": "user",
+          "comment": "Configuração do usuário",
+          "fieldName": "userConfiguration",
           "fieldProperties": {
             "fieldType": "userConfiguration",
             "required": true,
@@ -3001,7 +3024,7 @@
           },
           "relationShips": {
             "fetchType": "LAZY",
-            "relationShip": "OneToOne",
+            "relationShip": "ManyToOne",
             "mappedBy": "",
             "bidirectional": false,
             "reference": false
@@ -3097,6 +3120,76 @@
             "guidance": "",
             "reference": "",
             "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Situação do compromisso",
+          "fieldName": "status",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "appointmentStatus",
+            "required": true,
+            "valueDefault": "SCHEDULED"
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Tipo de recorrência",
+          "fieldName": "recurrenceType",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "recurrenceType",
+            "required": true,
+            "valueDefault": "NONE"
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Dias da semana da recorrência separados por vírgula",
+          "fieldName": "recurrenceDays",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Data limite da recorrência",
+          "fieldName": "recurrenceEndDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Identificador comum às ocorrências da série",
+          "fieldName": "recurrenceGroupId",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
           }
         }
       ],
@@ -3464,6 +3557,83 @@
           }
         ]
       }
+    },
+    {
+      "comment": "Cria um compromisso único ou uma série de compromissos semanais",
+      "methodName": "createRecurringAppointments",
+      "httpMethod": "POST",
+      "grouper": "",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "appointment",
+            "parameterType": "appointments",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "appointments",
+            "parameterType": "appointments",
+            "list": true
+          }
+        ]
+      },
+      "permissions": {
+        "description": "Permite criar compromissos recorrentes na agenda",
+        "resource": "createRecurringAppointments",
+        "premissions": [
+          "CREATE"
+        ],
+        "permissionDefault": false
+      }
+    },
+    {
+      "comment": "Cadastra um usuário na igreja autenticada",
+      "methodName": "createChurchUser",
+      "httpMethod": "POST",
+      "grouper": "",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "name",
+            "parameterType": "string",
+            "list": false
+          },
+          {
+            "parameterName": "email",
+            "parameterType": "string",
+            "list": false
+          },
+          {
+            "parameterName": "phone",
+            "parameterType": "string",
+            "list": false
+          },
+          {
+            "parameterName": "password",
+            "parameterType": "password",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "user",
+            "parameterType": "userConfiguration",
+            "list": false
+          }
+        ]
+      },
+      "permissions": {
+        "description": "Permite cadastrar usuários na igreja",
+        "resource": "createChurchUser",
+        "premissions": [
+          "CREATE"
+        ],
+        "permissionDefault": false
+      }
     }
   ],
   "enums": [
@@ -3553,6 +3723,20 @@
         "WIDOWED",
         "SEPARATED",
         "CIVIL_UNION"
+      ]
+    },
+    {
+      "enumName": "appointmentStatus",
+      "values": [
+        "SCHEDULED",
+        "CANCELLED"
+      ]
+    },
+    {
+      "enumName": "recurrenceType",
+      "values": [
+        "NONE",
+        "WEEKLY"
       ]
     }
   ]
