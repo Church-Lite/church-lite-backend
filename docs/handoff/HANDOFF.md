@@ -16,7 +16,7 @@ Parte da API é gerada pelo plugin `entity-generator`. Este documento descreve o
 - autenticação/JWT via `authorization-backend`;
 - multitenancy por schema;
 - AWS S3, RabbitMQ e OpenAPI;
-- `entity-generator` 1.0.1.
+- `entity-generator` 1.0.2.
 
 Swagger local: `http://localhost:5050/church-lite/swagger-ui/index.html`.
 
@@ -42,7 +42,7 @@ Regras:
 
 ## Domínio
 
-O contrato possui 21 entidades.
+O contrato possui 22 entidades.
 
 ### Pessoas
 
@@ -244,3 +244,25 @@ JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw clean compile -DskipTests
 ## Atualização — traduções customizadas (15/07/2026)
 
 A entidade gerada `translation` armazena somente sobrescritas por tenant, identificadas por `language + translationKey`. O CRUD padrão gerado (`/translation`) é usado para consultar, criar, alterar e remover customizações. A migration `V20260715090000003__create_translation.sql` cria a tabela e a restrição única. Os arquivos JSON do frontend continuam sendo a fonte padrão; restaurar uma tradução remove a sobrescrita persistida.
+
+
+## Atualização consolidada — traduções e usuários (15/07/2026)
+
+### Traduções
+
+O contrato possui 22 entidades após a inclusão de `translation`. A entidade e seu CRUD são gerados pelo `entity-generator` 1.0.2. O identificador usa `GenerationType.UUID`; portanto, inclusões em `POST /translation` não enviam `id`. O banco gera o UUID, enquanto atualizações usam `PUT /translation/{id}`.
+
+A unicidade de `language + translation_key` é garantida pela migration incremental. Como a tabela vive no schema do tenant, customizações permanecem isoladas por igreja. O backend armazena somente sobrescritas; os valores padrão continuam nos JSONs do frontend.
+
+Recursos gerados: `CREATE`, `VIEW`, `UPDATE` e `DELETE` para `translation`. Não adicionar regra manual ao handler `_gen`. Qualquer validação adicional de catálogo deve ser implementada fora do diretório gerado.
+
+### Cadastro administrativo de usuários
+
+O padrão atual permanece baseado em contrato gerado e implementação manual: `POST /createChurchUser` define entrada/saída no `properties.json`, e `UserConfigurationCustomHandlerImpl` delega a operação ao serviço. O tenant vem exclusivamente de `TenantContext`; criação, edição e exclusão sincronizam `ADMIN.user_access` com `user_configuration`. Senhas usam BCrypt, e a unicidade é `email + tenant`.
+
+O fluxo de autenticação multi-tenant valida a senha individualmente em cada vínculo e retorna somente opções validadas. Alterações futuras devem preservar atomicidade, isolamento, ausência de senha/hash nas respostas e sincronismo entre os dois registros.
+
+Especificações reutilizáveis na raiz do workspace:
+
+- `spec/FEATURE_TRANSLATIONS_SPEC.md`;
+- `spec/FEATURE_USER_REGISTRATION_SPEC.md`.
