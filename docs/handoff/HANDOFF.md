@@ -266,3 +266,24 @@ Especificações reutilizáveis na raiz do workspace:
 
 - `spec/FEATURE_TRANSLATIONS_SPEC.md`;
 - `spec/FEATURE_USER_REGISTRATION_SPEC.md`.
+
+
+## Atualização — módulo de células, Fase 1 inicial (15/07/2026)
+
+A base gerável do módulo foi adicionada ao `properties.json` com `cellOrganizationLevelType`, `cellOrganizationUnit`, `cell`, `cellLeadership`, `cellMember` e `cellModuleSettings`, além dos enums específicos. A migration `V20260715090000004__create_cells_module_base.sql` cria tabelas, FKs, índices, unicidade de código e restrições para vínculos ativos.
+
+Regras manuais ficam em `com.smartverse.churchlitebackend.cells`: validação de célula ativa, código único, hierarquia sem ciclos, preservação de subunidades, liderança ativa e vínculos de membros sem duplicidade. Exclusão física de liderança e membro foi bloqueada; esses vínculos devem ser encerrados para preservar histórico.
+
+
+### Continuação da Fase 1 — contratos em uso (15/07/2026)
+
+Os CRUDs gerados de níveis, unidades, lideranças, membros e configurações passaram a ser consumidos pela área administrativa do frontend. Lideranças e membros são encerrados por atualização, nunca por exclusão física. A hierarquia continua protegida contra autorreferência e ciclos no handler manual, e índices parciais reforçam vínculos ativos e célula principal.
+
+
+## Atualização — módulo de células, Fase 2 (15/07/2026)
+
+Foram declaradas no `properties.json` e geradas as entidades `cellVisitor`, `cellMeeting`, `cellAttendance` e `cellPrayerRequest`, com seus enums e CRUDs abstratos. A migration `V20260715090000005__create_cells_meetings.sql` cria as tabelas, relacionamentos, índices e restrições de datas, contagens e presença única por reunião.
+
+As regras manuais permanecem em `com.smartverse.churchlitebackend.cells`. Visitantes validam período e quantidade de visitas; reuniões nascem em `DRAFT` e somente rascunhos/rejeitadas podem ser editados; presenças exigem exatamente uma pessoa ou visitante e não admitem duplicidade; pedidos de oração aceitam pessoa ou visitante, nunca ambos.
+
+O workflow usa os contratos gerados `POST /submitCellMeeting` e `POST /reviewCellMeeting`. A transição permitida é `DRAFT|REJECTED -> SUBMITTED -> APPROVED|REJECTED`; rejeição exige motivo. A implementação altera a entidade gerenciada carregada do repository, sem persistir DTO convertido com identificador existente. Validação realizada com `JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw compile -DskipTests`.

@@ -2586,29 +2586,57 @@
           "comment": "Identificador da tradução customizada",
           "fieldName": "id",
           "list": false,
-          "fieldProperties": { "fieldType": "uuid", "required": true, "valueDefault": "" },
-          "metadata": { "nullable": false, "key": true }
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
         },
         {
           "comment": "Idioma da tradução",
           "fieldName": "language",
           "list": false,
-          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
-          "metadata": { "nullable": false, "key": false }
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
         },
         {
           "comment": "Chave existente no arquivo padrão de traduções",
           "fieldName": "translationKey",
           "list": false,
-          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
-          "metadata": { "nullable": false, "key": false }
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
         },
         {
           "comment": "Valor customizado da tradução",
           "fieldName": "value",
           "list": false,
-          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
-          "metadata": { "nullable": false, "key": false }
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
         }
       ]
     },
@@ -3371,6 +3399,1936 @@
       "classExtends": "",
       "generateDefaultHandlers": false,
       "handlerAbstract": false
+    },
+    {
+      "comment": "Tipos de níveis da estrutura organizacional de células",
+      "entityName": "cellOrganizationLevelType",
+      "tableName": "cell_organization_level_type",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Nome do nível",
+          "fieldName": "name",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Ordem de exibição",
+          "fieldName": "displayOrder",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Indica se o nível está ativo",
+          "fieldName": "active",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Unidades hierárquicas do módulo de células",
+      "entityName": "cellOrganizationUnit",
+      "tableName": "cell_organization_unit",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Nome da unidade",
+          "fieldName": "name",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Descrição",
+          "fieldName": "description",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Situação",
+          "fieldName": "status",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "Status",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Tipo do nível",
+          "fieldName": "levelType",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cellOrganizationLevelType",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "Unidade superior",
+          "fieldName": "parentUnit",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cellOrganizationUnit",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "Subunidades",
+          "fieldName": "children",
+          "list": true,
+          "fieldProperties": {
+            "fieldType": "cellOrganizationUnit",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "OneToMany",
+            "mappedBy": "parentUnit",
+            "bidirectional": true,
+            "reference": false
+          }
+        },
+        {
+          "comment": "Responsável",
+          "fieldName": "responsible",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "person",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Cadastro principal de células",
+      "entityName": "cell",
+      "tableName": "cell",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Código único da célula",
+          "fieldName": "code",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Nome da célula",
+          "fieldName": "name",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Descrição",
+          "fieldName": "description",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Tipo da célula",
+          "fieldName": "type",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "CellType",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Situação da célula",
+          "fieldName": "status",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "CellStatus",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Unidade organizacional",
+          "fieldName": "organizationUnit",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cellOrganizationUnit",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "Dia da semana",
+          "fieldName": "meetingDay",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Horário da reunião",
+          "fieldName": "meetingTime",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Data de início",
+          "fieldName": "startDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Capacidade",
+          "fieldName": "capacity",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Meta de membros",
+          "fieldName": "memberGoal",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Meta de visitantes",
+          "fieldName": "visitorGoal",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Meta de multiplicação",
+          "fieldName": "multiplicationGoal",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Previsão de multiplicação",
+          "fieldName": "expectedMultiplicationDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Endereço",
+          "fieldName": "address",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Bairro",
+          "fieldName": "neighborhood",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Cidade",
+          "fieldName": "city",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "city",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "Latitude",
+          "fieldName": "latitude",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "decimal",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Longitude",
+          "fieldName": "longitude",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "decimal",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Observações",
+          "fieldName": "notes",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Papéis de liderança das células",
+      "entityName": "cellLeadership",
+      "tableName": "cell_leadership",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Célula",
+          "fieldName": "cell",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cell",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "Pessoa",
+          "fieldName": "person",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "person",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "Papel de liderança",
+          "fieldName": "role",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "CellLeadershipRole",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Data de início",
+          "fieldName": "startDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Data de encerramento",
+          "fieldName": "endDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Vínculo ativo",
+          "fieldName": "active",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Vínculos de pessoas com células",
+      "entityName": "cellMember",
+      "tableName": "cell_member",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Célula",
+          "fieldName": "cell",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cell",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "Pessoa",
+          "fieldName": "person",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "person",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "Data de entrada",
+          "fieldName": "entryDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Data de saída",
+          "fieldName": "exitDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Situação do vínculo",
+          "fieldName": "status",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "CellMemberStatus",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Papel na célula",
+          "fieldName": "role",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "CellMemberRole",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Célula principal",
+          "fieldName": "primaryCell",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Participa regularmente",
+          "fieldName": "regularParticipant",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Está em acompanhamento",
+          "fieldName": "underFollowUp",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Pode receber responsabilidades",
+          "fieldName": "canReceiveResponsibilities",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Origem do vínculo",
+          "fieldName": "origin",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Motivo de saída",
+          "fieldName": "exitReason",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Observações",
+          "fieldName": "notes",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Configurações do módulo de células",
+      "entityName": "cellModuleSettings",
+      "tableName": "cell_module_settings",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Nome usado para célula",
+          "fieldName": "cellTerm",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Permitir múltiplas células por pessoa",
+          "fieldName": "allowMultipleCellsPerPerson",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Permitir liderança de múltiplas células",
+          "fieldName": "allowMultipleLeadership",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Exigir aprovação de relatório",
+          "fieldName": "requireReportApproval",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Exigir aprovação de multiplicação",
+          "fieldName": "requireMultiplicationApproval",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Permitir visitante sem pessoa",
+          "fieldName": "allowVisitorsWithoutPerson",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Ausências para alerta",
+          "fieldName": "absenceAlertCount",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Visitas para sugerir integração",
+          "fieldName": "visitsForIntegrationSuggestion",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Dias para relatório atrasado",
+          "fieldName": "lateReportDays",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Capacidade padrão",
+          "fieldName": "defaultCapacity",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        }
+      ]
+    },
+    {
+      "comment": "cellVisitor",
+      "entityName": "cellVisitor",
+      "tableName": "cell_visitor",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "id",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "cell",
+          "fieldName": "cell",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cell",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "person",
+          "fieldName": "person",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "person",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "name",
+          "fieldName": "name",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "phone",
+          "fieldName": "phone",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "email",
+          "fieldName": "email",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "firstVisitDate",
+          "fieldName": "firstVisitDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "lastVisitDate",
+          "fieldName": "lastVisitDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "visitCount",
+          "fieldName": "visitCount",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "invitedBy",
+          "fieldName": "invitedBy",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "person",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "followUpResponsible",
+          "fieldName": "followUpResponsible",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "person",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "status",
+          "fieldName": "status",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "CellVisitorStatus",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "nextActionDate",
+          "fieldName": "nextActionDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "notes",
+          "fieldName": "notes",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        }
+      ]
+    },
+    {
+      "comment": "cellMeeting",
+      "entityName": "cellMeeting",
+      "tableName": "cell_meeting",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "id",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "cell",
+          "fieldName": "cell",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cell",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "startAt",
+          "fieldName": "startAt",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "datetime",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "endAt",
+          "fieldName": "endAt",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "datetime",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "location",
+          "fieldName": "location",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "theme",
+          "fieldName": "theme",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "study",
+          "fieldName": "study",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "responsibleLeader",
+          "fieldName": "responsibleLeader",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "person",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "adultCount",
+          "fieldName": "adultCount",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "childrenCount",
+          "fieldName": "childrenCount",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "memberCount",
+          "fieldName": "memberCount",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "visitorCount",
+          "fieldName": "visitorCount",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "decisions",
+          "fieldName": "decisions",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "reconciliations",
+          "fieldName": "reconciliations",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "offering",
+          "fieldName": "offering",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "decimal",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "notes",
+          "fieldName": "notes",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "status",
+          "fieldName": "status",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "CellMeetingStatus",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "submittedAt",
+          "fieldName": "submittedAt",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "datetime",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "submittedBy",
+          "fieldName": "submittedBy",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "userConfiguration",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "reviewedAt",
+          "fieldName": "reviewedAt",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "datetime",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "reviewReason",
+          "fieldName": "reviewReason",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "cancellationReason",
+          "fieldName": "cancellationReason",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        }
+      ]
+    },
+    {
+      "comment": "cellAttendance",
+      "entityName": "cellAttendance",
+      "tableName": "cell_attendance",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "id",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "meeting",
+          "fieldName": "meeting",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cellMeeting",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "person",
+          "fieldName": "person",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "person",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "visitor",
+          "fieldName": "visitor",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cellVisitor",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "type",
+          "fieldName": "type",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "CellAttendanceType",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "present",
+          "fieldName": "present",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "notes",
+          "fieldName": "notes",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        }
+      ]
+    },
+    {
+      "comment": "cellPrayerRequest",
+      "entityName": "cellPrayerRequest",
+      "tableName": "cell_prayer_request",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "id",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "meeting",
+          "fieldName": "meeting",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cellMeeting",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "person",
+          "fieldName": "person",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "person",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "visitor",
+          "fieldName": "visitor",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cellVisitor",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "description",
+          "fieldName": "description",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "status",
+          "fieldName": "status",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "CellPrayerRequestStatus",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "confidential",
+          "fieldName": "confidential",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "followUpResponsible",
+          "fieldName": "followUpResponsible",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "person",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "answeredAt",
+          "fieldName": "answeredAt",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "datetime",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "notes",
+          "fieldName": "notes",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        }
+      ]
     }
   ],
   "endpoints": [
@@ -3764,6 +5722,78 @@
         ],
         "permissionDefault": false
       }
+    },
+    {
+      "comment": "Envia relatório",
+      "methodName": "submitCellMeeting",
+      "httpMethod": "POST",
+      "grouper": "cells",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "meetingId",
+            "parameterType": "uuid",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "meeting",
+            "parameterType": "cellMeeting",
+            "list": false
+          }
+        ]
+      },
+      "permissions": {
+        "description": "Enviar relatório",
+        "resource": "cellMeetingSubmit",
+        "premissions": [
+          "UPDATE"
+        ],
+        "permissionDefault": false
+      }
+    },
+    {
+      "comment": "Revisa relatório",
+      "methodName": "reviewCellMeeting",
+      "httpMethod": "POST",
+      "grouper": "cells",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "meetingId",
+            "parameterType": "uuid",
+            "list": false
+          },
+          {
+            "parameterName": "approved",
+            "parameterType": "boolean",
+            "list": false
+          },
+          {
+            "parameterName": "reason",
+            "parameterType": "string",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "meeting",
+            "parameterType": "cellMeeting",
+            "list": false
+          }
+        ]
+      },
+      "permissions": {
+        "description": "Revisar relatório",
+        "resource": "cellMeetingApprove",
+        "premissions": [
+          "UPDATE"
+        ],
+        "permissionDefault": false
+      }
     }
   ],
   "enums": [
@@ -3867,6 +5897,109 @@
       "values": [
         "NONE",
         "WEEKLY"
+      ]
+    },
+    {
+      "enumName": "CellStatus",
+      "values": [
+        "PLANNED",
+        "ACTIVE",
+        "INACTIVE",
+        "SUSPENDED",
+        "MULTIPLYING",
+        "MULTIPLIED",
+        "CLOSED"
+      ]
+    },
+    {
+      "enumName": "CellType",
+      "values": [
+        "MIXED",
+        "YOUTH",
+        "TEENS",
+        "CHILDREN",
+        "COUPLES",
+        "MEN",
+        "WOMEN",
+        "FAMILY",
+        "UNIVERSITY",
+        "SENIORS",
+        "OTHER"
+      ]
+    },
+    {
+      "enumName": "CellMemberStatus",
+      "values": [
+        "ACTIVE",
+        "INACTIVE",
+        "TRANSFERRED",
+        "REMOVED",
+        "UNDER_FOLLOW_UP",
+        "AWAY"
+      ]
+    },
+    {
+      "enumName": "CellLeadershipRole",
+      "values": [
+        "LEADER",
+        "VICE_LEADER",
+        "ASSISTANT_LEADER",
+        "TRAINEE_LEADER",
+        "SUPERVISOR",
+        "COORDINATOR",
+        "NETWORK_PASTOR",
+        "HOST",
+        "SECRETARY"
+      ]
+    },
+    {
+      "enumName": "CellMemberRole",
+      "values": [
+        "MEMBER",
+        "VISITOR_INTEGRATION",
+        "SUPPORT",
+        "SECRETARY"
+      ]
+    },
+    {
+      "enumName": "CellVisitorStatus",
+      "values": [
+        "NEW",
+        "CONTACT_PENDING",
+        "CONTACTED",
+        "RETURNED",
+        "INTEGRATION",
+        "CONVERTED_TO_MEMBER",
+        "NOT_INTERESTED",
+        "NO_RESPONSE"
+      ]
+    },
+    {
+      "enumName": "CellMeetingStatus",
+      "values": [
+        "PLANNED",
+        "DRAFT",
+        "SUBMITTED",
+        "APPROVED",
+        "REJECTED",
+        "CANCELLED"
+      ]
+    },
+    {
+      "enumName": "CellAttendanceType",
+      "values": [
+        "MEMBER",
+        "VISITOR",
+        "CHILD"
+      ]
+    },
+    {
+      "enumName": "CellPrayerRequestStatus",
+      "values": [
+        "OPEN",
+        "IN_FOLLOW_UP",
+        "ANSWERED",
+        "CLOSED"
       ]
     }
   ]
