@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,15 +37,32 @@ public class AuthenticationService {
     @Autowired
     EmailService emailService;
 
-    public String login(UserSupplierDTO userSupplierDTO){
+    public List<AuthenticatedChurch> login(UserSupplierDTO userSupplierDTO){
         TenantContext.setCurrentTenant("admin");
-        var userSupplierEntity = authenticationRepository.findOneByEmail(userSupplierDTO.email());
-        if(userSupplierEntity.isPresent() && new BCryptPasswordEncoder().matches(userSupplierDTO.password(),userSupplierEntity.get().getPassword())){
-            return authenticate.generateToken(setUserSupplier(userSupplierEntity.get()));
-        } else {
+        var passwordEncoder = new BCryptPasswordEncoder();
+
+        // No login multi-tenant, cada registro precisa validar a senha antes de seu token ser
+        // retornado. Se mais de um vínculo usar a mesma senha, todos serão oferecidos para
+        // seleção e o primeiro (ordenado por ID) será mantido como token principal.
+        var authenticatedChurches = authenticationRepository
+                .findAllByEmailOrderByIdAsc(userSupplierDTO.email())
+                .stream()
+                .filter(user -> passwordEncoder.matches(userSupplierDTO.password(), user.getPassword()))
+                .map(user -> new AuthenticatedChurch(
+                        user.getId(),
+                        user.getName(),
+                        user.getTenant(),
+                        authenticate.generateToken(setUserSupplier(user))))
+                .toList();
+
+        if (authenticatedChurches.isEmpty()) {
             throw new ServiceException(HttpStatus.UNAUTHORIZED,"User or password invalid");
         }
+
+        return authenticatedChurches;
     }
+
+    public record AuthenticatedChurch(UUID userId, String name, String tenant, String accessToken) {}
 
     public UserSupplier validateToken(String token){
         token = token.replace("Bearer ","");

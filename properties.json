@@ -3634,6 +3634,97 @@
         ],
         "permissionDefault": false
       }
+    },
+    {
+      "comment": "Retorna o snapshot financeiro completo do dashboard",
+      "methodName": "getDashboardFinancial",
+      "httpMethod": "GET",
+      "grouper": "dashboard",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          {
+            "parameterName": "dataInicial",
+            "parameterType": "date",
+            "list": false
+          },
+          {
+            "parameterName": "dataFinal",
+            "parameterType": "date",
+            "list": false
+          },
+          {
+            "parameterName": "bancoId",
+            "parameterType": "uuid",
+            "list": false
+          },
+          {
+            "parameterName": "contaBancariaId",
+            "parameterType": "uuid",
+            "list": false
+          },
+          {
+            "parameterName": "caixaId",
+            "parameterType": "uuid",
+            "list": false
+          },
+          {
+            "parameterName": "somenteCaixasAbertos",
+            "parameterType": "boolean",
+            "list": false
+          },
+          {
+            "parameterName": "centroCustoId",
+            "parameterType": "uuid",
+            "list": false
+          },
+          {
+            "parameterName": "planoContaId",
+            "parameterType": "uuid",
+            "list": false
+          }
+        ],
+        "output": [
+          {
+            "parameterName": "data",
+            "parameterType": "map",
+            "list": false
+          }
+        ]
+      },
+      "permissions": {
+        "description": "Permite visualizar o dashboard financeiro",
+        "resource": "dashboardFinancial",
+        "premissions": [
+          "VIEW"
+        ],
+        "permissionDefault": false
+      }
+    },
+    {
+      "comment": "Retorna o snapshot da agenda do dashboard",
+      "methodName": "getDashboardAgenda",
+      "httpMethod": "GET",
+      "grouper": "dashboard",
+      "metadata": {
+        "anonymous": false,
+        "input": [],
+        "output": [
+          {
+            "parameterName": "data",
+            "parameterType": "map",
+            "list": false
+          }
+        ]
+      },
+      "permissions": {
+        "description": "Permite visualizar o resumo da agenda",
+        "resource": "dashboardAgenda",
+        "premissions": [
+          "VIEW"
+        ],
+        "permissionDefault": false
+      }
     }
   ],
   "enums": [

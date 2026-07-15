@@ -1,5 +1,7 @@
 # Handoff — Church Lite Backend
 
+> Atualizado em 15/07/2026.
+
 ## Visão do produto
 
 O Church Lite é o backend de um sistema de gestão de igrejas. Ele isola os dados de cada igreja por tenant e oferece cadastros, agenda, financeiro, armazenamento de imagens e autenticação.
@@ -112,7 +114,11 @@ Declarados no contrato:
 - `requestUpload`, `requestUrl` e `deleteObject`;
 - `getUser`;
 - `getIDCashTransaction`, `getSumValuesCash`;
-- `getBalanceBankAccount`, `getResumeTransaction`.
+- `getBalanceBankAccount`, `getResumeTransaction`;
+- `createRecurringAppointments`;
+- `createChurchUser`;
+- `getDashboardFinancial`;
+- `getDashboardAgenda`.
 
 Também existem `/authenticate`, `/register`, `/metadata`, `/status` e os CRUDs gerados.
 
@@ -185,4 +191,51 @@ O cadastro administrativo usa o endpoint gerado `POST /createChurchUser`. O tena
 
 A operação grava as credenciais com BCrypt em `ADMIN.user_access` e cria a configuração correspondente em `user_configuration` no schema da igreja. Nome, e-mail e telefone são sincronizados nas edições; a exclusão remove os dois registros. A duplicidade é verificada por `email + tenant`, permitindo o mesmo e-mail em igrejas diferentes.
 
-`user_access.id` é formalizado como PK pela migration e o telefone existe nas duas tabelas. O fluxo futuro de escolha de igreja para e-mails com múltiplos tenants não faz parte desta entrega.
+`user_access.id` é formalizado como PK pela migration e o telefone existe nas duas tabelas. O fluxo multi-tenant atual está descrito na atualização de 15/07/2026 abaixo.
+
+## Atualização — autenticação multi-tenant (15/07/2026)
+
+O mesmo e-mail pode existir em mais de uma igreja. `AuthenticationService.login` busca os vínculos em `ADMIN.user_access` por e-mail, ordenados pelo ID, e executa BCrypt individualmente para cada registro. Um vínculo com senha diferente não tem seu token exposto.
+
+Resposta atual de `POST /authenticate`:
+
+- `accessToken`: JWT do primeiro vínculo válido;
+- `token`: ID do usuário do primeiro vínculo válido;
+- `churches`: lista com `userId`, `name`, `tenant` e `accessToken` de cada vínculo validado;
+- `requiresTenantSelection`: indica se existe mais de uma opção.
+
+A resposta contém os tokens finais; não existe endpoint adicional para trocar tenant. Ao alterar esse fluxo, preservar a validação individual da senha e o comentário de segurança em `AuthenticationService`.
+
+## Atualização — dashboard executivo (15/07/2026)
+
+O dashboard foi implementado em `com.smartverse.churchlitebackend.dashboard`, sem regras no handler e sem alterações manuais em `_gen`:
+
+- `DashboardHandlerImpl`: implementa os contratos gerados e converte os snapshots tipados para a saída `Map` do contrato;
+- `DashboardService`: filtros, comparações, agrupamentos, saldos, alertas e agenda;
+- `DashboardRepository`: centraliza o acesso aos repositories gerados;
+- `DashboardModels`: records específicos de entrada e saída.
+
+Contratos declarados no `properties.json`:
+
+- `GET /getDashboardFinancial` recebe período, banco, conta bancária, caixa, somente caixas abertos, centro de custo e plano de contas;
+- `GET /getDashboardAgenda` retorna agenda de hoje, próximos eventos e contadores do dia, semana e mês.
+
+Regras adotadas:
+
+- receitas e despesas realizadas são calculadas sobre `transactions`; `financial` fornece classificação, origem, plano de contas e centro de custo;
+- o período anterior possui a mesma quantidade de dias do período selecionado;
+- evolução usa granularidade diária, semanal ou mensal conforme a duração;
+- despesas sem centro de custo ou plano de contas permanecem nos agrupamentos;
+- saldo bancário considera as movimentações da conta;
+- saldo de caixa aberto usa saldo inicial da sessão mais movimentações vinculadas; caixa fechado usa o saldo final da última sessão;
+- saldo disponível representa a posição atual e não é limitado pelo período financeiro;
+- compromissos cancelados não entram nos resumos da agenda;
+- o tenant continua vindo exclusivamente do JWT/interceptor.
+
+Ponto de evolução: o repository atual monta o snapshot usando `findAll()` dentro de transação read-only. Para tenants com alto volume, substituir por consultas agregadas/paginadas preservando os mesmos DTOs e regras de fechamento dos agrupamentos.
+
+Validação realizada com JDK 25:
+
+```bash
+JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw clean compile -DskipTests
+```

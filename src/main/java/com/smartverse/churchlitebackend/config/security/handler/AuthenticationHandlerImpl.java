@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 
 @RestController
 @CrossOrigin(origins="*")
@@ -32,13 +33,15 @@ public class AuthenticationHandlerImpl {
     @Anonymous
     @PostMapping("/authenticate")
     public ResponseEntity<?> authenticate(@RequestBody UserSupplierDTO userSupplier){
-        var map = new Hashtable<>();
-        var token = authenticationService.login(userSupplier);
-        var user = authenticate.isAuthenticated(token);
+        var map = new LinkedHashMap<String, Object>();
+        var churches = authenticationService.login(userSupplier);
+        var firstChurch = churches.getFirst();
 
-        map.put("accessToken", token);
+        map.put("accessToken", firstChurch.accessToken());
         map.put("validate", 80000);
-        map.put("token", user.getId());
+        map.put("token", firstChurch.userId());
+        map.put("churches", churches);
+        map.put("requiresTenantSelection", churches.size() > 1);
         return ResponseEntity.ok(map);
     }
 
