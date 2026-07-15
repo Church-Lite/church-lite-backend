@@ -287,3 +287,12 @@ Foram declaradas no `properties.json` e geradas as entidades `cellVisitor`, `cel
 As regras manuais permanecem em `com.smartverse.churchlitebackend.cells`. Visitantes validam período e quantidade de visitas; reuniões nascem em `DRAFT` e somente rascunhos/rejeitadas podem ser editados; presenças exigem exatamente uma pessoa ou visitante e não admitem duplicidade; pedidos de oração aceitam pessoa ou visitante, nunca ambos.
 
 O workflow usa os contratos gerados `POST /submitCellMeeting` e `POST /reviewCellMeeting`. A transição permitida é `DRAFT|REJECTED -> SUBMITTED -> APPROVED|REJECTED`; rejeição exige motivo. A implementação altera a entidade gerenciada carregada do repository, sem persistir DTO convertido com identificador existente. Validação realizada com `JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw compile -DskipTests`.
+
+
+## Revisão do módulo de células — ajustes pós-Fase 2 (15/07/2026)
+
+A migration incremental `V20260715090000006__align_cells_generated_columns.sql` corrige os relacionamentos criados na Fase 1 com sufixo `_id`. As entidades geradas usam os nomes definidos pelo gerador (`level_type`, `parent_unit`, `responsible`, `organization_unit`, `city`, `cell` e `person`). A migration original V04 não foi alterada para preservar o checksum do Flyway; a V06 renomeia as colunas existentes e mantém dados, FKs e índices.
+
+Ao criar migrations para entidades geradas, conferir sempre os valores de `@JoinColumn(name = ...)` produzidos a partir do `properties.json`. Não presumir sufixo `_id`. Backend validado após a correção com `JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw compile -DskipTests`.
+
+Para testes manuais foi criado temporariamente na raiz do workspace o arquivo `MASSA_DADOS_CELULAS_TEMP.sql`. Ele usa UUIDs fixos, casts explícitos `::uuid`, `ON CONFLICT DO NOTHING` e aproveita pessoas existentes no schema do tenant. O arquivo é descartável e não faz parte das migrations do produto.
