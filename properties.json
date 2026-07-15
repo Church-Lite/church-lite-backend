@@ -2574,6 +2574,45 @@
       "handlerAbstract": true
     },
     {
+      "comment": "Sobrescritas de traduções por igreja e idioma",
+      "entityName": "translation",
+      "tableName": "translation",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "Identificador da tradução customizada",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": { "fieldType": "uuid", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": true }
+        },
+        {
+          "comment": "Idioma da tradução",
+          "fieldName": "language",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Chave existente no arquivo padrão de traduções",
+          "fieldName": "translationKey",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Valor customizado da tradução",
+          "fieldName": "value",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        }
+      ]
+    },
+    {
       "entityName": "userConfiguration",
       "tableName": "user_configuration",
       "entityFields": [

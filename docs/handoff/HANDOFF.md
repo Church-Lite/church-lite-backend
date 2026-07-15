@@ -239,3 +239,8 @@ Validação realizada com JDK 25:
 ```bash
 JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw clean compile -DskipTests
 ```
+
+
+## Atualização — traduções customizadas (15/07/2026)
+
+A entidade gerada `translation` armazena somente sobrescritas por tenant, identificadas por `language + translationKey`. O CRUD padrão gerado (`/translation`) é usado para consultar, criar, alterar e remover customizações. A migration `V20260715090000003__create_translation.sql` cria a tabela e a restrição única. Os arquivos JSON do frontend continuam sendo a fonte padrão; restaurar uma tradução remove a sobrescrita persistida.
