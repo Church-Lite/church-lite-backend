@@ -5660,6 +5660,73 @@
           }
         }
       ]
+    },
+    {
+      "comment": "Template de cabecalho e rodape dos relatorios",
+      "entityName": "reportTemplate",
+      "tableName": "report_template",
+      "classExtends": "",
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Imagem do cabecalho",
+          "fieldName": "headerImage",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Texto do cabecalho",
+          "fieldName": "headerText",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Texto livre do rodape",
+          "fieldName": "footerText",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        }
+      ],
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false,
+      "onlyDTO": false
     }
   ],
   "endpoints": [

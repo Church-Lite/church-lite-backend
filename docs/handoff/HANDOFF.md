@@ -310,3 +310,12 @@ Contratos gerados: `permissionGroup`, `permissionGroupMember`, `permissionGroupD
 O interceptor resolve recurso/operação pelo catálogo e responde `403` com a chave `permission_access_denied` quando encontra negação. `OPTIONS` deve ser liberado antes da autenticação. A migration aceita `CREATE`, `VIEW`, `UPDATE` e `DELETE`. A separação futura `VIEW`/`VIEW_ALL` foi adiada até atualização do gerador; por enquanto `VIEW` cobre GET por ID e listagem.
 
 Especificação canônica: `spec/FEATURE_PERMISSION_GROUPS_SPEC.md`. Backend validado com `JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw compile -DskipTests`.
+
+
+## Atualização — template de cabeçalho e rodapé de relatórios (16/07/2026)
+
+O contrato gerado `reportTemplate` representa a configuração visual única de relatórios por tenant. A entidade possui `id`, `headerImage`, `headerText` e `footerText`. Os dois textos armazenam HTML produzido pelo editor rich text; não criar campos separados para fonte, tamanho ou alinhamento.
+
+O CRUD padrão está disponível em `/reportTemplate`, com `generateDefaultHandlers: true` e `handlerAbstract: false`. Não existe controller manual nem endpoint singleton específico: o frontend consulta o GET paginado com `size=1`, cria pelo POST quando não há registro e atualiza pelo PUT quando existe.
+
+A migration `V20260716090000002__create_report_template.sql` cria `report_template`. `header_image` guarda o token do objeto no S3; `header_text` e `footer_text` usam `text`. O recurso também passa a fazer parte do catálogo gerado de permissões. Validação realizada com Java 25 e `./mvnw compile -DskipTests`.
