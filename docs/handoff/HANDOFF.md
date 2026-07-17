@@ -1,6 +1,6 @@
 # Handoff — Church Lite Backend
 
-> Atualizado em 15/07/2026.
+> Atualizado em 16/07/2026.
 
 ## Visão do produto
 
@@ -118,7 +118,8 @@ Declarados no contrato:
 - `createRecurringAppointments`;
 - `createChurchUser`;
 - `getDashboardFinancial`;
-- `getDashboardAgenda`.
+- `getDashboardAgenda`;
+- `getPermissionResources`.
 
 Também existem `/authenticate`, `/register`, `/metadata`, `/status` e os CRUDs gerados.
 
@@ -296,3 +297,16 @@ A migration incremental `V20260715090000006__align_cells_generated_columns.sql` 
 Ao criar migrations para entidades geradas, conferir sempre os valores de `@JoinColumn(name = ...)` produzidos a partir do `properties.json`. Não presumir sufixo `_id`. Backend validado após a correção com `JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw compile -DskipTests`.
 
 Para testes manuais foi criado temporariamente na raiz do workspace o arquivo `MASSA_DADOS_CELULAS_TEMP.sql`. Ele usa UUIDs fixos, casts explícitos `::uuid`, `ON CONFLICT DO NOTHING` e aproveita pessoas existentes no schema do tenant. O arquivo é descartável e não faz parte das migrations do produto.
+
+
+## Atualização — grupos e permissionamento (16/07/2026)
+
+O permissionamento administrativo usa grupos ativos e persistência deny-only. Todo recurso/operação do catálogo começa permitido; somente switches desligados geram registros em `permission_group_denial`. Um usuário pode participar de vários grupos e qualquer bloqueio de qualquer grupo ativo prevalece. Usuário sem grupo ou sem negação explícita continua permitido.
+
+O catálogo é sempre obtido de `src/main/resources/resources.json`, gerado a partir do `properties.json`; nunca criar uma tabela de recursos. `GET /getPermissionResources` relê o catálogo e retorna `resource`, `description` e `permissions`. Comentários de entidades/endpoints alimentam `description`; contratos sem comentário usam o identificador do recurso. Novos recursos aparecem automaticamente permitidos.
+
+Contratos gerados: `permissionGroup`, `permissionGroupMember`, `permissionGroupDenial` e o DTO não persistente `permissionResource` com `onlyDTO: true`. O CRUD de grupos segue o handler gerado. O endpoint de catálogo é declarado em `endpoints` e implementado manualmente por `handlers/permissions/PermissionResourcesHandlerImpl`, com `@CrossOrigin`, sem duplicar contrato. Metadados ficam em `config/metadata`, regras em `services/permissions` e autorização no interceptor existente em `config/interceptor`.
+
+O interceptor resolve recurso/operação pelo catálogo e responde `403` com a chave `permission_access_denied` quando encontra negação. `OPTIONS` deve ser liberado antes da autenticação. A migration aceita `CREATE`, `VIEW`, `UPDATE` e `DELETE`. A separação futura `VIEW`/`VIEW_ALL` foi adiada até atualização do gerador; por enquanto `VIEW` cobre GET por ID e listagem.
+
+Especificação canônica: `spec/FEATURE_PERMISSION_GROUPS_SPEC.md`. Backend validado com `JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw compile -DskipTests`.

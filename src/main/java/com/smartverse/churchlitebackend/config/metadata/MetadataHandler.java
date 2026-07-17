@@ -15,18 +15,10 @@ import java.util.Scanner;
 @RequestMapping
 public class MetadataHandler {
 
-    @PostMapping("/metadata")
+    @GetMapping("/metadata")
     @Anonymous
-    public ResponseEntity<?> getStatus(@RequestBody Map<String, Object> obj){
-        var enumMetadata = EnumMetadata.valueOf(obj.get("metadata").toString());
-
-        var ret = switch (enumMetadata){
-            case FIELDS -> retFields("properties.json");
-            case RESOURCES -> retFields("resources.json");
-            default -> "";
-        };
-
-        return ResponseEntity.of(Optional.of(ret));
+    public ResponseEntity<?> getMetadata(){
+        return ResponseEntity.of(Optional.ofNullable(retFields("resources.json")));
     }
 
     private String retFields(String fileName){

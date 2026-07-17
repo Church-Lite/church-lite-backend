@@ -235,6 +235,45 @@ Docusaurus docs should focus on how to use the generator, not how the generator 
 
 For .NET and Node docs, mention that consumers can download `entity.exe` or `entity-generator-x.x.x.jar` and execute it in the project root, in the same folder as `properties.json`.
 
+## Church Lite Consumer Architecture
+
+When changing generated contracts in `church-lite-backend`, treat the root
+`properties.json` as the source of truth.
+
+- Use the generated CRUD for ordinary `POST`, `PUT`, `DELETE`, `GET /{id}`
+  and paginated `GET` operations. Do not create a parallel manual controller
+  for an entity already represented in `properties.json`.
+- Set `generateDefaultHandlers: true` and `handlerAbstract: false` when the
+  generated CRUD needs no customization.
+- Set `handlerAbstract: true` when a standard CRUD operation needs business
+  rules. Implement the generated abstract handler outside `_gen` and override
+  only the required methods.
+- Declare non-persistent request/response models as entities with
+  `onlyDTO: true`. Consume the generated `*DTO`; do not create equivalent
+  records or DTO classes manually.
+- Remember that generator 1.0.2 still traverses `onlyDTO` contracts while
+  producing SQL. Give each such contract one technical key field when generation
+  otherwise fails with a missing-key error.
+- Declare non-CRUD operations in the `endpoints` array. Implement the generated
+  interface in a manual `@RestController`; do not duplicate its route in a
+  handwritten controller contract.
+- Never edit `com.smartverse.churchlitebackend_gen` directly. Regenerate after
+  changing the contract and compile with the JDK configured by the service.
+
+Place manual Church Lite code according to its responsibility:
+
+- endpoint implementations in `com.smartverse.churchlitebackend.handlers.<domain>`;
+- business rules in `com.smartverse.churchlitebackend.services.<domain>`;
+- repositories in `com.smartverse.churchlitebackend.repository.<domain>`;
+- metadata/catalog infrastructure in
+  `com.smartverse.churchlitebackend.config.metadata`;
+- request interception in the existing
+  `com.smartverse.churchlitebackend.config.interceptor.InterceptorConfig`.
+
+Do not create a broad domain package containing controllers, services and
+infrastructure together. Extend the existing interceptor instead of registering
+a second interceptor for the same authentication/authorization request flow.
+
 ## Validation
 
 Prefer focused validation over full `mvn test` when generated `_gen` sources or local dependency state make full tests noisy.
@@ -265,3 +304,20 @@ When validating generation, create a temporary project under `/tmp`, copy or cre
 - Do not revert unrelated dirty files.
 - Do not edit generated `_gen` output as source of truth.
 - Keep Node relationship limitations honest in docs until implementation is complete.
+
+
+## Church Lite Permission Groups
+
+Ao trabalhar no permissionamento do Church Lite:
+
+- Tratar o `properties.json` da raiz como fonte de contratos e `resources.json` como catálogo gerado; nunca persistir cópia do catálogo.
+- Definir `permissionResource` com `onlyDTO: true`, incluindo `resource`, `description` e `permissions`; não criar DTO manual equivalente.
+- Preencher `comment` em entidades/endpoints, pois ele vira a descrição apresentada ao administrador.
+- Usar CRUD gerado para `permissionGroup`; usar `handlerAbstract: true` somente se uma operação CRUD padrão exigir sobrescrita.
+- Declarar `getPermissionResources` em `endpoints`, implementar a interface gerada em `handlers/permissions` e aplicar CORS como nos handlers gerados.
+- Manter catálogo em `config/metadata`, consulta de bloqueios em `services/permissions` e autorização no interceptor existente em `config/interceptor`.
+- Persistir somente negações. Tudo ausente no banco é permitido; em múltiplos grupos ativos, qualquer negação prevalece.
+- Reler `resources.json` ao listar o catálogo para incorporar recursos novos como permitidos por padrão.
+- Liberar `OPTIONS` antes de autenticação/autorização e responder negação com `403` + chave `permission_access_denied`.
+- Manter `VIEW` para GET por ID e GET paginado enquanto o gerador não fornecer `VIEW_ALL`; ao introduzir `VIEW_ALL`, atualizar catálogo, migration, resolução de URL, frontend, spec e documentação juntos.
+- Consultar `spec/FEATURE_PERMISSION_GROUPS_SPEC.md` antes de alterar o modelo.

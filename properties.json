@@ -364,7 +364,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Cadastro de pessoas da igreja"
     },
     {
       "entityName": "personAddress",
@@ -567,7 +568,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": false,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Endereços vinculados às pessoas"
     },
     {
       "entityName": "city",
@@ -673,7 +675,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Cadastro de cidades"
     },
     {
       "entityName": "state",
@@ -779,7 +782,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": false,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Cadastro de estados"
     },
     {
       "entityName": "country",
@@ -880,7 +884,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Cadastro de países"
     },
     {
       "entityName": "personalDocs",
@@ -1078,7 +1083,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": false,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Documentos pessoais vinculados às pessoas"
     },
     {
       "entityName": "personalTelphone",
@@ -1184,7 +1190,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": false,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Telefones vinculados às pessoas"
     },
     {
       "entityName": "personalEmail",
@@ -1267,7 +1274,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": false,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "E-mails vinculados às pessoas"
     },
     {
       "entityName": "userConfirmation",
@@ -1345,7 +1353,8 @@
           }
         }
       ],
-      "classExtends": ""
+      "classExtends": "",
+      "comment": "Confirmações e validações de usuários"
     },
     {
       "entityName": "positions",
@@ -1423,7 +1432,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Cargos e funções exercidos na igreja"
     },
     {
       "entityName": "eventsType",
@@ -1524,7 +1534,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Tipos de eventos e compromissos"
     },
     {
       "entityName": "planAccount",
@@ -1683,7 +1694,8 @@
           }
         }
       ],
-      "classExtends": ""
+      "classExtends": "",
+      "comment": "Plano de contas financeiro"
     },
     {
       "entityName": "costCenter",
@@ -1819,7 +1831,8 @@
           }
         }
       ],
-      "classExtends": ""
+      "classExtends": "",
+      "comment": "Centros de custo da igreja"
     },
     {
       "entityName": "bank",
@@ -1897,7 +1910,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Cadastro de bancos e contas bancárias"
     },
     {
       "entityName": "cash",
@@ -2074,7 +2088,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Caixas financeiros da igreja"
     },
     {
       "entityName": "financial",
@@ -2364,7 +2379,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": true
+      "handlerAbstract": true,
+      "comment": "Lançamentos financeiros de receitas e despesas"
     },
     {
       "entityName": "transactions",
@@ -2571,7 +2587,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": true
+      "handlerAbstract": true,
+      "comment": "Movimentações financeiras realizadas"
     },
     {
       "comment": "Sobrescritas de traduções por igreja e idioma",
@@ -2831,7 +2848,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": true
+      "handlerAbstract": true,
+      "comment": "Configurações e dados do usuário no tenant"
     },
     {
       "entityName": "cashTransactions",
@@ -3008,7 +3026,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": true
+      "handlerAbstract": true,
+      "comment": "Movimentações vinculadas aos caixas financeiros"
     },
     {
       "entityName": "appointments",
@@ -3262,7 +3281,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": true,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Agenda de compromissos e eventos"
     },
     {
       "entityName": "personMember",
@@ -3398,7 +3418,8 @@
       ],
       "classExtends": "",
       "generateDefaultHandlers": false,
-      "handlerAbstract": false
+      "handlerAbstract": false,
+      "comment": "Informações de membresia das pessoas"
     },
     {
       "comment": "Tipos de níveis da estrutura organizacional de células",
@@ -4447,7 +4468,7 @@
       ]
     },
     {
-      "comment": "cellVisitor",
+      "comment": "Visitantes vinculados às células",
       "entityName": "cellVisitor",
       "tableName": "cell_visitor",
       "classExtends": "",
@@ -4682,7 +4703,7 @@
       ]
     },
     {
-      "comment": "cellMeeting",
+      "comment": "Reuniões e relatórios das células",
       "entityName": "cellMeeting",
       "tableName": "cell_meeting",
       "classExtends": "",
@@ -5022,7 +5043,7 @@
       ]
     },
     {
-      "comment": "cellAttendance",
+      "comment": "Registros de presença nas reuniões de células",
       "entityName": "cellAttendance",
       "tableName": "cell_attendance",
       "classExtends": "",
@@ -5152,7 +5173,7 @@
       ]
     },
     {
-      "comment": "cellPrayerRequest",
+      "comment": "Pedidos de oração registrados nas células",
       "entityName": "cellPrayerRequest",
       "tableName": "cell_prayer_request",
       "classExtends": "",
@@ -5329,6 +5350,316 @@
           }
         }
       ]
+    },
+    {
+      "comment": "Grupo de usuarios",
+      "entityName": "permissionGroup",
+      "tableName": "permission_group",
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Nome",
+          "fieldName": "name",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Descricao",
+          "fieldName": "description",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Ativo",
+          "fieldName": "active",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": "true"
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Usuarios vinculados",
+          "fieldName": "members",
+          "list": true,
+          "fieldProperties": {
+            "fieldType": "permissionGroupMember",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "OneToMany",
+            "mappedBy": "permissionGroup",
+            "bidirectional": true,
+            "reference": false
+          }
+        },
+        {
+          "comment": "Operacoes bloqueadas",
+          "fieldName": "denials",
+          "list": true,
+          "fieldProperties": {
+            "fieldType": "permissionGroupDenial",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "OneToMany",
+            "mappedBy": "permissionGroup",
+            "bidirectional": true,
+            "reference": false
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Vinculo entre usuario e grupo",
+      "entityName": "permissionGroupMember",
+      "tableName": "permission_group_member",
+      "classExtends": "",
+      "generateDefaultHandlers": false,
+      "handlerAbstract": false,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Grupo",
+          "fieldName": "permissionGroup",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "permissionGroup",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "Usuario",
+          "fieldName": "userId",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Operacao bloqueada para o grupo",
+      "entityName": "permissionGroupDenial",
+      "tableName": "permission_group_denial",
+      "classExtends": "",
+      "generateDefaultHandlers": false,
+      "handlerAbstract": false,
+      "onlyDTO": false,
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Grupo",
+          "fieldName": "permissionGroup",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "permissionGroup",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "Recurso",
+          "fieldName": "resource",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Operacao",
+          "fieldName": "permission",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Recurso e operacoes disponiveis",
+      "entityName": "permissionResource",
+      "tableName": "permission_resource_dto",
+      "classExtends": "",
+      "generateDefaultHandlers": false,
+      "handlerAbstract": false,
+      "onlyDTO": true,
+      "entityFields": [
+        {
+          "comment": "Identificador tecnico",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": true
+          }
+        },
+        {
+          "comment": "Recurso",
+          "fieldName": "resource",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Descricao legivel do recurso",
+          "fieldName": "description",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Operacoes",
+          "fieldName": "permissions",
+          "list": true,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        }
+      ]
     }
   ],
   "endpoints": [
@@ -5352,7 +5683,8 @@
           }
         ],
         "anonymous": true
-      }
+      },
+      "comment": "verifyURL"
     },
     {
       "methodName": "requestUpload",
@@ -5379,7 +5711,8 @@
             "list": false
           }
         ]
-      }
+      },
+      "comment": "requestUpload"
     },
     {
       "methodName": "requestUrl",
@@ -5406,7 +5739,8 @@
             "list": false
           }
         ]
-      }
+      },
+      "comment": "requestUrl"
     },
     {
       "methodName": "deleteObject",
@@ -5428,7 +5762,8 @@
             "list": false
           }
         ]
-      }
+      },
+      "comment": "deleteObject"
     },
     {
       "methodName": "getUser",
@@ -5450,7 +5785,8 @@
             "list": false
           }
         ]
-      }
+      },
+      "comment": "getUser"
     },
     {
       "methodName": "getIDCashTransaction",
@@ -5472,7 +5808,8 @@
             "list": false
           }
         ]
-      }
+      },
+      "comment": "getIDCashTransaction"
     },
     {
       "methodName": "getSumValuesCash",
@@ -5504,7 +5841,8 @@
             "list": false
           }
         ]
-      }
+      },
+      "comment": "getSumValuesCash"
     },
     {
       "methodName": "getBalanceBankAccount",
@@ -5531,7 +5869,8 @@
             "list": false
           }
         ]
-      }
+      },
+      "comment": "getBalanceBankAccount"
     },
     {
       "methodName": "getResumeTransaction",
@@ -5553,7 +5892,8 @@
             "list": false
           }
         ]
-      }
+      },
+      "comment": "getResumeTransaction"
     },
     {
       "comment": "Cria um compromisso único ou uma série de compromissos semanais",
@@ -5791,6 +6131,31 @@
         "resource": "cellMeetingApprove",
         "premissions": [
           "UPDATE"
+        ],
+        "permissionDefault": false
+      }
+    },
+    {
+      "comment": "Lista recursos e operacoes disponiveis para permissionamento",
+      "methodName": "getPermissionResources",
+      "httpMethod": "GET",
+      "grouper": "permissions",
+      "metadata": {
+        "input": [],
+        "output": [
+          {
+            "parameterName": "resources",
+            "parameterType": "permissionResource",
+            "list": true
+          }
+        ],
+        "anonymous": false
+      },
+      "permissions": {
+        "description": "Visualizar catalogo de permissoes",
+        "resource": "permissionGroup",
+        "premissions": [
+          "VIEW"
         ],
         "permissionDefault": false
       }
