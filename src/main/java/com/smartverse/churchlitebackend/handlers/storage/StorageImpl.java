@@ -1,23 +1,27 @@
-package com.smartverse.churchlitebackend.handlers.s3;
+package com.smartverse.churchlitebackend.handlers.storage;
 
 
-import com.smartverse.churchlitebackend.services.s3.S3Service;
+import com.smartverse.churchlitebackend.services.storage.MiniIoService;
+
 import com.smartverse.churchlitebackend_gen.*;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "*")
 @RestController
-public class S3Impl implements RequestUpload, RequestUrl, DeleteObject {
+public class StorageImpl implements RequestUpload, RequestUrl, DeleteObject {
 
-    @Autowired
-    S3Service s3Service;
+    MiniIoService storage3Service;
+
+    public StorageImpl(MiniIoService storage3Service) {
+        this.storage3Service = storage3Service;
+    }
 
     @Override
     public ResponseEntity<RequestUploadOutput> requestUpload(Integer expired, String fileName) {
-        var url = s3Service.requestUpload(fileName, expired);
+        var url = storage3Service.requestUpload(fileName, expired);
         var output = new RequestUploadOutput();
         output.url = url.toString();
         return ResponseEntity.ok(output);
@@ -25,7 +29,7 @@ public class S3Impl implements RequestUpload, RequestUrl, DeleteObject {
 
     @Override
     public ResponseEntity<RequestUrlOutput> requestUrl(Integer expired, String fileName) {
-        var url = s3Service.requestDownload(fileName, expired);
+        var url = storage3Service.requestDownload(fileName, expired);
         var output = new RequestUrlOutput();
         output.url = url.toString();
         return ResponseEntity.ok(output);
@@ -34,7 +38,7 @@ public class S3Impl implements RequestUpload, RequestUrl, DeleteObject {
     @Override
     public ResponseEntity<DeleteObjectOutput> deleteObject(String fileName) {
         var output = new DeleteObjectOutput();
-        output.output = s3Service.requestDelete(fileName);
+        output.output = storage3Service.requestDelete(fileName);
         return ResponseEntity.ok(output);
     }
 }
