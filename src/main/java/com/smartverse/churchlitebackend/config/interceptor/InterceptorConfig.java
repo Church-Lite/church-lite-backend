@@ -6,6 +6,7 @@ import com.potatotech.authorization.security.Authenticate;
 import com.potatotech.authorization.tenant.TenantConfiguration;
 import com.potatotech.authorization.tenant.TenantContext;
 import com.smartverse.churchlitebackend.config.migration.DBMigration;
+import com.smartverse.churchlitebackend.config.context.RequestUserContext;
 import com.smartverse.churchlitebackend.config.metadata.PermissionCatalogService;
 import com.smartverse.churchlitebackend.services.permissions.PermissionGroupService;
 import feign.Request;
@@ -57,6 +58,7 @@ public class InterceptorConfig extends Authenticate implements HandlerIntercepto
             TenantContext.setCurrentTenant(user.getTenant());
             tenant = user.getTenant();
             userId = user.getId();
+            RequestUserContext.set(userId);
         } else {
             if(tenant == null){
                 throw new ServiceException(HttpStatus.FORBIDDEN,"tenant is required");
@@ -73,6 +75,11 @@ public class InterceptorConfig extends Authenticate implements HandlerIntercepto
             }
         }
         return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        RequestUserContext.clear();
     }
 
     private boolean validateDomainsAllowAccess(String uri) {

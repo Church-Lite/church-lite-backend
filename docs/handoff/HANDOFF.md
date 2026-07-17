@@ -1,6 +1,8 @@
 # Handoff — Church Lite Backend
 
-> Atualizado em 16/07/2026.
+> Atualizado em 17/07/2026.
+
+> Configuração da igreja e aprovação de fechamento documentadas em `spec/SESSION_2026-07-17_CASH_CLOSING.md` na raiz do workspace.
 
 ## Visão do produto
 
@@ -318,4 +320,4 @@ O contrato gerado `reportTemplate` representa a configuração visual única de 
 
 O CRUD padrão está disponível em `/reportTemplate`, com `generateDefaultHandlers: true` e `handlerAbstract: false`. Não existe controller manual nem endpoint singleton específico: o frontend consulta o GET paginado com `size=1`, cria pelo POST quando não há registro e atualiza pelo PUT quando existe.
 
-A migration `V20260716090000002__create_report_template.sql` cria `report_template`. `header_image` guarda o token do objeto no S3; `header_text` e `footer_text` usam `text`. O recurso também passa a fazer parte do catálogo gerado de permissões. Validação realizada com Java 25 e `./mvnw compile -DskipTests`.
+A migration `V20260716090000002__create_report_template.sql` cria `report_template`. `header_image` guarda a referência da imagem selecionada pelo componente compartilhado; `header_text` e `footer_text` usam `text`. O recurso também passa a fazer parte do catálogo gerado de permissões. Validação realizada com Java 25 e `./mvnw compile -DskipTests`.

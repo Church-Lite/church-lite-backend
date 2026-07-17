@@ -3414,6 +3414,36 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "Funções exercidas pelo membro",
+          "fieldName": "functions",
+          "list": true,
+          "fieldProperties": {
+            "fieldType": "memberFunction",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "ManyToMany",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
         }
       ],
       "classExtends": "",
@@ -5727,6 +5757,462 @@
       "generateDefaultHandlers": true,
       "handlerAbstract": false,
       "onlyDTO": false
+    },
+    {
+      "entityName": "memberFunction",
+      "tableName": "member_function",
+      "entityFields": [
+        {
+          "comment": "Identificador da função",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Nome da função",
+          "fieldName": "name",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        },
+        {
+          "comment": "Descrição da função",
+          "fieldName": "description",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "",
+            "size": 0,
+            "hidden": false,
+            "order": 0,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": false
+          }
+        }
+      ],
+      "classExtends": "",
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false,
+      "onlyDTO": false,
+      "comment": "Funções configuráveis exercidas pelos membros"
+    },
+    {
+      "comment": "Configuracao institucional e financeira da igreja",
+      "entityName": "churchConfiguration",
+      "tableName": "church_configuration",
+      "classExtends": "",
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "CNPJ da igreja",
+          "fieldName": "cnpj",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Nome da igreja",
+          "fieldName": "name",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Data de fundacao",
+          "fieldName": "foundationDate",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "date",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "CEP",
+          "fieldName": "postalCode",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Endereco",
+          "fieldName": "address",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Numero",
+          "fieldName": "number",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Complemento",
+          "fieldName": "complement",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Bairro",
+          "fieldName": "neighborhood",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Cidade",
+          "fieldName": "city",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "city",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          }
+        },
+        {
+          "comment": "Telefone",
+          "fieldName": "phone",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        },
+        {
+          "comment": "Usuario lider da igreja",
+          "fieldName": "leader",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "userConfiguration",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "OneToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          }
+        },
+        {
+          "comment": "Politica de aprovacao do fechamento de caixa",
+          "fieldName": "cashApprovalPolicy",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cashApprovalPolicy",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        }
+      ],
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false,
+      "onlyDTO": false
+    },
+    {
+      "comment": "Usuarios responsaveis pela operacao financeira da igreja",
+      "entityName": "churchResponsibleUser",
+      "tableName": "church_responsible_user",
+      "classExtends": "",
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Usuario responsavel",
+          "fieldName": "userConfiguration",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "userConfiguration",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "OneToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          }
+        },
+        {
+          "comment": "Usuario tesoureiro",
+          "fieldName": "treasurer",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Usuario aprovador financeiro",
+          "fieldName": "financialApprover",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        }
+      ],
+      "generateDefaultHandlers": true,
+      "handlerAbstract": false,
+      "onlyDTO": false
+    },
+    {
+      "comment": "Aprovacoes do fechamento de caixa",
+      "entityName": "cashClosingApproval",
+      "tableName": "cash_closing_approval",
+      "classExtends": "",
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": true
+          }
+        },
+        {
+          "comment": "Fechamento de caixa",
+          "fieldName": "cashTransaction",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "cashTransactions",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          }
+        },
+        {
+          "comment": "Usuario aprovador",
+          "fieldName": "approver",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "userConfiguration",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          }
+        },
+        {
+          "comment": "Aprovacao realizada",
+          "fieldName": "approved",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "boolean",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
+          "comment": "Data e hora da aprovacao",
+          "fieldName": "approvedAt",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "datetime",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
+        }
+      ],
+      "generateDefaultHandlers": true,
+      "handlerAbstract": true,
+      "onlyDTO": false
     }
   ],
   "endpoints": [
@@ -6288,7 +6774,8 @@
         "OPEN_CASH",
         "CLOSE_CASH",
         "REVENUE",
-        "EXPENSE"
+        "EXPENSE",
+        "PENDING_APPROVAL"
       ]
     },
     {
@@ -6432,6 +6919,14 @@
         "IN_FOLLOW_UP",
         "ANSWERED",
         "CLOSED"
+      ]
+    },
+    {
+      "enumName": "CashApprovalPolicy",
+      "values": [
+        "DISABLED",
+        "ANY",
+        "ALL"
       ]
     }
   ]

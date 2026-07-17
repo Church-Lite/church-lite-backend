@@ -61,12 +61,13 @@ public class TransactionsService {
     }
 
     public void delete(FinancialEntity entity) {
+        if (entity != null && entity.getCash() != null) verifyStatusCash(entity.getCash());
         transactionsRepository.findByFinancial(entity).ifPresent(transaction -> transactionsRepository.delete(transaction));
     }
 
     private void verifyStatusCash(CashEntity cashEntity){
-        if(cashEntity.getStatus() == TransactionOperation.CLOSE_CASH){
-            throw new ServiceException(HttpStatus.BAD_REQUEST, "Caixa selecionado está fechado");
+        if(cashEntity.getStatus() != TransactionOperation.OPEN_CASH){
+            throw new ServiceException(HttpStatus.BAD_REQUEST, cashEntity.getStatus() == TransactionOperation.PENDING_APPROVAL ? "cash_pending_approval" : "Caixa selecionado está fechado");
         }
     }
 }
