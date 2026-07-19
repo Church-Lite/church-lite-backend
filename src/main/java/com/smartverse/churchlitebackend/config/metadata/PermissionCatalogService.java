@@ -2,7 +2,7 @@ package com.smartverse.churchlitebackend.config.metadata;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smartverse.churchlitebackend_gen.PermissionResourceDTO;
+import com.smartverse.churchlitebackend_gen.dtos.PermissionResourceDTO;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 

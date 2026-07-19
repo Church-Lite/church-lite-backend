@@ -20,7 +20,7 @@
 		<spring-cloud.version>2025.0.3</spring-cloud.version>
 		<jjwt.version>0.11.5</jjwt.version>
 		<authorization.version>1.0.2</authorization.version>
-		<entity-generatior.version>1.0.2</entity-generatior.version>
+		<gonthera-cli.version>2.0.0</gonthera-cli.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -152,9 +152,9 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>com.potatotech</groupId>
-				<artifactId>entity-generator</artifactId>
-				<version>${entity-generatior.version}</version>
+				<groupId>com.gonthera</groupId>
+				<artifactId>gonthera-cli</artifactId>
+				<version>${gonthera-cli.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

@@ -1,42 +1,223 @@
 ---
-name: entity-generator-project
-description: Use this skill when working on the PotatoTech entity-generator Maven plugin, especially when changing Java, .NET, Node.js, SQL generation, properties.json schema, RabbitMQ messaging, relationships, DTO converters, Prisma generation, README, Docusaurus docs, or handoff documentation.
+name: gonthera-cli-project
+description: Use this skill when working on the Gonthera CLI Maven plugin, especially when changing Java, .NET, Node.js, SQL generation, project.json schema, RabbitMQ messaging, relationships, DTO converters, Prisma generation, README, Docusaurus docs, or handoff documentation.
 ---
 
-# Entity Generator Project
+# Gonthera CLI Project
 
-Use this skill for code or documentation changes in the `entity-generator` project.
+Use this skill for code or documentation changes in the `gonthera-cli` project.
 
 ## Project Purpose
 
-`entity-generator` is a Maven plugin/JAR that reads `properties.json` from the current working directory and generates code for service projects.
+`gonthera-cli` is a Maven plugin/JAR that reads `project.json` from the current working directory and generates code for service projects. It temporarily falls back to the legacy `properties.json` when `project.json` is absent.
+
+Configuration lookup order:
+
+1. `.gonthera/project.json` with optional separated files;
+2. root `project.json`;
+3. root legacy `properties.json`.
+
+When `.gonthera` exists, its `project.json` is required. `entities.json`, `endpoints.json`, and `enums.json` contain arrays directly; `messaging.json` contains the messaging object. All sections may still remain inside `.gonthera/project.json`; each separated file overrides only its corresponding section. The loader merges them into the same `Properties` model used by single-file configuration.
+
+Validation is available without generation through `mvn gonthera-cli:validate` or `gonthera-cli.exe --validate`. Validation requires `.gonthera`, checks JSON syntax and shape, rejects unknown properties at any nesting level, and then applies the shared semantic `ProjectValidator`. It must not create or delete generated output. Root configuration remains temporarily supported for generation only.
 
 Supported targets:
 
-- `JAVA`: Spring/JPA style generation under `src/main/java/<mainPackage>_gen` and resources under `src/main/resources`.
+- `JAVA`: Spring/JPA style generation under `src/main/java/<mainPackage>_gen`, organized into `entities`, `dtos`, `converters`, `repositories`, `services`, `controllers`, `endpoints`, `enums`, `common`, and `messaging` subpackages; resources remain under `src/main/resources`.
+
+Java CRUD controllers delegate persistence, conversion, filtering, pagination, and transactions to generated `*Service` classes. `serviceAbstract: false` generates a concrete Spring `@Service`; `serviceAbstract: true` generates an abstract class without `@Service` and must produce a validator warning that the consumer needs a concrete Spring bean. Prefer `generateDefaultControllers` and `controllerAbstract`; accept `generateDefaultHandlers` and `handlerAbstract` only as deprecated aliases with warnings and new-name precedence. Do not apply this behavior to .NET without also changing its explicit DI registration.
 - `DOTNET`: C# generation under `<mainPackage>_gen` and static files under `static`.
 - `NODE`: TypeScript generation under `src/generated` plus `prisma/schema.prisma`.
 - SQL: PostgreSQL script generation as `postgree.sql`.
 - Messaging: RabbitMQ generation under `messaging.RabbitMq`.
 
+## Java CRUD Architecture
+
+For every Java entity that is not `onlyDTO`, the generated CRUD flow is:
+
+```text
+HTTP request
+    -> <Entity>Controller
+    -> <Entity>Service
+    -> <Entity>Repository
+    -> database
+```
+
+The generated classes have deliberately separate responsibilities:
+
+- `controllers/<Entity>Controller.java` owns the HTTP boundary. It implements `common/CrudController`, receives request bodies and path variables, parses CRUD list query parameters, and delegates to the service. It must not perform repository access, DTO conversion, filtering, or transaction management.
+- `services/<Entity>Service.java` owns the CRUD use-case implementation. It coordinates the repository, DTO converter, filtering, pagination, and transaction boundaries.
+- `repositories/<Entity>Repository.java` owns Spring Data persistence.
+- `converters/<Entity>DTOConverter.java` maps between generated DTOs and entities.
+- `common/CrudController.java` defines the standard Spring MVC CRUD mappings shared by generated controllers.
+
+The old generated names are a breaking compatibility boundary:
+
+- `handlers/<Entity>Handler.java` became `controllers/<Entity>Controller.java`;
+- `common/HandlerBase.java` became `common/CrudController.java`;
+- custom classes that extended a generated Handler must extend the generated Controller instead;
+- imports, class names, filenames, and tests in a consumer project must be migrated from `handlers`/`Handler` to `controllers`/`Controller`;
+- `generateDefaultHandlers` and `handlerAbstract` remain accepted only as deprecated JSON aliases. New configuration and consumer code must use `generateDefaultControllers` and `controllerAbstract`.
+
+### Generated service behavior
+
+The generated `<Entity>Service` exposes overridable public methods:
+
+- `save(dto)`: converts the DTO to a new entity, saves it, and converts the persisted entity back to a DTO;
+- `update(dto, id)`: converts the DTO to an entity, forcibly applies the path `id` to the entity key, saves it, and returns the resulting DTO;
+- `delete(id)`: calls `repository.deleteById(id)`;
+- `get(id)`: obtains `repository.getReferenceById(id)` and converts the result to a DTO;
+- `getAll(input)`: normalizes a non-positive offset to `1`, converts the public one-based page offset to Spring Data's zero-based page index, creates a `PageRequest`, applies `SpecificationFilter`, queries the repository, and returns `ResponseData` with total, contents, size, and the zero-based result offset.
+
+Current list-query limitations must remain visible when adapting a consumer:
+
+- the controller defaults `size` to `20` and `offset` to `1`;
+- `filter`, `order`, and `displayFields` are read from query parameters;
+- `filter` and `displayFields` are used by the service;
+- `order` is currently captured but not applied by the generated Java service;
+- there is currently no generated upper-bound validation for `size`;
+- service methods are not `final`, and the generated repository, converter, and filter fields are `protected`, specifically so subclasses can override behavior when configured for customization.
+
+Transaction rules:
+
+- `save`, `update`, and `delete` use `@Transactional`;
+- `get` and `getAll` use `@Transactional(readOnly = true)`;
+- transaction ownership belongs to the service, not the controller;
+- when an override changes transaction semantics, declare the appropriate `@Transactional` annotation explicitly on the overriding method;
+- keep slow external calls and unrelated orchestration outside a database transaction unless the use case intentionally requires otherwise.
+
+### Concrete and abstract service rules
+
+`serviceAbstract` controls whether Gonthera supplies the Spring bean or only the reusable base implementation.
+
+With `serviceAbstract: false` (the default):
+
+- Gonthera generates a concrete `<Entity>Service` annotated with `@Service`;
+- the generated controller can inject and use it immediately;
+- use this mode when no service customization is needed;
+- do not add another ordinary Spring bean extending this concrete service unless bean selection is intentionally resolved, because injection by `<Entity>Service` type can become ambiguous.
+
+With `serviceAbstract: true`:
+
+- Gonthera generates `public abstract class <Entity>Service` without `@Service`;
+- its CRUD methods still have working concrete implementations and may be inherited, selectively overridden, or called through `super`;
+- the generated abstract class is not a Spring bean and cannot satisfy controller injection by itself;
+- the consumer must provide at least one concrete subclass registered as a Spring bean;
+- normally there should be exactly one bean assignable to `<Entity>Service`; if there are multiple implementations, the consumer must resolve injection with `@Primary` or `@Qualifier`;
+- the implementation must live outside generated `_gen` sources, because regeneration replaces generated files.
+
+Recommended consumer implementation:
+
+```java
+package com.example.service.services;
+
+import com.example.service_gen.dtos.CustomerDTO;
+import com.example.service_gen.services.CustomerService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class CustomerApplicationService extends CustomerService {
+
+    @Override
+    @Transactional
+    public CustomerDTO save(CustomerDTO dto) {
+        // Consumer-specific validation or normalization.
+        return super.save(dto);
+    }
+}
+```
+
+Inherited `protected` dependencies are injected by Spring into the concrete subclass. Prefer overriding only the methods whose behavior actually differs. Calling `super` preserves the generated CRUD implementation; omitting it means the consumer owns the complete behavior and return contract of that method.
+
+### Concrete and abstract controller rules
+
+The controller flags are independent from `serviceAbstract`:
+
+- `generateDefaultControllers: false`: no default controller is generated for that entity; the service is still generated unless `onlyDTO` is true. The consumer owns the complete HTTP adapter.
+- `generateDefaultControllers: true` and `controllerAbstract: false`: generates a concrete `@RestController` ready to use.
+- `generateDefaultControllers: true` and `controllerAbstract: true`: generates an abstract controller containing the standard mappings and delegation. The consumer must provide a concrete Spring controller subclass.
+
+Recommended consumer implementation for an abstract generated controller:
+
+```java
+package com.example.service.controllers;
+
+import com.example.service_gen.controllers.CustomerController;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class CustomerApplicationController extends CustomerController {
+    // Override only endpoints that need consumer-specific HTTP behavior.
+}
+```
+
+Rules for controller customization:
+
+- keep custom concrete controllers outside `_gen`;
+- do not redeclare the same class-level or method-level mappings unless the URL contract is intentionally being replaced;
+- do not create a second concrete controller over the same generated routes while the default generated controller remains active, because Spring can report ambiguous mappings;
+- controller overrides should handle HTTP concerns and delegate business/persistence work to the service;
+- if the consumer wants total control of routes, prefer `generateDefaultControllers: false` and implement its own controller instead of subclassing the default concrete controller.
+
+### Safe configuration combinations
+
+Use these combinations when adapting a generated Java project:
+
+The flags belong to each object inside `entities.json` or the `entities` array in `project.json`:
+
+```json
+{
+  "entityName": "customer",
+  "generateDefaultControllers": true,
+  "controllerAbstract": true,
+  "serviceAbstract": true,
+  "onlyDTO": false,
+  "entityFields": []
+}
+```
+
+The empty `entityFields` above only highlights flag placement; it is not a valid complete entity. A real entity must declare its fields and exactly one key according to the validation contract.
+
+| Goal | `generateDefaultControllers` | `controllerAbstract` | `serviceAbstract` | Consumer responsibility |
+| --- | ---: | ---: | ---: | --- |
+| CRUD ready without customization | `true` | `false` | `false` | None |
+| Customize only business rules | `true` | `false` | `true` | Implement one concrete `@Service` subclass |
+| Customize only the HTTP adapter | `true` | `true` | `false` | Implement one concrete `@RestController` subclass |
+| Customize controller and service | `true` | `true` | `true` | Implement one concrete controller and one concrete service |
+| Own all HTTP routes | `false` | ignored | either | Implement the controller; implement the service too only when `serviceAbstract` is `true` |
+
+`onlyDTO: true` takes precedence over CRUD generation: the Java generator skips entity-backed repository, service, and default controller generation for that item. Do not instruct a consumer to subclass CRUD artifacts that do not exist for an `onlyDTO` entity.
+
+### Validation and migration expectations
+
+The validator must:
+
+- reject non-boolean values for `generateDefaultControllers`, `controllerAbstract`, and `serviceAbstract`;
+- warn when `generateDefaultHandlers` or `handlerAbstract` is used;
+- use the new property when both a new name and its legacy alias are present, and warn about the conflict;
+- warn when `serviceAbstract: true` because generation cannot verify that the consumer actually supplies a concrete Spring bean.
+
+When asked to migrate a consumer project, inspect its generated-code extensions and Spring beans before editing. Rename Handler imports/classes to Controller, move business overrides to a concrete generated-service subclass where appropriate, keep HTTP-only overrides in the controller, and check for duplicate beans and duplicate request mappings after the migration.
+
 ## Must Read First
 
 Before making non-trivial changes, inspect:
 
-- `docs/handoff/HANDOFF_ENTITY.md`: implementation-oriented behavior and known limitations.
-- `docs/handoff/HANDOFF_FRONTEND_ENTITY.md`: frontend-facing JSON and query contracts.
+- `docs/handoff/gonthera-cli-project/HANDOFF.md`: implementation-oriented behavior and known limitations.
+- `docs/handoff/HANDOFF_FRONTEND.md`: frontend-facing JSON and query contracts.
 - `README.md`: user-facing instructions.
 - `CHANGELOG.md`: current release notes and future improvements.
 - Relevant generator package:
-  - Java: `src/main/java/com/potatotech/entitygenerator/service/java`
-  - .NET: `src/main/java/com/potatotech/entitygenerator/service/dotNet`
-  - Node: `src/main/java/com/potatotech/entitygenerator/service/node`
-  - Shared: `src/main/java/com/potatotech/entitygenerator/service/common`
-  - Models: `src/main/java/com/potatotech/entitygenerator/model`
+  - Java: `src/main/java/com/gonthera/cli/service/java`
+  - .NET: `src/main/java/com/gonthera/cli/service/dotNet`
+  - Node: `src/main/java/com/gonthera/cli/service/node`
+  - Shared: `src/main/java/com/gonthera/cli/service/common`
+  - Models: `src/main/java/com/gonthera/cli/model`
 
 For docs-only changes in the Docusaurus project, inspect `docs-docusaurus/docs` and `docs-docusaurus/sidebars.js`.
 
-## properties.json Contract
+## project.json Contract
 
 The minimum valid shape must include arrays even when empty:
 
@@ -57,7 +238,7 @@ Accepted `language` values are uppercase:
 - `DOTNET`
 - `NODE`
 
-Unknown JSON properties are ignored by Gson. Do not document unsupported properties as active behavior.
+The structural validator rejects unknown JSON properties before generation. Do not document unsupported properties as active behavior, even though Gson itself would otherwise ignore them.
 
 ## Entity Field Shape
 
@@ -163,7 +344,7 @@ Rules:
 
 - Generate RabbitMQ code only when `messaging.RabbitMq` exists and has at least one `pub` or `sub` channel.
 - Do not generate RabbitMQ dependencies/configuration when `RabbitMq` is absent, null, or empty.
-- Keep the exchange outside `properties.json`; Java/.NET use annotation/attribute in consumer code, Node uses a concrete config class.
+- Keep the exchange outside `project.json`; Java/.NET use annotation/attribute in consumer code, Node uses a concrete config class.
 - The old `pup` typo must not be reintroduced. Use `pub`.
 - The old `events`/`listeners` model is not implemented; do not document it as current behavior.
 
@@ -226,53 +407,14 @@ Treat filtering as target-specific behavior, not as a portable JPA/SQL query lan
 Update docs when behavior changes:
 
 - `README.md`: user-facing usage.
-- `docs/handoff/HANDOFF_ENTITY.md`: implementation details and caveats.
-- `docs/handoff/HANDOFF_FRONTEND_ENTITY.md`: frontend request construction and limitations.
+- `docs/handoff/gonthera-cli-project/HANDOFF.md`: implementation details and caveats.
+- `docs/handoff/HANDOFF_FRONTEND.md`: frontend request construction and limitations.
 - `CHANGELOG.md`: release notes and future improvements.
 - `docs-docusaurus/docs`: detailed user documentation.
 
 Docusaurus docs should focus on how to use the generator, not how the generator is implemented.
 
-For .NET and Node docs, mention that consumers can download `entity.exe` or `entity-generator-x.x.x.jar` and execute it in the project root, in the same folder as `properties.json`.
-
-## Church Lite Consumer Architecture
-
-When changing generated contracts in `church-lite-backend`, treat the root
-`properties.json` as the source of truth.
-
-- Use the generated CRUD for ordinary `POST`, `PUT`, `DELETE`, `GET /{id}`
-  and paginated `GET` operations. Do not create a parallel manual controller
-  for an entity already represented in `properties.json`.
-- Set `generateDefaultHandlers: true` and `handlerAbstract: false` when the
-  generated CRUD needs no customization.
-- Set `handlerAbstract: true` when a standard CRUD operation needs business
-  rules. Implement the generated abstract handler outside `_gen` and override
-  only the required methods.
-- Declare non-persistent request/response models as entities with
-  `onlyDTO: true`. Consume the generated `*DTO`; do not create equivalent
-  records or DTO classes manually.
-- Remember that generator 1.0.2 still traverses `onlyDTO` contracts while
-  producing SQL. Give each such contract one technical key field when generation
-  otherwise fails with a missing-key error.
-- Declare non-CRUD operations in the `endpoints` array. Implement the generated
-  interface in a manual `@RestController`; do not duplicate its route in a
-  handwritten controller contract.
-- Never edit `com.smartverse.churchlitebackend_gen` directly. Regenerate after
-  changing the contract and compile with the JDK configured by the service.
-
-Place manual Church Lite code according to its responsibility:
-
-- endpoint implementations in `com.smartverse.churchlitebackend.handlers.<domain>`;
-- business rules in `com.smartverse.churchlitebackend.services.<domain>`;
-- repositories in `com.smartverse.churchlitebackend.repository.<domain>`;
-- metadata/catalog infrastructure in
-  `com.smartverse.churchlitebackend.config.metadata`;
-- request interception in the existing
-  `com.smartverse.churchlitebackend.config.interceptor.InterceptorConfig`.
-
-Do not create a broad domain package containing controllers, services and
-infrastructure together. Extend the existing interceptor instead of registering
-a second interceptor for the same authentication/authorization request flow.
+For .NET and Node docs, mention that consumers can download `gonthera-cli.exe` or `gonthera-cli-x.x.x.jar` and execute it in the project root, in the same folder as `project.json`.
 
 ## Validation
 
@@ -281,10 +423,10 @@ Prefer focused validation over full `mvn test` when generated `_gen` sources or 
 Useful compile check for generator sources:
 
 ```bash
-find src/main/java/com/potatotech/entitygenerator -name '*.java' ! -path '*entitygenerator_gen*' > /tmp/entity-generator-sources.txt
-rm -rf /tmp/entity-generator-compile
-mkdir -p /tmp/entity-generator-compile
-javac -cp /home/geovane/.m2/repository/org/projectlombok/lombok/1.18.28/lombok-1.18.28.jar:/home/geovane/.m2/repository/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar:/home/geovane/.m2/repository/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1.jar:/home/geovane/.m2/repository/org/apache/logging/log4j/log4j-core/2.23.1/log4j-core-2.23.1.jar:/home/geovane/.m2/repository/org/apache/maven/plugin-tools/maven-plugin-annotations/3.9.0/maven-plugin-annotations-3.9.0.jar:/home/geovane/.m2/repository/org/apache/maven/maven-plugin-api/3.9.3/maven-plugin-api-3.9.3.jar -d /tmp/entity-generator-compile @/tmp/entity-generator-sources.txt
+find src/main/java/com/gonthera/cli -name '*.java' ! -path '*cli_gen*' > /tmp/gonthera-cli-sources.txt
+rm -rf /tmp/gonthera-cli-compile
+mkdir -p /tmp/gonthera-cli-compile
+javac -cp /home/geovane/.m2/repository/org/projectlombok/lombok/1.18.28/lombok-1.18.28.jar:/home/geovane/.m2/repository/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar:/home/geovane/.m2/repository/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1.jar:/home/geovane/.m2/repository/org/apache/logging/log4j/log4j-core/2.23.1/log4j-core-2.23.1.jar:/home/geovane/.m2/repository/org/apache/maven/plugin-tools/maven-plugin-annotations/3.9.0/maven-plugin-annotations-3.9.0.jar:/home/geovane/.m2/repository/org/apache/maven/maven-plugin-api/3.9.3/maven-plugin-api-3.9.3.jar -d /tmp/gonthera-cli-compile @/tmp/gonthera-cli-sources.txt
 ```
 
 Docusaurus validation:
@@ -294,7 +436,7 @@ cd docs-docusaurus
 npm run build
 ```
 
-When validating generation, create a temporary project under `/tmp`, copy or create `properties.json`, execute `Main` or the compiled classes from that folder, then inspect generated output.
+When validating generation, create a temporary project under `/tmp`, copy or create `project.json`, execute `Main` or the compiled classes from that folder, then inspect generated output.
 
 ## Editing Rules
 
@@ -304,20 +446,3 @@ When validating generation, create a temporary project under `/tmp`, copy or cre
 - Do not revert unrelated dirty files.
 - Do not edit generated `_gen` output as source of truth.
 - Keep Node relationship limitations honest in docs until implementation is complete.
-
-
-## Church Lite Permission Groups
-
-Ao trabalhar no permissionamento do Church Lite:
-
-- Tratar o `properties.json` da raiz como fonte de contratos e `resources.json` como catálogo gerado; nunca persistir cópia do catálogo.
-- Definir `permissionResource` com `onlyDTO: true`, incluindo `resource`, `description` e `permissions`; não criar DTO manual equivalente.
-- Preencher `comment` em entidades/endpoints, pois ele vira a descrição apresentada ao administrador.
-- Usar CRUD gerado para `permissionGroup`; usar `handlerAbstract: true` somente se uma operação CRUD padrão exigir sobrescrita.
-- Declarar `getPermissionResources` em `endpoints`, implementar a interface gerada em `handlers/permissions` e aplicar CORS como nos handlers gerados.
-- Manter catálogo em `config/metadata`, consulta de bloqueios em `services/permissions` e autorização no interceptor existente em `config/interceptor`.
-- Persistir somente negações. Tudo ausente no banco é permitido; em múltiplos grupos ativos, qualquer negação prevalece.
-- Reler `resources.json` ao listar o catálogo para incorporar recursos novos como permitidos por padrão.
-- Liberar `OPTIONS` antes de autenticação/autorização e responder negação com `403` + chave `permission_access_denied`.
-- Manter `VIEW` para GET por ID e GET paginado enquanto o gerador não fornecer `VIEW_ALL`; ao introduzir `VIEW_ALL`, atualizar catálogo, migration, resolução de URL, frontend, spec e documentação juntos.
-- Consultar `spec/FEATURE_PERMISSION_GROUPS_SPEC.md` antes de alterar o modelo.

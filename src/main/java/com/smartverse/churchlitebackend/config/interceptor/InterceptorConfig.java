@@ -8,7 +8,7 @@ import com.potatotech.authorization.tenant.TenantContext;
 import com.smartverse.churchlitebackend.config.migration.DBMigration;
 import com.smartverse.churchlitebackend.config.context.RequestUserContext;
 import com.smartverse.churchlitebackend.config.metadata.PermissionCatalogService;
-import com.smartverse.churchlitebackend.services.permissions.PermissionGroupService;
+import com.smartverse.churchlitebackend.service.permissions.PermissionGroupBusinessService;
 import feign.Request;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,9 +27,9 @@ public class InterceptorConfig extends Authenticate implements HandlerIntercepto
     @Autowired
     DBMigration dbMigration;
     private final PermissionCatalogService permissionCatalogService;
-    private final PermissionGroupService permissionGroupService;
+    private final PermissionGroupBusinessService permissionGroupService;
 
-    public InterceptorConfig(PermissionCatalogService permissionCatalogService, PermissionGroupService permissionGroupService) {
+    public InterceptorConfig(PermissionCatalogService permissionCatalogService, PermissionGroupBusinessService permissionGroupService) {
         this.permissionCatalogService = permissionCatalogService;
         this.permissionGroupService = permissionGroupService;
     }
