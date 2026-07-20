@@ -365,6 +365,7 @@
       "classExtends": "",
       "generateDefaultControllers": true,
       "controllerAbstract": false,
+      "serviceAbstract": true,
       "comment": "Cadastro de pessoas da igreja"
     },
     {
@@ -2091,6 +2092,7 @@
       "classExtends": "",
       "generateDefaultControllers": true,
       "controllerAbstract": false,
+      "serviceAbstract": true,
       "comment": "Caixas financeiros da igreja"
     },
     {
@@ -2600,6 +2602,7 @@
       "classExtends": "",
       "generateDefaultControllers": true,
       "controllerAbstract": false,
+      "serviceAbstract": true,
       "onlyDTO": false,
       "entityFields": [
         {
@@ -5401,6 +5404,7 @@
       "classExtends": "",
       "generateDefaultControllers": true,
       "controllerAbstract": false,
+      "serviceAbstract": true,
       "onlyDTO": false,
       "entityFields": [
         {
@@ -5769,6 +5773,7 @@
       ],
       "generateDefaultControllers": true,
       "controllerAbstract": false,
+      "serviceAbstract": true,
       "onlyDTO": false
     },
     {
@@ -6226,6 +6231,401 @@
       "generateDefaultControllers": true,
       "controllerAbstract": true,
       "serviceAbstract": true,
+      "onlyDTO": false
+    },
+    {
+      "comment": "Consumo de um recurso limitado pelo plano",
+      "entityName": "subscriptionResourceUsage",
+      "tableName": "subscription_resource_usage_dto",
+      "classExtends": "",
+      "entityFields": [
+        {
+          "comment": "Identificador apenas para o contrato DTO",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": { "fieldType": "uuid", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": true }
+        },
+        {
+          "comment": "Recurso medido",
+          "fieldName": "resource",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Consumo atual",
+          "fieldName": "used",
+          "list": false,
+          "fieldProperties": { "fieldType": "long", "required": true, "valueDefault": "0" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Limite configurado; nulo representa ilimitado",
+          "fieldName": "limitValue",
+          "list": false,
+          "fieldProperties": { "fieldType": "long", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false }
+        },
+        {
+          "comment": "Quantidade restante",
+          "fieldName": "remaining",
+          "list": false,
+          "fieldProperties": { "fieldType": "long", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false }
+        },
+        {
+          "comment": "Percentual que dispara aviso",
+          "fieldName": "warningPercentage",
+          "list": false,
+          "fieldProperties": { "fieldType": "integer", "required": true, "valueDefault": "80" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Percentual consumido",
+          "fieldName": "percentage",
+          "list": false,
+          "fieldProperties": { "fieldType": "integer", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false }
+        },
+        {
+          "comment": "Indica se novas inclusoes estao permitidas",
+          "fieldName": "allowed",
+          "list": false,
+          "fieldProperties": { "fieldType": "boolean", "required": true, "valueDefault": "true" },
+          "metadata": { "nullable": false, "key": false }
+        }
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": true
+    },
+    {
+      "comment": "Disponibilidade de uma funcionalidade no plano",
+      "entityName": "subscriptionFeatureAvailability",
+      "tableName": "subscription_feature_availability_dto",
+      "classExtends": "",
+      "entityFields": [
+        {
+          "comment": "Identificador apenas para o contrato DTO",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": { "fieldType": "uuid", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": true }
+        },
+        {
+          "comment": "Funcionalidade consultada",
+          "fieldName": "feature",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Indica se a funcionalidade esta habilitada",
+          "fieldName": "enabled",
+          "list": false,
+          "fieldProperties": { "fieldType": "boolean", "required": true, "valueDefault": "false" },
+          "metadata": { "nullable": false, "key": false }
+        }
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": true
+    },
+    {
+      "comment": "Resumo da assinatura e consumo do tenant",
+      "entityName": "currentSubscription",
+      "tableName": "current_subscription_dto",
+      "classExtends": "",
+      "entityFields": [
+        {
+          "comment": "Identificador apenas para o contrato DTO",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": { "fieldType": "uuid", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": true }
+        },
+        {
+          "comment": "Codigo do plano",
+          "fieldName": "planCode",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Nome comercial do plano",
+          "fieldName": "planName",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Valor mensal preservado",
+          "fieldName": "priceMonthly",
+          "list": false,
+          "fieldProperties": { "fieldType": "decimal", "required": true, "valueDefault": "0" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Estado da assinatura",
+          "fieldName": "status",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Fim do periodo corrente",
+          "fieldName": "currentPeriodEndsAt",
+          "list": false,
+          "fieldProperties": { "fieldType": "datetime", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false }
+        },
+        {
+          "comment": "Fim do periodo de tolerancia",
+          "fieldName": "gracePeriodEndsAt",
+          "list": false,
+          "fieldProperties": { "fieldType": "datetime", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false }
+        },
+        {
+          "comment": "Consumo dos recursos do plano",
+          "fieldName": "resources",
+          "list": true,
+          "fieldProperties": { "fieldType": "subscriptionResourceUsage", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Funcionalidades do plano",
+          "fieldName": "features",
+          "list": true,
+          "fieldProperties": { "fieldType": "subscriptionFeatureAvailability", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        }
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": true
+    },
+    {
+      "comment": "Plano de assinatura disponivel para a igreja",
+      "entityName": "subscriptionPlan",
+      "tableName": "subscription_plan",
+      "classExtends": "",
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": { "fieldType": "uuid", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": true }
+        },
+        {
+          "comment": "Codigo estavel do plano",
+          "fieldName": "code",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Nome comercial do plano",
+          "fieldName": "name",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Valor mensal atual do plano",
+          "fieldName": "priceMonthly",
+          "list": false,
+          "fieldProperties": { "fieldType": "decimal", "required": true, "valueDefault": "0" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Indica se o plano pode ser utilizado",
+          "fieldName": "active",
+          "list": false,
+          "fieldProperties": { "fieldType": "boolean", "required": true, "valueDefault": "true" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Ordem de exibicao comercial",
+          "fieldName": "displayOrder",
+          "list": false,
+          "fieldProperties": { "fieldType": "integer", "required": true, "valueDefault": "0" },
+          "metadata": { "nullable": false, "key": false }
+        }
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": false
+    },
+    {
+      "comment": "Limite configuravel de um recurso do plano",
+      "entityName": "subscriptionPlanLimit",
+      "tableName": "subscription_plan_limit",
+      "classExtends": "",
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": { "fieldType": "uuid", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": true }
+        },
+        {
+          "comment": "Plano ao qual o limite pertence",
+          "fieldName": "plan",
+          "list": false,
+          "fieldProperties": { "fieldType": "subscriptionPlan", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false },
+          "relationShips": { "fetchType": "LAZY", "relationShip": "ManyToOne", "mappedBy": "", "bidirectional": false, "reference": true }
+        },
+        {
+          "comment": "Recurso limitado pelo plano",
+          "fieldName": "resource",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Quantidade maxima; nulo representa ilimitado",
+          "fieldName": "limitValue",
+          "list": false,
+          "fieldProperties": { "fieldType": "long", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false }
+        },
+        {
+          "comment": "Percentual para aviso preventivo",
+          "fieldName": "warningPercentage",
+          "list": false,
+          "fieldProperties": { "fieldType": "integer", "required": true, "valueDefault": "80" },
+          "metadata": { "nullable": false, "key": false }
+        }
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": false
+    },
+    {
+      "comment": "Funcionalidade disponibilizada por um plano",
+      "entityName": "subscriptionPlanFeature",
+      "tableName": "subscription_plan_feature",
+      "classExtends": "",
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": { "fieldType": "uuid", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": true }
+        },
+        {
+          "comment": "Plano ao qual a funcionalidade pertence",
+          "fieldName": "plan",
+          "list": false,
+          "fieldProperties": { "fieldType": "subscriptionPlan", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false },
+          "relationShips": { "fetchType": "LAZY", "relationShip": "ManyToOne", "mappedBy": "", "bidirectional": false, "reference": true }
+        },
+        {
+          "comment": "Identificador estavel da funcionalidade",
+          "fieldName": "feature",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Indica se a funcionalidade esta habilitada",
+          "fieldName": "enabled",
+          "list": false,
+          "fieldProperties": { "fieldType": "boolean", "required": true, "valueDefault": "true" },
+          "metadata": { "nullable": false, "key": false }
+        }
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": false
+    },
+    {
+      "comment": "Assinatura vigente de um tenant",
+      "entityName": "tenantSubscription",
+      "tableName": "tenant_subscription",
+      "classExtends": "",
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "list": false,
+          "fieldProperties": { "fieldType": "uuid", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": true }
+        },
+        {
+          "comment": "Identificador do tenant da igreja",
+          "fieldName": "tenant",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Plano contratado pelo tenant",
+          "fieldName": "plan",
+          "list": false,
+          "fieldProperties": { "fieldType": "subscriptionPlan", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false },
+          "relationShips": { "fetchType": "EAGER", "relationShip": "ManyToOne", "mappedBy": "", "bidirectional": false, "reference": true }
+        },
+        {
+          "comment": "Estado atual da assinatura",
+          "fieldName": "status",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "ACTIVE" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Data de inicio da assinatura",
+          "fieldName": "startedAt",
+          "list": false,
+          "fieldProperties": { "fieldType": "datetime", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Fim do periodo corrente",
+          "fieldName": "currentPeriodEndsAt",
+          "list": false,
+          "fieldProperties": { "fieldType": "datetime", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false }
+        },
+        {
+          "comment": "Fim do periodo de tolerancia",
+          "fieldName": "gracePeriodEndsAt",
+          "list": false,
+          "fieldProperties": { "fieldType": "datetime", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false }
+        },
+        {
+          "comment": "Valor mensal preservado para a assinatura",
+          "fieldName": "priceMonthly",
+          "list": false,
+          "fieldProperties": { "fieldType": "decimal", "required": true, "valueDefault": "0" },
+          "metadata": { "nullable": false, "key": false }
+        },
+        {
+          "comment": "Data final de preservacao do preco",
+          "fieldName": "priceLockedUntil",
+          "list": false,
+          "fieldProperties": { "fieldType": "datetime", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false }
+        }
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
       "onlyDTO": false
     }
   ],
@@ -6726,6 +7126,31 @@
         ],
         "permissionDefault": false
       }
+    },
+    {
+      "comment": "Retorna plano, limites, consumo e funcionalidades do tenant autenticado",
+      "methodName": "getCurrentSubscription",
+      "httpMethod": "GET",
+      "grouper": "subscription",
+      "metadata": {
+        "input": [],
+        "output": [
+          {
+            "parameterName": "subscription",
+            "parameterType": "currentSubscription",
+            "list": false
+          }
+        ],
+        "anonymous": false
+      },
+      "permissions": {
+        "description": "Visualizar a assinatura atual",
+        "resource": "currentSubscription",
+        "premissions": [
+          "VIEW"
+        ],
+        "permissionDefault": false
+      }
     }
   ],
   "enums": [
@@ -6933,6 +7358,29 @@
         "IN_FOLLOW_UP",
         "ANSWERED",
         "CLOSED"
+      ]
+    },
+    {
+      "enumName": "SubscriptionResource",
+      "values": [
+        "PERSON",
+        "ADMIN_USER",
+        "ACTIVE_CELL",
+        "CASH_ACCOUNT",
+        "BANK_ACCOUNT",
+        "STORAGE_BYTES",
+        "ACTIVE_PERMISSION_GROUP"
+      ]
+    },
+    {
+      "enumName": "SubscriptionFeature",
+      "values": [
+        "EXECUTIVE_DASHBOARD",
+        "CUSTOM_TRANSLATIONS",
+        "REPORT_TEMPLATE",
+        "BASIC_EXPORT",
+        "FULL_EXPORT",
+        "PRIORITY_SUPPORT"
       ]
     },
     {

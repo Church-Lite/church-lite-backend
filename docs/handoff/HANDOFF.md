@@ -321,3 +321,40 @@ O contrato gerado `reportTemplate` representa a configuração visual única de 
 O CRUD padrão está disponível em `/reportTemplate`, com `generateDefaultHandlers: true` e `handlerAbstract: false`. Não existe controller manual nem endpoint singleton específico: o frontend consulta o GET paginado com `size=1`, cria pelo POST quando não há registro e atualiza pelo PUT quando existe.
 
 A migration `V20260716090000002__create_report_template.sql` cria `report_template`. `header_image` guarda a referência da imagem selecionada pelo componente compartilhado; `header_text` e `footer_text` usam `text`. O recurso também passa a fazer parte do catálogo gerado de permissões. Validação realizada com Java 25 e `./mvnw compile -DskipTests`.
+
+
+## Atualização — planos SaaS, Fase 1 (19/07/2026)
+
+A fundação de assinaturas foi adicionada ao contrato Gonthera com as entidades `subscriptionPlan`, `subscriptionPlanLimit`, `subscriptionPlanFeature` e `tenantSubscription`. Todas usam `generateDefaultControllers: false`: entity, DTO, converter, repository e service são gerados, mas nenhum CRUD HTTP é exposto.
+
+A migration incremental `V20260719090000001__create_subscription_plans.sql` cria as quatro tabelas em cada schema migrado, inclusive o tenant administrativo. Cada igreja mantém localmente catálogo, limites, funcionalidades e assinatura. O schema `ADMIN` usa as mesmas estruturas para a futura visão consolidada por tenant, sem endpoint administrativo nesta fase.
+
+Os planos iniciais são `FREE` (R$ 0,00), `ESSENTIAL` (R$ 19,99) e `PREMIUM` (R$ 39,99). Limites são linhas configuráveis por `plan + resource`; `limit_value = null` representa uso ilimitado. A migration semeia limites para pessoas, usuários administrativos, células ativas, armazenamento e grupos de permissão, além das funcionalidades comerciais acordadas. Alterações como elevar pessoas do gratuito de 30 para 50 são feitas por atualização de dados, sem migration estrutural ou regeneração.
+
+O contrato foi validado com `gonthera-cli:validate` e os artefatos foram regenerados. A primeira compilação revelou um defeito geral do Gonthera CLI 2.0.0: DTOs gerados tinham campos package-private em `dtos`, enquanto converters em outro pacote faziam acesso direto. O problema foi resolvido na atualização para 2.0.1 registrada na Fase 2, sem edição manual de `_gen`.
+
+
+## Atualização — planos SaaS, Fase 2 (19/07/2026)
+
+O backend passou a resolver a assinatura vigente por tenant. Na ausência de registro em `tenant_subscription`, cria automaticamente uma assinatura ativa do plano `FREE`. A mesma assinatura é espelhada em `tenant_subscription` do tenant `admin`, mantendo a visão administrativa consolidada sem expor CRUD de planos. O espelhamento não monta nome de schema nem usa SQL nativo: executa a migration do tenant, troca `TenantContext`, aplica `TenantSchemaInterceptor.switchSchema()`, usa os repositories gerados e restaura o tenant original em `finally`. O contexto JPA recebe `flush/clear` antes de cada troca para não reutilizar entidades entre schemas.
+
+`SubscriptionCache` define a abstração de cache e `InMemorySubscriptionCache` é a implementação inicial, com TTL de cinco minutos por tenant. O cache armazena plano, limites e funcionalidades; o consumo continua sendo calculado sobre os dados atuais. A interface foi separada para permitir futura substituição por Redis sem alterar as regras.
+
+O endpoint autenticado gerado `GET /getCurrentSubscription` retorna DTOs tipados com plano, status, preço, período, recursos, consumo, limites, percentuais e funcionalidades. O tamanho usado no armazenamento é calculado pela soma paginada dos objetos do bucket do tenant.
+
+Bloqueios implementados no backend:
+
+- criação de pessoas;
+- criação de usuários administrativos;
+- criação de células ativas e ativação de células existentes;
+- criação de grupos ativos e ativação de grupos existentes;
+- novas solicitações de upload quando o bucket já alcançou o limite;
+- dashboard executivo, traduções customizadas e template de relatório conforme as features do plano.
+
+Edição, leitura e exclusão dos dados existentes permanecem liberadas, exceto nos módulos inteiramente condicionados a feature. Não foram adicionados locks, contadores persistidos, Redis, rate limit ou endpoints administrativos. O armazenamento não reserva antecipadamente o tamanho do upload: no MVP, o bloqueio ocorre quando o consumo já atingiu o teto.
+
+Os services de `person`, `permissionGroup`, `translation` e `reportTemplate` são abstratos no contrato e possuem implementações Spring fora de `_gen`. O Gonthera CLI 2.0.1 corrigiu a visibilidade dos DTOs observada na Fase 1. Contrato validado, fontes regeneradas e backend compilado com Java 25 por `./mvnw compile -DskipTests`.
+
+### Complemento — limites financeiros (20/07/2026)
+
+Caixas e contas bancárias são recursos separados por `CashEntity.typeCash`: `CASH_ACCOUNT` e `BANK_ACCOUNT`. O cadastro `bank` representa apenas o catálogo de instituições e não consome limite. Os limites iniciais para cada recurso são 1 no FREE, 5 no ESSENTIAL e 20 no PREMIUM. A migration incremental `V20260720090000001__add_cash_subscription_limits.sql` preserva o checksum original. `CashService` é abstrato no contrato e `CashBusinessService` valida criação e mudança de tipo; edição sem troca de tipo permanece liberada.

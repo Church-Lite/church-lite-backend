@@ -3,6 +3,8 @@ package com.smartverse.churchlitebackend.service.storage;
 
 import com.potatotech.authorization.exception.ServiceException;
 import com.potatotech.authorization.tenant.TenantContext;
+import com.smartverse.churchlitebackend_gen.enums.SubscriptionResource;
+import com.smartverse.churchlitebackend.service.subscription.SubscriptionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -26,8 +28,10 @@ public class MiniIoService {
     private static final Region REGION = Region.US_EAST_1;
     private final S3Presigner presigner;
     private final S3Client s3Client;
+    private final SubscriptionService subscriptionService;
 
-    public MiniIoService() {
+    public MiniIoService(SubscriptionService subscriptionService) {
+        this.subscriptionService = subscriptionService;
 
         AwsBasicCredentials awsCredentials = AwsBasicCredentials.create("admin", "admin123");
 
@@ -49,6 +53,8 @@ public class MiniIoService {
     }
 
     public URL requestUpload(String objectKey, int expirationInSeconds) {
+        subscriptionService.requireAvailable(
+                SubscriptionResource.STORAGE_BYTES, getStorageUsageBytes());
         createBucket();
 
         PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(
@@ -116,6 +122,25 @@ public class MiniIoService {
     public void close() {
         presigner.close();
         s3Client.close();
+    }
+
+    public long getStorageUsageBytes() {
+        if (!verifyExistingBucket()) {
+            return 0;
+        }
+
+        long total = 0;
+        String continuationToken = null;
+        do {
+            var request = ListObjectsV2Request.builder()
+                    .bucket(getTenantBucketName())
+                    .continuationToken(continuationToken)
+                    .build();
+            var response = s3Client.listObjectsV2(request);
+            total += response.contents().stream().mapToLong(S3Object::size).sum();
+            continuationToken = response.isTruncated() ? response.nextContinuationToken() : null;
+        } while (continuationToken != null);
+        return total;
     }
 
     private String getTenantBucketName() {

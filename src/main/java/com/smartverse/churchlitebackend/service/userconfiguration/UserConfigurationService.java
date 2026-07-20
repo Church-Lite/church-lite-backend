@@ -5,6 +5,8 @@ import com.potatotech.authorization.tenant.TenantContext;
 import com.smartverse.churchlitebackend.config.database.TenantSchemaInterceptor;
 import com.smartverse.churchlitebackend.config.security.model.UserSupplierEntity;
 import com.smartverse.churchlitebackend.config.security.repository.AuthenticationRepository;
+import com.smartverse.churchlitebackend_gen.enums.SubscriptionResource;
+import com.smartverse.churchlitebackend.service.subscription.SubscriptionService;
 
 import com.smartverse.churchlitebackend_gen.converters.UserConfigurationDTOConverter;
 import com.smartverse.churchlitebackend_gen.dtos.UserConfigurationDTO;
@@ -30,17 +32,20 @@ public class UserConfigurationService {
     private final AuthenticationRepository authenticationRepository;
     private final UserConfigurationRepository userConfigurationRepository;
     private final UserConfigurationDTOConverter userConfigurationDTOConverter;
+    private final SubscriptionService subscriptionService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UserConfigurationService(
             TenantSchemaInterceptor tenantSchemaInterceptor,
             AuthenticationRepository authenticationRepository,
             UserConfigurationRepository userConfigurationRepository,
-            UserConfigurationDTOConverter userConfigurationDTOConverter) {
+            UserConfigurationDTOConverter userConfigurationDTOConverter,
+            SubscriptionService subscriptionService) {
         this.tenantSchemaInterceptor = tenantSchemaInterceptor;
         this.authenticationRepository = authenticationRepository;
         this.userConfigurationRepository = userConfigurationRepository;
         this.userConfigurationDTOConverter = userConfigurationDTOConverter;
+        this.subscriptionService = subscriptionService;
     }
 
     @Transactional
@@ -51,6 +56,7 @@ public class UserConfigurationService {
         if (churchTenant == null || churchTenant.isBlank() || ADMIN_TENANT.equalsIgnoreCase(churchTenant)) {
             throw new ServiceException(HttpStatus.FORBIDDEN, "Tenant da igreja não identificado");
         }
+        subscriptionService.requireAvailable(SubscriptionResource.ADMIN_USER);
 
         String normalizedEmail = input.email.trim().toLowerCase(Locale.ROOT);
         UserSupplierEntity accessUser;
