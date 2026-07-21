@@ -358,3 +358,14 @@ Os services de `person`, `permissionGroup`, `translation` e `reportTemplate` sã
 ### Complemento — limites financeiros (20/07/2026)
 
 Caixas e contas bancárias são recursos separados por `CashEntity.typeCash`: `CASH_ACCOUNT` e `BANK_ACCOUNT`. O cadastro `bank` representa apenas o catálogo de instituições e não consome limite. Os limites iniciais para cada recurso são 1 no FREE, 5 no ESSENTIAL e 20 no PREMIUM. A migration incremental `V20260720090000001__add_cash_subscription_limits.sql` preserva o checksum original. `CashService` é abstrato no contrato e `CashBusinessService` valida criação e mudança de tipo; edição sem troca de tipo permanece liberada.
+
+
+## Encerramento — assinatura, geração e autorização (20/07/2026)
+
+`SubscriptionResource` e `SubscriptionFeature` pertencem ao contrato `.gonthera/project.json` e são gerados em `churchlitebackend_gen.enums`; as versões manuais foram removidas. Novos recursos de plano devem começar no contrato, passar por `gonthera-cli:validate` e `gonthera-cli:generate-sources`, e nunca ser implementados diretamente em `_gen`.
+
+O espelhamento de assinatura no tenant administrativo usa o mesmo fluxo multi-tenant da aplicação: `DBMigration.loadMigrateTenants`, `TenantContext.setCurrentTenant` e `TenantSchemaInterceptor.switchSchema()`. Não montar nomes de schema em regra de negócio. Antes de alternar schemas dentro da transação, executar `EntityManager.flush/clear`; restaurar o tenant original em `finally`.
+
+Plano e permissionamento são camadas cumulativas. O catálogo de permissões decide se o usuário pode executar uma operação existente, enquanto `SubscriptionService` decide se o tenant contratou a feature ou ainda possui capacidade. Uma permissão concedida nunca contorna `requireFeature` ou `requireAvailable`. Erros de grupo usam `permission_access_denied`; restrições comerciais usam chaves `subscription_*`.
+
+Validação final realizada com Gonthera CLI 2.0.1 e `JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw -DskipTests compile`.

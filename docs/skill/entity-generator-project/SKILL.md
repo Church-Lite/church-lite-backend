@@ -446,3 +446,14 @@ When validating generation, create a temporary project under `/tmp`, copy or cre
 - Do not revert unrelated dirty files.
 - Do not edit generated `_gen` output as source of truth.
 - Keep Node relationship limitations honest in docs until implementation is complete.
+
+## Church Lite SaaS and Permission Boundaries
+
+- Declare subscription resources and features in `.gonthera/project.json` under `enums`; consume the generated `*_gen.enums` types. Do not maintain parallel manual enums.
+- Use `generateDefaultControllers: false` for plan/catalog entities that must not expose CRUD endpoints.
+- Use `serviceAbstract: true` when a generated CRUD needs subscription validation, then provide exactly one concrete Spring service outside `_gen` and override only the affected methods.
+- Treat permission and subscription checks as cumulative. Permission grants access to an operation; it never unlocks a feature or capacity excluded by the tenant plan.
+- Keep error namespaces distinct: `permission_access_denied` for user authorization and `subscription_*` for commercial restrictions.
+- When switching to the administrative tenant, run migrations, update `TenantContext`, apply the schema interceptor, and restore the original tenant in `finally`. Do not interpolate schema names in business SQL.
+- Flush and clear the persistence context before switching schemas inside one transaction to prevent cross-schema entity reuse.
+- Regenerate with `gonthera-cli:generate-sources`, never the nonexistent `generate` goal, then compile with the project's required JDK.
