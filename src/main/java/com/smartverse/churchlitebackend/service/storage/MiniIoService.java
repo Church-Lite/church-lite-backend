@@ -125,22 +125,28 @@ public class MiniIoService {
     }
 
     public long getStorageUsageBytes() {
-        if (!verifyExistingBucket()) {
-            return 0;
+        try {
+            long total = 0;
+            String continuationToken = null;
+            do {
+                var request = ListObjectsV2Request.builder()
+                        .bucket(getTenantBucketName())
+                        .continuationToken(continuationToken)
+                        .build();
+                var response = s3Client.listObjectsV2(request);
+                total += response.contents().stream().mapToLong(S3Object::size).sum();
+                continuationToken = response.isTruncated() ? response.nextContinuationToken() : null;
+            } while (continuationToken != null);
+            return total;
+        } catch (S3Exception exception) {
+            String errorCode = exception.awsErrorDetails() == null
+                    ? null
+                    : exception.awsErrorDetails().errorCode();
+            if (exception.statusCode() == 404 || "NoSuchBucket".equals(errorCode)) {
+                return 0;
+            }
+            throw exception;
         }
-
-        long total = 0;
-        String continuationToken = null;
-        do {
-            var request = ListObjectsV2Request.builder()
-                    .bucket(getTenantBucketName())
-                    .continuationToken(continuationToken)
-                    .build();
-            var response = s3Client.listObjectsV2(request);
-            total += response.contents().stream().mapToLong(S3Object::size).sum();
-            continuationToken = response.isTruncated() ? response.nextContinuationToken() : null;
-        } while (continuationToken != null);
-        return total;
     }
 
     private String getTenantBucketName() {
