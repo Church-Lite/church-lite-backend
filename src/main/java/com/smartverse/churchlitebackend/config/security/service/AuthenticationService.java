@@ -8,10 +8,11 @@ import com.smartverse.churchlitebackend.config.security.model.RegisterDTO;
 import com.smartverse.churchlitebackend.config.security.model.UserSupplierDTO;
 import com.smartverse.churchlitebackend.config.security.model.UserSupplierEntity;
 import com.smartverse.churchlitebackend.config.security.repository.AuthenticationRepository;
+import com.smartverse.churchlitebackend.repository.userconfirmation.UserConfirmationCustomRepository;
 import com.smartverse.churchlitebackend.service.email.EmailService;
 import com.smartverse.churchlitebackend_gen.entities.UserConfirmationEntity;
-import com.smartverse.churchlitebackend_gen.repositories.UserConfirmationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -28,13 +30,16 @@ public class AuthenticationService {
     AuthenticationRepository authenticationRepository;
 
     @Autowired
-    UserConfirmationRepository userConfirmationRepository;
+    UserConfirmationCustomRepository userConfirmationRepository;
 
     @Autowired
     Authenticate authenticate;
 
     @Autowired
     EmailService emailService;
+
+    @Value("${app.frontend.base-url:${FRONTEND_BASE_URL:http://localhost:4200}}")
+    String frontendBaseUrl;
 
     public List<AuthenticatedChurch> login(UserSupplierDTO userSupplierDTO){
         TenantContext.setCurrentTenant("admin");
@@ -43,10 +48,18 @@ public class AuthenticationService {
         // No login multi-tenant, cada registro precisa validar a senha antes de seu token ser
         // retornado. Se mais de um vínculo usar a mesma senha, todos serão oferecidos para
         // seleção e o primeiro (ordenado por ID) será mantido como token principal.
-        var authenticatedChurches = authenticationRepository
+        var passwordMatches = authenticationRepository
                 .findAllByEmailOrderByIdAsc(userSupplierDTO.email())
                 .stream()
                 .filter(user -> passwordEncoder.matches(userSupplierDTO.password(), user.getPassword()))
+                .toList();
+
+        if (passwordMatches.isEmpty()) {
+            throw new ServiceException(HttpStatus.UNAUTHORIZED,"User or password invalid");
+        }
+
+        var authenticatedChurches = passwordMatches.stream()
+                .filter(user -> user.isUserConfirm() && user.isActive())
                 .map(user -> new AuthenticatedChurch(
                         user.getId(),
                         user.getName(),
@@ -55,7 +68,7 @@ public class AuthenticationService {
                 .toList();
 
         if (authenticatedChurches.isEmpty()) {
-            throw new ServiceException(HttpStatus.UNAUTHORIZED,"User or password invalid");
+            throw new ServiceException(HttpStatus.FORBIDDEN,"account_confirmation_required");
         }
 
         return authenticatedChurches;
@@ -81,20 +94,26 @@ public class AuthenticationService {
     @Transactional
     public boolean onRegisterUser(RegisterDTO register){
 
-        if(register.name().isEmpty() || register.password().isEmpty() || register.email().isEmpty()){
+        if (register.name() == null || register.name().isBlank()
+                || register.password() == null || register.password().isBlank()
+                || register.email() == null || register.email().isBlank()) {
             throw new ServiceException(HttpStatus.BAD_REQUEST,"Campos com dados inválidos");
         }
 
-        var email = authenticationRepository.existsByEmail(register.email());
+        var normalizedEmail = normalizeEmail(register.email());
+        var existingUser = authenticationRepository.findFirstByEmailIgnoreCaseOrderByIdAsc(normalizedEmail).orElse(null);
 
-        if(email){
-            throw new ServiceException(HttpStatus.FORBIDDEN,"Ja existe um email cadastrado!");
+        if (existingUser != null) {
+            if (!existingUser.isUserConfirm() && !existingUser.isActive()) {
+                throw new ServiceException(HttpStatus.CONFLICT,"account_confirmation_pending");
+            }
+            throw new ServiceException(HttpStatus.CONFLICT,"email_already_registered");
         }
 
         var count = authenticationRepository.countAllBy();
         var user = new UserSupplierEntity();
         user.setName(register.name());
-        user.setEmail(register.email());
+        user.setEmail(normalizedEmail);
         var pass = new BCryptPasswordEncoder().encode(register.password());
         user.setPassword(pass);
         user.setUserConfirm(false);
@@ -109,15 +128,55 @@ public class AuthenticationService {
         userConfirmation.setHash(UUID.randomUUID().toString());
         userConfirmation = userConfirmationRepository.save(userConfirmation);
 
-        var emailcontent = emailService.loadModel("new-churc");
-        emailcontent = emailcontent.replace("{{url}}",String.format("http://localhost:4200/#/register-church/%s",userConfirmation.getHash()));
-
-        try{
-            //emailService.sendEmail(user.getEmail(),"Confirmação de email",emailcontent);
-        } catch (Exception e){
-            throw new ServiceException(HttpStatus.BAD_REQUEST,e.getMessage());
-        }
+        sendConfirmationEmail(user, userConfirmation.getHash());
 
         return true;
+    }
+
+    @Transactional
+    public boolean resendConfirmation(String email) {
+        if (email == null || email.isBlank()) {
+            return true;
+        }
+
+        var user = authenticationRepository
+                .findFirstByEmailIgnoreCaseOrderByIdAsc(normalizeEmail(email))
+                .orElse(null);
+
+        if (user == null || user.isUserConfirm() || user.isActive()) {
+            return true;
+        }
+
+        var confirmation = userConfirmationRepository.findByUserId(user.getId())
+                .orElseGet(UserConfirmationEntity::new);
+        confirmation.setUserId(user.getId());
+        confirmation.setHash(UUID.randomUUID().toString());
+        confirmation = userConfirmationRepository.save(confirmation);
+
+        sendConfirmationEmail(user, confirmation.getHash());
+        return true;
+    }
+
+    private void sendConfirmationEmail(UserSupplierEntity user, String token) {
+        var confirmationUrl = frontendBaseUrl.replaceAll("/+$", "") + "/register-church/" + token;
+        var emailContent = emailService.loadModel("new-churc")
+                .replace("{{name}}", escapeHtml(user.getName()))
+                .replace("{{url}}", confirmationUrl);
+        emailService.sendEmail(user.getEmail(), "Confirme sua conta no Church Lite", emailContent, token);
+    }
+
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private String escapeHtml(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 }

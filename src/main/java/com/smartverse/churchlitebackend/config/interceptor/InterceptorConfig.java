@@ -88,7 +88,8 @@ public class InterceptorConfig extends Authenticate implements HandlerIntercepto
         if(uri.startsWith("/church-lite/swagger-ui/") || uri.startsWith("/church-lite/v3/")) {
             return true;
         } // valida login e register
-        else if(uri.startsWith("/church-lite/authenticate") || uri.startsWith("/church-lite/register") || uri.startsWith("/church-lite/verifyURL")) {
+        else if(uri.startsWith("/church-lite/authenticate") || uri.startsWith("/church-lite/register")
+                || uri.startsWith("/church-lite/verifyURL") || uri.startsWith("/church-lite/resendConfirmation")) {
             TenantContext.setCurrentTenant("admin");
             dbMigration.loadMigrateTenants("admin");
             return true;

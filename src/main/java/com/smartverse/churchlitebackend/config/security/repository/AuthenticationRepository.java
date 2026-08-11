@@ -13,6 +13,8 @@ public interface AuthenticationRepository extends JpaRepository<UserSupplierEnti
 
     Optional<UserSupplierEntity> findOneByEmail(String email);
 
+    Optional<UserSupplierEntity> findFirstByEmailIgnoreCaseOrderByIdAsc(String email);
+
     List<UserSupplierEntity> findAllByEmailOrderByIdAsc(String email);
 
     boolean existsByEmail(String email);

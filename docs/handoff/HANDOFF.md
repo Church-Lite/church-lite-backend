@@ -369,3 +369,17 @@ O espelhamento de assinatura no tenant administrativo usa o mesmo fluxo multi-te
 Plano e permissionamento são camadas cumulativas. O catálogo de permissões decide se o usuário pode executar uma operação existente, enquanto `SubscriptionService` decide se o tenant contratou a feature ou ainda possui capacidade. Uma permissão concedida nunca contorna `requireFeature` ou `requireAvailable`. Erros de grupo usam `permission_access_denied`; restrições comerciais usam chaves `subscription_*`.
 
 Validação final realizada com Gonthera CLI 2.0.1 e `JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw -DskipTests compile`.
+
+## Atualização — confirmação de conta por e-mail (11/08/2026)
+
+O cadastro inicial envia a confirmação pelo Resend. A conta permanece com `active=false` e `userConfirm=false`; o schema do tenant continua sendo criado somente depois que `GET /verifyURL` valida o token. Falhas do provedor retornam `502` e provocam rollback do cadastro transacional.
+
+Configuração: `RESEND_KEY` é obrigatória para envio; `RESEND_FROM` aceita o remetente validado e usa `Church Lite <no-reply@smartverse.com.br>` como padrão; `FRONTEND_BASE_URL` define a origem do link e usa `http://localhost:4200` localmente. Em produção, configurar `FRONTEND_BASE_URL=https://app.smartverse.com.br/church-lite`.
+
+`POST /resendConfirmation` é anônimo, recebe `{ "email": "..." }`, rotaciona o token somente para conta pendente e sempre responde de forma neutra. O template `models/email/new-churc.mo` usa HTML inline com identidade Church Lite/SmartVerse e placeholders `{{name}}` e `{{url}}`. Gonthera validado/regenerado e backend compilado com Java 25.
+
+## Atualização — checkout e confirmação de assinaturas (11/08/2026)
+
+`POST /createSubscriptionPaymentLink` recebe somente `planCode` e `billingCycle`. O backend calcula o total usando o preço mensal persistido: `MONTHLY` sem desconto, `QUARTERLY` com 10% e `SEMIANNUAL` com 15%, e chama o Smart Payment com serviço `CHURCH_LITE` e valor em centavos. Cobranças pendentes equivalentes são reutilizadas.
+
+Confirmações chegam pela fila `smart.payment.confirmed.church-lite`, exchange `smart.payment.events` e routing key `payment.confirmed.CHURCH_LITE`. O evento é validado contra cobrança, NSU e valor, persistido na inbox idempotente e somente então ativa/renova a assinatura. Renovação antecipada acrescenta meses ao vencimento vigente. Configurar `PAYMENT_SERVICE_BASE_URL` e as variáveis `RABBITMQ_*`.

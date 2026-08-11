@@ -2,44 +2,55 @@ package com.smartverse.churchlitebackend.service.email;
 
 import com.potatotech.authorization.exception.ServiceException;
 import com.smartverse.churchlitebackend.common.FileCommon;
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.messaging.MessagingException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+
+import java.util.List;
 
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final RestClient resend;
+    private final String from;
 
-    public void sendEmail(String to, String subject, String model) throws jakarta.mail.MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(model, true);
-        helper.setFrom("geovane.araujo@dataon.com.br");
-
-        mailSender.send(mimeMessage);
+    public EmailService(RestClient.Builder builder,
+                        @Value("${resend.api-key:${RESEND_KEY:}}") String resendKey,
+                        @Value("${resend.from:${RESEND_FROM:Church Lite <no-reply@smartverse.com.br>}}") String from) {
+        this.resend = builder
+                .baseUrl("https://api.resend.com")
+                .defaultHeader("Authorization", "Bearer " + resendKey)
+                .build();
+        this.from = from;
     }
 
+    public void sendEmail(String to, String subject, String model, String idempotencyKey) {
+        try {
+            var response = resend.post()
+                    .uri("/emails")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Idempotency-Key", idempotencyKey)
+                    .body(new ResendEmailRequest(from, List.of(to), subject, model))
+                    .retrieve()
+                    .body(ResendEmailResponse.class);
 
-    public void loadAndSendEmail(String to, String subject, String modelName)  {
-        try{
-            var emailModel = loadModel(modelName);
-            sendEmail(to,subject,emailModel);
-        }catch ( MessagingException | jakarta.mail.MessagingException e){
-            throw new ServiceException(HttpStatus.BAD_REQUEST,e.getMessage());
+            if (response == null || response.id() == null || response.id().isBlank()) {
+                throw new ServiceException(HttpStatus.BAD_GATEWAY, "email_delivery_failed");
+            }
+        } catch (ServiceException exception) {
+            throw exception;
+        } catch (Exception exception) {
+            throw new ServiceException(HttpStatus.BAD_GATEWAY, "email_delivery_failed");
         }
     }
 
-
-    public String loadModel(String modelName){
+    public String loadModel(String modelName) {
         return FileCommon.loadMod(modelName);
     }
 
+    private record ResendEmailRequest(String from, List<String> to, String subject, String html) {}
+
+    private record ResendEmailResponse(String id) {}
 }

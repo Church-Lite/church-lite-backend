@@ -3,19 +3,24 @@ package com.smartverse.churchlitebackend.controller.verifyurlchurch;
 import com.potatotech.authorization.stereotype.Anonymous;
 import com.smartverse.churchlitebackend.config.migration.DBMigration;
 import com.smartverse.churchlitebackend.config.security.repository.AuthenticationRepository;
+import com.smartverse.churchlitebackend.config.security.service.AuthenticationService;
 import com.smartverse.churchlitebackend.repository.userconfirmation.UserConfirmationCustomRepository;
 
+import com.smartverse.churchlitebackend_gen.endpoints.ResendConfirmation;
+import com.smartverse.churchlitebackend_gen.endpoints.ResendConfirmationInput;
+import com.smartverse.churchlitebackend_gen.endpoints.ResendConfirmationOutput;
 import com.smartverse.churchlitebackend_gen.endpoints.VerifyURL;
 import com.smartverse.churchlitebackend_gen.endpoints.VerifyURLOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins="*")
 @RestController
-public class VerifyUrlImpl implements VerifyURL {
+public class VerifyUrlImpl implements VerifyURL, ResendConfirmation {
 
     @Autowired
     UserConfirmationCustomRepository userConfirmationRepository;
@@ -26,11 +31,17 @@ public class VerifyUrlImpl implements VerifyURL {
     @Autowired
     DBMigration dbMigration;
 
+    @Autowired
+    AuthenticationService authenticationService;
+
     @Anonymous
+    @Transactional
     @Override
     public ResponseEntity<VerifyURLOutput> verifyURL(String token) {
 
-        var userConfirmation = userConfirmationRepository.findByHash(token).orElse(null);
+        var userConfirmation = token == null || token.isBlank()
+                ? null
+                : userConfirmationRepository.findByHash(token).orElse(null);
         var output = new VerifyURLOutput();
         output.authorize = false;
         if(userConfirmation != null) {
@@ -46,5 +57,13 @@ public class VerifyUrlImpl implements VerifyURL {
         }
 
         return new ResponseEntity<>(output, HttpStatus.OK);
+    }
+
+    @Anonymous
+    @Override
+    public ResponseEntity<ResendConfirmationOutput> resendConfirmation(ResendConfirmationInput input) {
+        var output = new ResendConfirmationOutput();
+        output.accepted = authenticationService.resendConfirmation(input == null ? null : input.email);
+        return ResponseEntity.ok(output);
     }
 }

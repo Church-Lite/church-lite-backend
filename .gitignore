@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/main/**/churchlitebackend_gen/
 !**/src/test/**/target/
+src/main/java/com/smartverse/churchlitebackend_gen
 
 ### STS ###
 .apt_generated
