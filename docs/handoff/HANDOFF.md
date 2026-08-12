@@ -377,9 +377,3 @@ O cadastro inicial envia a confirmação pelo Resend. A conta permanece com `act
 Configuração: `RESEND_KEY` é obrigatória para envio; `RESEND_FROM` aceita o remetente validado e usa `Church Lite <no-reply@smartverse.com.br>` como padrão; `FRONTEND_BASE_URL` define a origem do link e usa `http://localhost:4200` localmente. Em produção, configurar `FRONTEND_BASE_URL=https://app.smartverse.com.br/church-lite`.
 
 `POST /resendConfirmation` é anônimo, recebe `{ "email": "..." }`, rotaciona o token somente para conta pendente e sempre responde de forma neutra. O template `models/email/new-churc.mo` usa HTML inline com identidade Church Lite/SmartVerse e placeholders `{{name}}` e `{{url}}`. Gonthera validado/regenerado e backend compilado com Java 25.
-
-## Atualização — checkout e confirmação de assinaturas (11/08/2026)
-
-`POST /createSubscriptionPaymentLink` recebe somente `planCode` e `billingCycle`. O backend calcula o total usando o preço mensal persistido: `MONTHLY` sem desconto, `QUARTERLY` com 10% e `SEMIANNUAL` com 15%, e chama o Smart Payment com serviço `CHURCH_LITE` e valor em centavos. Cobranças pendentes equivalentes são reutilizadas.
-
-Confirmações chegam pela fila `smart.payment.confirmed.church-lite`, exchange `smart.payment.events` e routing key `payment.confirmed.CHURCH_LITE`. O evento é validado contra cobrança, NSU e valor, persistido na inbox idempotente e somente então ativa/renova a assinatura. Renovação antecipada acrescenta meses ao vencimento vigente. Configurar `PAYMENT_SERVICE_BASE_URL` e as variáveis `RABBITMQ_*`.
