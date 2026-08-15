@@ -6550,6 +6550,135 @@
       "onlyDTO": true
     },
     {
+      "comment": "Configuracao secreta de uma integracao externa",
+      "entityName": "integrationConfiguration",
+      "tableName": "integration_configuration",
+      "classExtends": "",
+      "entityFields": [
+        {"comment":"Identificador","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Servico externo configurado","fieldName":"service","list":false,"fieldProperties":{"fieldType":"integrationService","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Pares CHAVE=VALOR separados por ponto e virgula","fieldName":"configuration","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}}
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": false
+    },
+    {
+      "comment": "Desconto configurado para um ciclo de cobranca",
+      "entityName": "billingDiscount",
+      "tableName": "billing_discount",
+      "classExtends": "",
+      "entityFields": [
+        {"comment":"Identificador","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Ciclo de cobranca","fieldName":"billingCycle","list":false,"fieldProperties":{"fieldType":"billingCycle","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Quantidade de meses","fieldName":"months","list":false,"fieldProperties":{"fieldType":"int","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Percentual de desconto","fieldName":"discountPercentage","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Indica se o ciclo esta disponivel","fieldName":"active","list":false,"fieldProperties":{"fieldType":"boolean","required":true,"valueDefault":"true"},"metadata":{"nullable":false,"key":false}}
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": false
+    },
+    {
+      "comment": "Cobranca de assinatura criada para um tenant",
+      "entityName": "subscriptionPayment",
+      "tableName": "subscription_payment",
+      "classExtends": "",
+      "entityFields": [
+        {"comment":"Identificador usado como client_id no Smart Payment","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Tenant comprador","fieldName":"tenant","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Codigo do plano adquirido","fieldName":"planCode","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Ciclo de cobranca","fieldName":"billingCycle","list":false,"fieldProperties":{"fieldType":"billingCycle","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Meses de cobertura","fieldName":"months","list":false,"fieldProperties":{"fieldType":"int","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Valor base em centavos","fieldName":"baseAmountCents","list":false,"fieldProperties":{"fieldType":"int","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Percentual de desconto aplicado","fieldName":"discountPercentage","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Valor final em centavos","fieldName":"amountCents","list":false,"fieldProperties":{"fieldType":"int","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Estado da cobranca","fieldName":"status","list":false,"fieldProperties":{"fieldType":"paymentStatus","required":true,"valueDefault":"PENDING"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Identificador da ordem no Smart Payment","fieldName":"orderNsu","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Identificador da transacao no gateway","fieldName":"transactionNsu","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Data de criacao","fieldName":"createdAt","list":false,"fieldProperties":{"fieldType":"datetime","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Data da ultima atualizacao","fieldName":"updatedAt","list":false,"fieldProperties":{"fieldType":"datetime","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Data confirmada do pagamento","fieldName":"paidAt","list":false,"fieldProperties":{"fieldType":"datetime","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Inicio da cobertura adquirida","fieldName":"coverageStartAt","list":false,"fieldProperties":{"fieldType":"datetime","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Fim da cobertura adquirida","fieldName":"coverageEndAt","list":false,"fieldProperties":{"fieldType":"datetime","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}}
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": false
+    },
+    {
+      "comment": "Inbox idempotente de eventos confirmados do Smart Payment",
+      "entityName": "paymentEventInbox",
+      "tableName": "payment_event_inbox",
+      "classExtends": "",
+      "entityFields": [
+        {"comment":"Identificador interno","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Chave idempotente do pagamento","fieldName":"paymentId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Cobranca local beneficiada","fieldName":"clientId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Identificador da ordem","fieldName":"orderNsu","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Identificador da transacao","fieldName":"transactionNsu","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Estado do processamento local","fieldName":"status","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":"RECEIVED"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Falha registrada para retry","fieldName":"failureReason","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Data de recebimento","fieldName":"receivedAt","list":false,"fieldProperties":{"fieldType":"datetime","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Data de processamento","fieldName":"processedAt","list":false,"fieldProperties":{"fieldType":"datetime","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Valor solicitado em centavos","fieldName":"amount","list":false,"fieldProperties":{"fieldType":"int","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Valor pago em centavos","fieldName":"paidAmount","list":false,"fieldProperties":{"fieldType":"int","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Data informada pelo gateway","fieldName":"paidAt","list":false,"fieldProperties":{"fieldType":"datetime","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}}
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": false
+    },
+    {
+      "comment": "Evento confirmado recebido do Smart Payment",
+      "entityName": "paymentConfirmedEvent",
+      "tableName": "payment_confirmed_event_dto",
+      "classExtends": "",
+      "entityFields": [
+        {"comment":"Chave idempotente","fieldName":"paymentId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Cobranca local","fieldName":"clientId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Servico destinatario","fieldName":"service","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Gateway de pagamento","fieldName":"gateway","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Identificador da ordem","fieldName":"orderNsu","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Identificador da transacao","fieldName":"transactionNsu","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Valor solicitado em centavos","fieldName":"amount","list":false,"fieldProperties":{"fieldType":"int","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Valor pago em centavos","fieldName":"paidAmount","list":false,"fieldProperties":{"fieldType":"int","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Quantidade de parcelas","fieldName":"installments","list":false,"fieldProperties":{"fieldType":"int","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Metodo de captura","fieldName":"captureMethod","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"URL do comprovante","fieldName":"receiptUrl","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Data confirmada do pagamento","fieldName":"paidAt","list":false,"fieldProperties":{"fieldType":"datetime","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}}
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": true
+    },
+    {
+      "comment": "Item do historico de cobrancas da igreja",
+      "entityName": "paymentHistoryItem",
+      "tableName": "payment_history_item_dto",
+      "classExtends": "",
+      "entityFields": [
+        {"comment":"Identificador","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Codigo do plano","fieldName":"planCode","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Ciclo de cobranca","fieldName":"billingCycle","list":false,"fieldProperties":{"fieldType":"billingCycle","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Valor em centavos","fieldName":"amountCents","list":false,"fieldProperties":{"fieldType":"int","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Estado da cobranca","fieldName":"status","list":false,"fieldProperties":{"fieldType":"paymentStatus","required":true,"valueDefault":"PENDING"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Data de criacao","fieldName":"createdAt","list":false,"fieldProperties":{"fieldType":"datetime","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Data do pagamento","fieldName":"paidAt","list":false,"fieldProperties":{"fieldType":"datetime","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Inicio da cobertura","fieldName":"coverageStartAt","list":false,"fieldProperties":{"fieldType":"datetime","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Fim da cobertura","fieldName":"coverageEndAt","list":false,"fieldProperties":{"fieldType":"datetime","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}}
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": true
+    },
+    {
       "comment": "Plano de assinatura disponivel para a igreja",
       "entityName": "subscriptionPlan",
       "tableName": "subscription_plan",
@@ -7477,6 +7606,38 @@
       }
     },
     {
+      "comment": "Cria ou reutiliza um link de pagamento para um plano pago",
+      "methodName": "createPaymentLink",
+      "httpMethod": "POST",
+      "grouper": "payment",
+      "metadata": {
+        "input": [
+          {"parameterName":"planCode","parameterType":"string","list":false},
+          {"parameterName":"billingCycle","parameterType":"billingCycle","list":false}
+        ],
+        "output": [
+          {"parameterName":"url","parameterType":"string","list":false},
+          {"parameterName":"orderNsu","parameterType":"string","list":false},
+          {"parameterName":"status","parameterType":"string","list":false},
+          {"parameterName":"reused","parameterType":"boolean","list":false}
+        ],
+        "anonymous": false
+      },
+      "permissions": {"description":"Contratar plano","resource":"subscriptionPayment","premissions":["CREATE"],"permissionDefault":false}
+    },
+    {
+      "comment": "Retorna o historico de cobrancas do tenant autenticado",
+      "methodName": "getPaymentHistory",
+      "httpMethod": "GET",
+      "grouper": "payment",
+      "metadata": {
+        "input": [],
+        "output": [{"parameterName":"payments","parameterType":"paymentHistoryItem","list":true}],
+        "anonymous": false
+      },
+      "permissions": {"description":"Visualizar cobrancas","resource":"subscriptionPayment","premissions":["VIEW"],"permissionDefault":false}
+    },
+    {
       "comment": "Retorna plano, limites, consumo e funcionalidades do tenant autenticado",
       "methodName": "getCurrentSubscription",
       "httpMethod": "GET",
@@ -7733,6 +7894,18 @@
       ]
     },
     {
+      "enumName": "integrationService",
+      "values": ["SMART_REPORT"]
+    },
+    {
+      "enumName": "billingCycle",
+      "values": ["MONTHLY", "QUARTERLY", "SEMIANNUAL"]
+    },
+    {
+      "enumName": "paymentStatus",
+      "values": ["PENDING", "PAID", "FAILED", "CANCELLED", "EXPIRED"]
+    },
+    {
       "enumName": "CashApprovalPolicy",
       "values": [
         "DISABLED",
@@ -7741,5 +7914,12 @@
       ]
     }
   ],
-  "messaging": {}
+  "messaging": {
+    "RabbitMq": {
+      "pub": [],
+      "sub": [
+        {"name":"paymentConfirmed","queue":"${PAYMENT_CONFIRMED_QUEUE:smart.payment.confirmed.church-lite}"}
+      ]
+    }
+  }
 }

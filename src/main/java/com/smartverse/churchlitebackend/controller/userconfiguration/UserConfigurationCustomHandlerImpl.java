@@ -2,17 +2,14 @@ package com.smartverse.churchlitebackend.controller.userconfiguration;
 
 import com.smartverse.churchlitebackend.repository.userconfiguration.UserConfigurationCustomRepository;
 import com.smartverse.churchlitebackend.service.userconfiguration.UserConfigurationService;
-
 import com.smartverse.churchlitebackend_gen.converters.UserConfigurationDTOConverter;
 import com.smartverse.churchlitebackend_gen.endpoints.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*")
 public class UserConfigurationCustomHandlerImpl implements GetUser, CreateChurchUser {
 
     private final UserConfigurationCustomRepository userConfigurationRepository;

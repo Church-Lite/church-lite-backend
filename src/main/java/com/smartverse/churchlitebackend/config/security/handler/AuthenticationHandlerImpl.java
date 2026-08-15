@@ -17,7 +17,6 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 
 @RestController
-@CrossOrigin(origins="*")
 @RequestMapping
 public class AuthenticationHandlerImpl {
 

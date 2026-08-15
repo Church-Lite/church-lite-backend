@@ -377,3 +377,15 @@ O cadastro inicial envia a confirmação pelo Resend. A conta permanece com `act
 Configuração: `RESEND_KEY` é obrigatória para envio; `RESEND_FROM` aceita o remetente validado e usa `Church Lite <no-reply@smartverse.com.br>` como padrão; `FRONTEND_BASE_URL` define a origem do link e usa `http://localhost:4200` localmente. Em produção, configurar `FRONTEND_BASE_URL=https://app.smartverse.com.br/church-lite`.
 
 `POST /resendConfirmation` é anônimo, recebe `{ "email": "..." }`, rotaciona o token somente para conta pendente e sempre responde de forma neutra. O template `models/email/new-churc.mo` usa HTML inline com identidade Church Lite/SmartVerse e placeholders `{{name}}` e `{{url}}`. Gonthera validado/regenerado e backend compilado com Java 25.
+
+## Atualização — checkout de planos com Smart Payment (15/08/2026)
+
+O checkout dos planos pagos usa exclusivamente o Smart Payment. `POST /createPaymentLink` recebe `planCode` e `billingCycle`, cria ou reutiliza uma cobrança `PENDING` no schema administrativo e chama `POST /paymentLink` por OpenFeign, propagando o JWT normal da requisição. O payload usa `service=CHURCH_LITE`, valor inteiro em centavos e o UUID da cobrança local como `client_id`. `GET /getPaymentHistory` lista apenas as cobranças do tenant autenticado.
+
+Os ciclos disponíveis são `MONTHLY`, `QUARTERLY` e `SEMIANNUAL`, inicialmente configurados com 1 mês/0%, 3 meses/10% e 6 meses/15%. As tabelas `billing_discount`, `subscription_payment` e `payment_event_inbox` existem somente no schema administrativo pela migration `V20260815090000001__create_subscription_billing.sql`.
+
+A confirmação é assíncrona pelo exchange `smart.payment.events`, fila `smart.payment.confirmed.church-lite` e routing key `payment.confirmed.CHURCH_LITE`. O subscriber é gerado pelo Gonthera; configuração, listener e regras ficam fora de `_gen`. O listener aceita apenas eventos `CHURCH_LITE`, persiste o inbox antes de conceder o benefício, valida `paymentId`, `transactionNsu`, `orderNsu`, cobrança e valores, e processa duplicidades de forma idempotente.
+
+Depois da confirmação, a assinatura é ativada/renovada no schema da igreja e espelhada no schema administrativo na mesma transação, a cobrança passa para `PAID`, o inbox para `PROCESSED` e o cache do tenant é invalidado. Falhas ficam como `FAILED` com motivo e são retomadas pelo retry agendado local. Redirecionamento do navegador nunca confirma pagamento.
+
+Configurações: `PAYMENT_SERVICE_BASE_URL` (padrão `https://app.smartverse.com.br/api/payment-service`), `PAYMENT_CONFIRMED_QUEUE`, `smart-payment.retry-delay-ms` e `smart-payment.retry-initial-delay-ms`. Contrato validado, fontes regeneradas e backend compilado com Java 25.
