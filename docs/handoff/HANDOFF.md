@@ -389,3 +389,13 @@ A confirmação é assíncrona pelo exchange `smart.payment.events`, fila `smart
 Depois da confirmação, a assinatura é ativada/renovada no schema da igreja e espelhada no schema administrativo na mesma transação, a cobrança passa para `PAID`, o inbox para `PROCESSED` e o cache do tenant é invalidado. Falhas ficam como `FAILED` com motivo e são retomadas pelo retry agendado local. Redirecionamento do navegador nunca confirma pagamento.
 
 Configurações: `PAYMENT_SERVICE_BASE_URL` (padrão `https://app.smartverse.com.br/api/payment-service`), `PAYMENT_CONFIRMED_QUEUE`, `smart-payment.retry-delay-ms` e `smart-payment.retry-initial-delay-ms`. Contrato validado, fontes regeneradas e backend compilado com Java 25.
+
+## Atualização — relatórios por tela com SmartReport (15/08/2026)
+
+Cada schema de igreja possui a tabela `screen_report`, que associa um nome exibível e uma rota/tela do Church Lite ao UUID de um relatório no SmartReport. Uma mesma tela aceita qualquer quantidade de relatórios; `display_order` controla a ordem e `active` permite ocultar uma opção sem removê-la. Não existe CRUD público: os registros iniciais e personalizados são administrados diretamente no banco até existir uma ferramenta interna.
+
+`GET /getScreenReports?screen=<rota>` retorna somente `id`, `name` e `screen` dos registros ativos do tenant autenticado. `POST /generateScreenReport` recebe o `reportId` local e o mesmo objeto JSON produzido pela tela em `data`; `SmartReportGenerationService` resolve o UUID remoto e chama `POST /generateReport` do SmartReport por OpenFeign. O nome específico do orquestrador evita colisão com o bean CRUD `churchlitebackend_gen.services.ScreenReportService`. A resposta mantém o contrato `{ "report": "<PDF em Base64>" }`.
+
+A credencial fica exclusivamente em `integration_configuration` no schema administrativo, no registro `service = SMART_REPORT` (ordinal `0`). O campo extensível aceita pares separados por ponto e vírgula; para esta integração são reconhecidas `API_KEY`, `X_API_KEY` e `TOKEN`, por exemplo `API_KEY=sr_live_...`. A chave é enviada somente no header `X-API-Key`, não aparece no DTO do frontend e o JSON/PDF não é registrado em logs.
+
+Configuração: `SMART_REPORT_BASE_URL`, com padrão `https://app.smartverse.com.br/api/smartreport`. A migration `V20260815090000005__create_screen_report.sql` cria a tabela somente fora do tenant administrativo. Contrato Gonthera validado, fontes regeneradas e backend compilado com Java 25.

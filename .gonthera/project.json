@@ -6565,6 +6565,39 @@
       "onlyDTO": false
     },
     {
+      "comment": "Relatorio do SmartReport disponibilizado em uma tela do Church Lite",
+      "entityName": "screenReport",
+      "tableName": "screen_report",
+      "classExtends": "",
+      "entityFields": [
+        {"comment":"Identificador local usado pelo frontend","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Nome exibido no menu de relatorios","fieldName":"name","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Rota ou identificador canonico da tela","fieldName":"screen","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Identificador do relatorio no SmartReport","fieldName":"smartReportId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Ordem de exibicao dentro da tela","fieldName":"displayOrder","list":false,"fieldProperties":{"fieldType":"int","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Indica se o relatorio esta disponivel","fieldName":"active","list":false,"fieldProperties":{"fieldType":"boolean","required":true,"valueDefault":"true"},"metadata":{"nullable":false,"key":false}}
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": false
+    },
+    {
+      "comment": "Opcao de relatorio exposta ao frontend",
+      "entityName": "screenReportOption",
+      "tableName": "screen_report_option_dto",
+      "classExtends": "",
+      "entityFields": [
+        {"comment":"Identificador local da configuracao","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Nome exibido no menu","fieldName":"name","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Rota ou identificador canonico da tela","fieldName":"screen","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}}
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": true
+    },
+    {
       "comment": "Desconto configurado para um ciclo de cobranca",
       "entityName": "billingDiscount",
       "tableName": "billing_discount",
@@ -7636,6 +7669,33 @@
         "anonymous": false
       },
       "permissions": {"description":"Visualizar cobrancas","resource":"subscriptionPayment","premissions":["VIEW"],"permissionDefault":false}
+    },
+    {
+      "comment": "Lista os relatorios ativos configurados para uma tela",
+      "methodName": "getScreenReports",
+      "httpMethod": "GET",
+      "grouper": "report",
+      "metadata": {
+        "input": [{"parameterName":"screen","parameterType":"string","list":false}],
+        "output": [{"parameterName":"reports","parameterType":"screenReportOption","list":true}],
+        "anonymous": false
+      },
+      "permissions": {"description":"Visualizar relatorios disponiveis","resource":"screenReport","premissions":["VIEW"],"permissionDefault":false}
+    },
+    {
+      "comment": "Gera no SmartReport um relatorio configurado para o tenant",
+      "methodName": "generateScreenReport",
+      "httpMethod": "POST",
+      "grouper": "report",
+      "metadata": {
+        "input": [
+          {"parameterName":"reportId","parameterType":"uuid","list":false},
+          {"parameterName":"data","parameterType":"map","list":false}
+        ],
+        "output": [{"parameterName":"report","parameterType":"byte[]","list":false}],
+        "anonymous": false
+      },
+      "permissions": {"description":"Gerar relatorios configurados","resource":"screenReport","premissions":["VIEW"],"permissionDefault":false}
     },
     {
       "comment": "Retorna plano, limites, consumo e funcionalidades do tenant autenticado",
