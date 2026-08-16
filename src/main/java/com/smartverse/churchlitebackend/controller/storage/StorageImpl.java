@@ -4,10 +4,8 @@ package com.smartverse.churchlitebackend.controller.storage;
 import com.smartverse.churchlitebackend.service.storage.MiniIoService;
 import com.smartverse.churchlitebackend_gen.endpoints.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin(origins = "*")
 @RestController
 public class StorageImpl implements RequestUpload, RequestUrl, DeleteObject {
 

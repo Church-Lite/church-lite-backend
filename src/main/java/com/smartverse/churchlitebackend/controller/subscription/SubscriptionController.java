@@ -7,11 +7,9 @@ import com.smartverse.churchlitebackend_gen.endpoints.GetCurrentSubscriptionOutp
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin(origins = "*")
 public class SubscriptionController implements GetCurrentSubscription {
     private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionController.class);
 

@@ -3,12 +3,14 @@ package com.smartverse.churchlitebackend.controller.dashboard;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartverse.churchlitebackend.model.dashboard.DashboardModels.FinancialFilter;
-import com.smartverse.churchlitebackend_gen.enums.SubscriptionFeature;
 import com.smartverse.churchlitebackend.service.dashboard.DashboardService;
 import com.smartverse.churchlitebackend.service.subscription.SubscriptionService;
-import com.smartverse.churchlitebackend_gen.endpoints.*;
+import com.smartverse.churchlitebackend_gen.endpoints.GetDashboardAgenda;
+import com.smartverse.churchlitebackend_gen.endpoints.GetDashboardAgendaOutput;
+import com.smartverse.churchlitebackend_gen.endpoints.GetDashboardFinancial;
+import com.smartverse.churchlitebackend_gen.endpoints.GetDashboardFinancialOutput;
+import com.smartverse.churchlitebackend_gen.enums.SubscriptionFeature;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
@@ -16,7 +18,6 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*")
 public class DashboardHandlerImpl implements GetDashboardFinancial, GetDashboardAgenda {
     private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {
     };

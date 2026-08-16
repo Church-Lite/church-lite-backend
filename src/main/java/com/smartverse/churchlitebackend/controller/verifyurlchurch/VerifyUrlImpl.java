@@ -5,20 +5,13 @@ import com.smartverse.churchlitebackend.config.migration.DBMigration;
 import com.smartverse.churchlitebackend.config.security.repository.AuthenticationRepository;
 import com.smartverse.churchlitebackend.config.security.service.AuthenticationService;
 import com.smartverse.churchlitebackend.repository.userconfirmation.UserConfirmationCustomRepository;
-
-import com.smartverse.churchlitebackend_gen.endpoints.ResendConfirmation;
-import com.smartverse.churchlitebackend_gen.endpoints.ResendConfirmationInput;
-import com.smartverse.churchlitebackend_gen.endpoints.ResendConfirmationOutput;
-import com.smartverse.churchlitebackend_gen.endpoints.VerifyURL;
-import com.smartverse.churchlitebackend_gen.endpoints.VerifyURLOutput;
+import com.smartverse.churchlitebackend_gen.endpoints.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin(origins="*")
 @RestController
 public class VerifyUrlImpl implements VerifyURL, ResendConfirmation {
 
