@@ -5,6 +5,9 @@ target/
 !**/src/main/**/churchlitebackend_gen/
 !**/src/test/**/target/
 src/main/java/com/smartverse/churchlitebackend_gen
+src/main/resources/postgree.sql
+src/main/resources/properties.json
+src/main/resources/resources.json
 
 ### STS ###
 .apt_generated

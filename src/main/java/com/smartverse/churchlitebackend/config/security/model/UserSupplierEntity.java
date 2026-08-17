@@ -25,6 +25,8 @@ public class UserSupplierEntity {
 
     private String phone;
 
+    private String cpf;
+
     private boolean active;
 
     @Column(name = "user_confirm")

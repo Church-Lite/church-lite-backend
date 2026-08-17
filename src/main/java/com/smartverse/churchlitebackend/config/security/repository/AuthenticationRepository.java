@@ -17,6 +17,8 @@ public interface AuthenticationRepository extends JpaRepository<UserSupplierEnti
 
     List<UserSupplierEntity> findAllByEmailOrderByIdAsc(String email);
 
+    List<UserSupplierEntity> findAllByCpfOrderByIdAsc(String cpf);
+
     boolean existsByEmail(String email);
 
     boolean existsByEmailAndTenant(String email, String tenant);

@@ -96,11 +96,16 @@ public class AuthenticationService {
 
         if (register.name() == null || register.name().isBlank()
                 || register.password() == null || register.password().isBlank()
-                || register.email() == null || register.email().isBlank()) {
+                || register.email() == null || register.email().isBlank()
+                || register.cpf() == null || register.cpf().isBlank()) {
             throw new ServiceException(HttpStatus.BAD_REQUEST,"Campos com dados inválidos");
         }
 
         var normalizedEmail = normalizeEmail(register.email());
+        var normalizedCpf = normalizeCpf(register.cpf());
+        if (!isValidCpf(normalizedCpf)) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST, "invalid_cpf");
+        }
         var existingUser = authenticationRepository.findFirstByEmailIgnoreCaseOrderByIdAsc(normalizedEmail).orElse(null);
 
         if (existingUser != null) {
@@ -114,6 +119,7 @@ public class AuthenticationService {
         var user = new UserSupplierEntity();
         user.setName(register.name());
         user.setEmail(normalizedEmail);
+        user.setCpf(normalizedCpf);
         var pass = new BCryptPasswordEncoder().encode(register.password());
         user.setPassword(pass);
         user.setUserConfirm(false);
@@ -167,6 +173,27 @@ public class AuthenticationService {
 
     private String normalizeEmail(String email) {
         return email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private String normalizeCpf(String cpf) {
+        return cpf == null ? "" : cpf.replaceAll("\\D", "");
+    }
+
+    private boolean isValidCpf(String cpf) {
+        if (cpf.length() != 11 || cpf.chars().distinct().count() == 1) {
+            return false;
+        }
+
+        for (int digitPosition = 9; digitPosition <= 10; digitPosition++) {
+            int sum = 0;
+            for (int index = 0; index < digitPosition; index++) {
+                sum += Character.digit(cpf.charAt(index), 10) * (digitPosition + 1 - index);
+            }
+            int digit = 11 - (sum % 11);
+            if (digit >= 10) digit = 0;
+            if (digit != Character.digit(cpf.charAt(digitPosition), 10)) return false;
+        }
+        return true;
     }
 
     private String escapeHtml(String value) {
