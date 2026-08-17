@@ -2,10 +2,12 @@ package com.smartverse.churchlitebackend.service.cashclosingapproval;
 
 import com.potatotech.authorization.exception.ServiceException;
 import com.smartverse.churchlitebackend.config.context.RequestUserContext;
+import com.smartverse.churchlitebackend.service.notification.NotificationBusinessService;
 import com.smartverse.churchlitebackend_gen.dtos.CashClosingApprovalDTO;
 import com.smartverse.churchlitebackend_gen.entities.CashClosingApprovalEntity;
 import com.smartverse.churchlitebackend_gen.enums.CashApprovalPolicy;
 import com.smartverse.churchlitebackend_gen.enums.TransactionOperation;
+import com.smartverse.churchlitebackend_gen.enums.NotificationType;
 import com.smartverse.churchlitebackend_gen.repositories.CashRepository;
 import com.smartverse.churchlitebackend_gen.repositories.CashTransactionsRepository;
 import com.smartverse.churchlitebackend_gen.repositories.ChurchConfigurationRepository;
@@ -25,16 +27,19 @@ public class CashClosingApprovalBusinessService extends CashClosingApprovalServi
     private final ChurchConfigurationRepository configurationRepository;
     private final CashTransactionsRepository cashTransactionsRepository;
     private final CashRepository cashRepository;
+    private final NotificationBusinessService notificationService;
 
     public CashClosingApprovalBusinessService(
             UserConfigurationRepository userRepository,
             ChurchConfigurationRepository configurationRepository,
             CashTransactionsRepository cashTransactionsRepository,
-            CashRepository cashRepository) {
+            CashRepository cashRepository,
+            NotificationBusinessService notificationService) {
         this.userRepository = userRepository;
         this.configurationRepository = configurationRepository;
         this.cashTransactionsRepository = cashTransactionsRepository;
         this.cashRepository = cashRepository;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -77,6 +82,17 @@ public class CashClosingApprovalBusinessService extends CashClosingApprovalServi
             var cash = transaction.getCash();
             cash.setStatus(TransactionOperation.CLOSE_CASH);
             cashRepository.save(cash);
+
+            var requester = approvals.stream()
+                    .map(CashClosingApprovalEntity::getRequestedBy)
+                    .filter(java.util.Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
+            notificationService.create(requester, NotificationType.CASH_APPROVED,
+                    "Fechamento de caixa aprovado",
+                    "O fechamento do caixa " + cash.getDescription() + " foi aprovado.",
+                    "CASH_TRANSACTION", transactionId, "/home/cash-history",
+                    "cash:" + transactionId + ":approved");
         }
 
         return dtoConverter.toDTO(approval, null);
