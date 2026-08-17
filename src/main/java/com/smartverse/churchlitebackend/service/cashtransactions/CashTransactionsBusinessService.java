@@ -2,15 +2,19 @@ package com.smartverse.churchlitebackend.service.cashtransactions;
 
 import com.potatotech.authorization.exception.ServiceException;
 import com.smartverse.churchlitebackend.repository.cashtransactions.CashTransactionsCustomRepository;
+import com.smartverse.churchlitebackend.config.context.RequestUserContext;
+import com.smartverse.churchlitebackend.service.notification.NotificationBusinessService;
 import com.smartverse.churchlitebackend_gen.dtos.CashTransactionsDTO;
 import com.smartverse.churchlitebackend_gen.entities.CashClosingApprovalEntity;
 import com.smartverse.churchlitebackend_gen.entities.ChurchResponsibleUserEntity;
 import com.smartverse.churchlitebackend_gen.enums.CashApprovalPolicy;
 import com.smartverse.churchlitebackend_gen.enums.TransactionOperation;
+import com.smartverse.churchlitebackend_gen.enums.NotificationType;
 import com.smartverse.churchlitebackend_gen.repositories.CashClosingApprovalRepository;
 import com.smartverse.churchlitebackend_gen.repositories.CashRepository;
 import com.smartverse.churchlitebackend_gen.repositories.ChurchConfigurationRepository;
 import com.smartverse.churchlitebackend_gen.repositories.ChurchResponsibleUserRepository;
+import com.smartverse.churchlitebackend_gen.repositories.UserConfigurationRepository;
 import com.smartverse.churchlitebackend_gen.services.CashTransactionsService;
 import jakarta.persistence.EntityManager;
 import org.springframework.http.HttpStatus;
@@ -25,6 +29,8 @@ public class CashTransactionsBusinessService extends CashTransactionsService {
     private final ChurchConfigurationRepository churchConfigurationRepository;
     private final ChurchResponsibleUserRepository responsibleUserRepository;
     private final CashClosingApprovalRepository approvalRepository;
+    private final UserConfigurationRepository userRepository;
+    private final NotificationBusinessService notificationService;
     private final EntityManager entityManager;
 
     public CashTransactionsBusinessService(
@@ -33,12 +39,16 @@ public class CashTransactionsBusinessService extends CashTransactionsService {
             ChurchConfigurationRepository churchConfigurationRepository,
             ChurchResponsibleUserRepository responsibleUserRepository,
             CashClosingApprovalRepository approvalRepository,
+            UserConfigurationRepository userRepository,
+            NotificationBusinessService notificationService,
             EntityManager entityManager) {
         this.cashTransactionsCustomRepository = cashTransactionsCustomRepository;
         this.cashRepository = cashRepository;
         this.churchConfigurationRepository = churchConfigurationRepository;
         this.responsibleUserRepository = responsibleUserRepository;
         this.approvalRepository = approvalRepository;
+        this.userRepository = userRepository;
+        this.notificationService = notificationService;
         this.entityManager = entityManager;
     }
 
@@ -83,12 +93,23 @@ public class CashTransactionsBusinessService extends CashTransactionsService {
                     .toList();
             approvalRepository.deleteAll(previousApprovals);
 
+            var requester = userRepository.findAll().stream()
+                    .filter(item -> RequestUserContext.getRequired().equals(item.getHash()))
+                    .findFirst()
+                    .orElseThrow(() -> new ServiceException(HttpStatus.FORBIDDEN, "user_configuration_not_found"));
+
             approvers.forEach(item -> {
                 var approval = new CashClosingApprovalEntity();
                 approval.setCashTransaction(pending);
                 approval.setApprover(item.getUserConfiguration());
+                approval.setRequestedBy(requester);
                 approval.setApproved(false);
                 approvalRepository.save(approval);
+                notificationService.create(item.getUserConfiguration(), NotificationType.CASH_PENDING_APPROVAL,
+                        "Fechamento de caixa aguardando aprovação",
+                        "O caixa " + cash.getDescription() + " possui um fechamento pendente.",
+                        "CASH_TRANSACTION", pending.getId(), "/home/cash-approvals",
+                        "cash:" + pending.getId() + ":pending:" + item.getUserConfiguration().getId());
             });
 
             return dtoConverter.toDTO(pending, null);

@@ -2935,6 +2935,95 @@
       "comment": "Configurações e dados do usuário no tenant"
     },
     {
+      "entityName": "notification",
+      "tableName": "notification",
+      "entityFields": [
+        {
+          "comment": "Identificador",
+          "fieldName": "id",
+          "fieldProperties": { "fieldType": "uuid", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": true },
+          "list": false
+        },
+        {
+          "comment": "Usuario destinatario",
+          "fieldName": "recipient",
+          "fieldProperties": { "fieldType": "userConfiguration", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false },
+          "relationShips": { "fetchType": "EAGER", "relationShip": "ManyToOne", "mappedBy": "", "bidirectional": false, "reference": false },
+          "list": false
+        },
+        {
+          "comment": "Tipo da notificacao",
+          "fieldName": "type",
+          "fieldProperties": { "fieldType": "notificationType", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false },
+          "list": false
+        },
+        {
+          "comment": "Titulo",
+          "fieldName": "title",
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false },
+          "list": false
+        },
+        {
+          "comment": "Mensagem",
+          "fieldName": "message",
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false },
+          "list": false
+        },
+        {
+          "comment": "Data de criacao",
+          "fieldName": "createdAt",
+          "fieldProperties": { "fieldType": "datetime", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false },
+          "list": false
+        },
+        {
+          "comment": "Data de leitura",
+          "fieldName": "readAt",
+          "fieldProperties": { "fieldType": "datetime", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false },
+          "list": false
+        },
+        {
+          "comment": "Tipo da referencia de origem",
+          "fieldName": "referenceType",
+          "fieldProperties": { "fieldType": "string", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false },
+          "list": false
+        },
+        {
+          "comment": "Identificador da referencia de origem",
+          "fieldName": "referenceId",
+          "fieldProperties": { "fieldType": "uuid", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false },
+          "list": false
+        },
+        {
+          "comment": "Rota de destino",
+          "fieldName": "actionUrl",
+          "fieldProperties": { "fieldType": "string", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false },
+          "list": false
+        },
+        {
+          "comment": "Chave de idempotencia",
+          "fieldName": "deduplicationKey",
+          "fieldProperties": { "fieldType": "string", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false },
+          "list": false
+        }
+      ],
+      "classExtends": "",
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "onlyDTO": false,
+      "comment": "Notificacoes internas por usuario"
+    },
+    {
       "entityName": "cashTransactions",
       "tableName": "cash_transactions",
       "entityFields": [
@@ -6290,6 +6379,27 @@
           }
         },
         {
+          "comment": "Usuario que solicitou o fechamento",
+          "fieldName": "requestedBy",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "userConfiguration",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "EAGER",
+            "relationShip": "ManyToOne",
+            "mappedBy": "",
+            "bidirectional": false,
+            "reference": false
+          }
+        },
+        {
           "comment": "Data e hora da aprovacao",
           "fieldName": "approvedAt",
           "list": false,
@@ -7450,6 +7560,70 @@
       "comment": "getResumeTransaction"
     },
     {
+      "comment": "Lista as notificacoes do usuario autenticado",
+      "methodName": "getNotifications",
+      "httpMethod": "GET",
+      "grouper": "notification",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          { "parameterName": "unreadOnly", "parameterType": "boolean", "list": false }
+        ],
+        "output": [
+          { "parameterName": "notifications", "parameterType": "notification", "list": true },
+          { "parameterName": "unreadCount", "parameterType": "int", "list": false }
+        ]
+      },
+      "permissions": {
+        "description": "Visualizar as proprias notificacoes",
+        "resource": "notification",
+        "premissions": ["VIEW"],
+        "permissionDefault": true
+      }
+    },
+    {
+      "comment": "Marca uma notificacao do usuario autenticado como lida",
+      "methodName": "markNotificationRead",
+      "httpMethod": "POST",
+      "grouper": "notification",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          { "parameterName": "notificationId", "parameterType": "uuid", "list": false }
+        ],
+        "output": [
+          { "parameterName": "notification", "parameterType": "notification", "list": false }
+        ]
+      },
+      "permissions": {
+        "description": "Marcar a propria notificacao como lida",
+        "resource": "notification",
+        "premissions": ["UPDATE"],
+        "permissionDefault": true
+      }
+    },
+    {
+      "comment": "Marca todas as notificacoes do usuario autenticado como lidas",
+      "methodName": "markAllNotificationsRead",
+      "httpMethod": "POST",
+      "grouper": "notification",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          { "parameterName": "all", "parameterType": "boolean", "list": false }
+        ],
+        "output": [
+          { "parameterName": "unreadCount", "parameterType": "int", "list": false }
+        ]
+      },
+      "permissions": {
+        "description": "Marcar todas as proprias notificacoes como lidas",
+        "resource": "notification",
+        "premissions": ["UPDATE"],
+        "permissionDefault": true
+      }
+    },
+    {
       "comment": "Cria um compromisso único ou uma série de compromissos semanais",
       "methodName": "createRecurringAppointments",
       "httpMethod": "POST",
@@ -7926,6 +8100,10 @@
         "SEPARATED",
         "CIVIL_UNION"
       ]
+    },
+    {
+      "enumName": "notificationType",
+      "values": ["APPOINTMENT_24_HOURS", "APPOINTMENT_1_HOUR", "CASH_PENDING_APPROVAL", "CASH_APPROVED", "CASH_REJECTED"]
     },
     {
       "enumName": "appointmentStatus",
