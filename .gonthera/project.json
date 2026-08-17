@@ -1667,6 +1667,20 @@
           }
         },
         {
+          "comment": "Natureza financeira herdada da conta raiz",
+          "fieldName": "financialNature",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "planAccountFinancialNature",
+            "required": true,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": false,
+            "key": false
+          }
+        },
+        {
           "comment": "Arvore",
           "fieldName": "children",
           "list": true,
@@ -2379,6 +2393,40 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "Regra recorrente que originou o lançamento",
+          "fieldName": "recurringFinancial",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "recurringFinancial",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "relationShips": {
+            "fetchType": "LAZY",
+            "relationShip": "ManyToOne",
+            "bidirectional": false,
+            "reference": true
+          }
+        },
+        {
+          "comment": "Número da ocorrência dentro da recorrência",
+          "fieldName": "recurrenceNumber",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "int",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
         }
       ],
       "classExtends": "",
@@ -2386,6 +2434,34 @@
       "controllerAbstract": true,
       "serviceAbstract": true,
       "comment": "Lançamentos financeiros de receitas e despesas"
+    },
+    {
+      "entityName": "recurringFinancial",
+      "tableName": "recurring_financial",
+      "comment": "Regras de parcelamentos e lançamentos financeiros recorrentes",
+      "classExtends": "",
+      "generateDefaultControllers": true,
+      "controllerAbstract": false,
+      "serviceAbstract": true,
+      "onlyDTO": false,
+      "entityFields": [
+        {"comment":"Identificador","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Descrição","fieldName":"description","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Receita ou despesa","fieldName":"typeFinancial","list":false,"fieldProperties":{"fieldType":"typeFinancial","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Parcelamento ou recorrência contínua","fieldName":"recurrenceMode","list":false,"fieldProperties":{"fieldType":"financialRecurrenceMode","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Periodicidade","fieldName":"frequency","list":false,"fieldProperties":{"fieldType":"financialRecurrenceFrequency","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Valor fixo ou variável estimado","fieldName":"valueType","list":false,"fieldProperties":{"fieldType":"financialRecurrenceValueType","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Valor da ocorrência ou valor estimado","fieldName":"value","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Primeiro vencimento","fieldName":"firstDueDate","list":false,"fieldProperties":{"fieldType":"date","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Data final opcional","fieldName":"endDate","list":false,"fieldProperties":{"fieldType":"date","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Quantidade de parcelas","fieldName":"occurrenceCount","list":false,"fieldProperties":{"fieldType":"int","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Situação da regra","fieldName":"status","list":false,"fieldProperties":{"fieldType":"financialRecurrenceStatus","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Última ocorrência gerada","fieldName":"generatedOccurrences","list":false,"fieldProperties":{"fieldType":"int","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Caixa ou conta bancária","fieldName":"cash","list":false,"fieldProperties":{"fieldType":"cash","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false},"relationShips":{"fetchType":"LAZY","relationShip":"ManyToOne","bidirectional":false,"reference":true}},
+        {"comment":"Pessoa opcional","fieldName":"person","list":false,"fieldProperties":{"fieldType":"person","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false},"relationShips":{"fetchType":"LAZY","relationShip":"ManyToOne","bidirectional":false,"reference":true}},
+        {"comment":"Plano de contas","fieldName":"planAccount","list":false,"fieldProperties":{"fieldType":"planAccount","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false},"relationShips":{"fetchType":"LAZY","relationShip":"ManyToOne","bidirectional":false,"reference":true}},
+        {"comment":"Centro de custo","fieldName":"costCenter","list":false,"fieldProperties":{"fieldType":"costCenter","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false},"relationShips":{"fetchType":"LAZY","relationShip":"ManyToOne","bidirectional":false,"reference":true}}
+      ]
     },
     {
       "entityName": "transactions",
@@ -7698,6 +7774,24 @@
       "permissions": {"description":"Gerar relatorios configurados","resource":"screenReport","premissions":["VIEW"],"permissionDefault":false}
     },
     {
+      "comment": "Consulta um CEP no provedor e resolve a cidade interna pelo codigo IBGE",
+      "methodName": "lookupPostalCode",
+      "httpMethod": "GET",
+      "grouper": "address",
+      "metadata": {
+        "input": [{"parameterName":"postalCode","parameterType":"string","list":false}],
+        "output": [
+          {"parameterName":"postalCode","parameterType":"string","list":false},
+          {"parameterName":"address","parameterType":"string","list":false},
+          {"parameterName":"neighborhood","parameterType":"string","list":false},
+          {"parameterName":"complement","parameterType":"string","list":false},
+          {"parameterName":"city","parameterType":"city","list":false}
+        ],
+        "anonymous": false
+      },
+      "permissions": {"description":"Consultar endereco por CEP","resource":"postalCodeAddress","premissions":["VIEW"],"permissionDefault":false}
+    },
+    {
       "comment": "Retorna plano, limites, consumo e funcionalidades do tenant autenticado",
       "methodName": "getCurrentSubscription",
       "httpMethod": "GET",
@@ -7757,6 +7851,10 @@
       ]
     },
     {
+      "enumName": "planAccountFinancialNature",
+      "values": ["REVENUE", "EXPENSE"]
+    },
+    {
       "enumName": "typeCash",
       "values": [
         "CASH",
@@ -7769,6 +7867,22 @@
         "REVENUE",
         "EXPENSE"
       ]
+    },
+    {
+      "enumName": "financialRecurrenceMode",
+      "values": ["INSTALLMENT", "CONTINUOUS"]
+    },
+    {
+      "enumName": "financialRecurrenceFrequency",
+      "values": ["WEEKLY", "MONTHLY", "BIMONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL"]
+    },
+    {
+      "enumName": "financialRecurrenceValueType",
+      "values": ["FIXED", "VARIABLE_ESTIMATED"]
+    },
+    {
+      "enumName": "financialRecurrenceStatus",
+      "values": ["ACTIVE", "PAUSED", "ENDED"]
     },
     {
       "enumName": "theme",
