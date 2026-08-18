@@ -12,6 +12,7 @@ import com.smartverse.churchlitebackend.config.security.repository.MemberPortalC
 import com.smartverse.churchlitebackend.controller.memberportal.MemberPortalModels.*;
 import com.smartverse.churchlitebackend.repository.userconfirmation.UserConfirmationCustomRepository;
 import com.smartverse.churchlitebackend.service.email.EmailService;
+import com.smartverse.churchlitebackend.messaging.social.MemberProfileEventDispatcher;
 import com.smartverse.churchlitebackend_gen.entities.*;
 import com.smartverse.churchlitebackend_gen.enums.Status;
 import com.smartverse.churchlitebackend_gen.enums.TypePerson;
@@ -44,6 +45,7 @@ public class MemberPortalAccessService {
     private final TenantSchemaInterceptor schemaInterceptor;
     private final DBMigration dbMigration;
     private final EmailService emailService;
+    private final MemberProfileEventDispatcher memberProfileEventDispatcher;
     private final EntityManager entityManager;
     private final String frontendBaseUrl;
 
@@ -56,6 +58,7 @@ public class MemberPortalAccessService {
                                      TenantSchemaInterceptor schemaInterceptor,
                                      DBMigration dbMigration,
                                      EmailService emailService,
+                                     MemberProfileEventDispatcher memberProfileEventDispatcher,
                                      EntityManager entityManager,
                                      @Value("${app.frontend.base-url:${FRONTEND_BASE_URL:http://localhost:4200}}") String frontendBaseUrl) {
         this.linkRepository = linkRepository;
@@ -67,6 +70,7 @@ public class MemberPortalAccessService {
         this.schemaInterceptor = schemaInterceptor;
         this.dbMigration = dbMigration;
         this.emailService = emailService;
+        this.memberProfileEventDispatcher = memberProfileEventDispatcher;
         this.entityManager = entityManager;
         this.frontendBaseUrl = frontendBaseUrl;
     }
@@ -153,6 +157,7 @@ public class MemberPortalAccessService {
         }
 
         if (!existingAccess) sendConfirmation(access);
+        memberProfileEventDispatcher.schedule(access, member);
         return new RegistrationResponse(true, existingAccess);
     }
 
@@ -175,6 +180,22 @@ public class MemberPortalAccessService {
                 "<h2>Portal do membro</h2><p>Olá, " + escapeHtml(member.getPerson().getName()) +
                         ".</p><p>Use o link abaixo para confirmar seus dados e criar sua senha:</p><p><a href=\"" + url + "\">Criar meu acesso</a></p>",
                 "member-link-" + UUID.randomUUID());
+    }
+
+    public void scheduleProfileSync(UserSupplierEntity access) {
+        if (access.getAccessProfiles() == null || !access.getAccessProfiles().contains(AccessProfile.MEMBER)) return;
+        try {
+            switchSchema(access.getTenant());
+            entityManager.createQuery(
+                            "select member from PersonMemberEntity member join fetch member.person where member.accessUserHash = :accessId",
+                            PersonMemberEntity.class)
+                    .setParameter("accessId", access.getId())
+                    .getResultStream()
+                    .findFirst()
+                    .ifPresent(member -> memberProfileEventDispatcher.schedule(access, member));
+        } finally {
+            switchSchema(ADMIN_TENANT);
+        }
     }
 
     private PersonMemberEntity createMember(RegistrationRequest request, String cpf, String email) {

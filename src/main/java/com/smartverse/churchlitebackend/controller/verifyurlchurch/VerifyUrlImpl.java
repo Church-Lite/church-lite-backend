@@ -4,6 +4,8 @@ import com.potatotech.authorization.stereotype.Anonymous;
 import com.smartverse.churchlitebackend.config.migration.DBMigration;
 import com.smartverse.churchlitebackend.config.security.repository.AuthenticationRepository;
 import com.smartverse.churchlitebackend.config.security.service.AuthenticationService;
+import com.smartverse.churchlitebackend.service.memberportal.MemberPortalAccessService;
+import com.smartverse.churchlitebackend.messaging.social.TenantSyncPublisher;
 import com.smartverse.churchlitebackend.repository.userconfirmation.UserConfirmationCustomRepository;
 import com.smartverse.churchlitebackend_gen.endpoints.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,12 @@ public class VerifyUrlImpl implements VerifyURL, ResendConfirmation {
     @Autowired
     AuthenticationService authenticationService;
 
+    @Autowired
+    MemberPortalAccessService memberPortalAccessService;
+
+    @Autowired
+    TenantSyncPublisher tenantSyncPublisher;
+
     @Anonymous
     @Transactional
     @Override
@@ -46,6 +54,8 @@ public class VerifyUrlImpl implements VerifyURL, ResendConfirmation {
                 user.setActive(true);
                 authenticationRepository.save(user);
                 dbMigration.loadMigrateTenants(user.getTenant());
+                tenantSyncPublisher.schedule(user.getTenant(), true);
+                memberPortalAccessService.scheduleProfileSync(user);
             }
         }
 

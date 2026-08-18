@@ -6867,6 +6867,45 @@
       "onlyDTO": false
     },
     {
+      "comment": "Evento de sincronizacao de tenant com o Church Lite Social",
+      "entityName": "tenantSyncedEvent",
+      "tableName": "tenant_synced_event_dto",
+      "classExtends": "",
+      "entityFields": [
+        {"comment":"Identificador idempotente do evento","fieldName":"eventId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Tenant da igreja","fieldName":"tenant","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Indica se o tenant esta ativo","fieldName":"active","list":false,"fieldProperties":{"fieldType":"boolean","required":true,"valueDefault":"true"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Data e hora da alteracao","fieldName":"occurredAt","list":false,"fieldProperties":{"fieldType":"datetime","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}}
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": true
+    },
+    {
+      "comment": "Evento de sincronizacao do perfil de membro com o Church Lite Social",
+      "entityName": "memberProfileSyncedEvent",
+      "tableName": "member_profile_synced_event_dto",
+      "classExtends": "",
+      "entityFields": [
+        {"comment":"Identificador idempotente do evento","fieldName":"eventId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Identificador do acesso no Church Lite","fieldName":"accessId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Identificador do membro no tenant de origem","fieldName":"memberId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Identificador da pessoa no tenant de origem","fieldName":"personId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Tenant autorizado","fieldName":"tenant","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Nome publico do membro","fieldName":"name","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Email do acesso","fieldName":"email","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Telefone do perfil","fieldName":"phone","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Referencia da foto do perfil","fieldName":"image","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Indica se o acesso esta ativo e confirmado","fieldName":"active","list":false,"fieldProperties":{"fieldType":"boolean","required":true,"valueDefault":"false"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Data e hora da alteracao","fieldName":"occurredAt","list":false,"fieldProperties":{"fieldType":"datetime","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}}
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": true
+    },
+    {
       "comment": "Evento confirmado recebido do Smart Payment",
       "entityName": "paymentConfirmedEvent",
       "tableName": "payment_confirmed_event_dto",
@@ -8282,9 +8321,23 @@
   ],
   "messaging": {
     "RabbitMq": {
-      "pub": [],
+      "pub": [
+        {
+          "name":"tenantSynced",
+          "queue":"${SOCIAL_TENANT_QUEUE:smart.church.tenant.social}",
+          "routingKey":"tenant.synced"
+        },
+        {
+          "name":"memberProfileSynced",
+          "queue":"${SOCIAL_MEMBER_PROFILE_QUEUE:smart.church.member-profile.social}",
+          "routingKey":"member.profile.synced"
+        }
+      ],
       "sub": [
-        {"name":"paymentConfirmed","queue":"${PAYMENT_CONFIRMED_QUEUE:smart.payment.confirmed.church-lite}"}
+        {
+          "name":"paymentConfirmed",
+          "queue":"${PAYMENT_CONFIRMED_QUEUE:smart.payment.confirmed.church-lite}"
+        }
       ]
     }
   }

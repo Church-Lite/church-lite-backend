@@ -255,6 +255,14 @@ A aprovação consultiva usa `V20260817090000008__create_member_financial_approv
 
 Pendente para a próxima sessão: definir autenticação e projeção de identidade do `church-lite-social`, que possui banco separado. Não replicar credenciais. A alternativa preferida é validação do JWT do Church Lite, com UUID estável do acesso e tenant como claims confiáveis, e perfil social local provisionado sob demanda ou por evento.
 
+### Integração inicial com o Church Lite Social (18/08/2026)
+
+O cadastro/ativação do Portal do Membro publica após commit o evento `member.profile.synced` no exchange `smart.church.events`. O contrato contém uma chave idempotente, `user_access.id`, IDs de membro e pessoa, tenant e dados públicos mínimos do perfil. Novos acessos ainda pendentes são enviados inativos; a confirmação do e-mail publica a atualização ativa. CPF, senha e JWT nunca são publicados. A fila padrão do consumidor é `smart.church.member-profile.social`, configurável por `SOCIAL_MEMBER_PROFILE_QUEUE`.
+
+O evento independente `tenant.synced` garante a projeção de todas as igrejas no Social. Na inicialização, o Church Lite publica os tenants distintos existentes em `ADMIN.user_access`; novas confirmações também publicam o evento após commit. O Social cria/migra o schema homônimo no banco próprio. A fila padrão é `smart.church.tenant.social`, configurável por `SOCIAL_TENANT_QUEUE`.
+
+Também na inicialização, `MemberProfileReconciliationPublisher` busca todos os acessos históricos que possuem `AccessProfile.MEMBER`, abre transação no schema de cada tenant, resolve `person_member.access_user_hash` e republica `member.profile.synced`. Logs informam total encontrado, publicação individual sem dados sensíveis, vínculos ausentes e total concluído. Pessoas sem acesso MEMBER não geram `social_access` até a ativação do Portal do Membro.
+
 
 ## Atualização — traduções customizadas (15/07/2026)
 

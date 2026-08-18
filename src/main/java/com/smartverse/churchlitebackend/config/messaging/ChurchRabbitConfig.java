@@ -11,15 +11,17 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.nio.charset.StandardCharsets;
 
 @Configuration
-@RabbitExchange("smart.payment.events")
-public class PaymentRabbitConfig extends RabbitConfig {
-    private static final String EXCHANGE = "smart.payment.events";
+@RabbitExchange("smart.church.events")
+public class ChurchRabbitConfig extends RabbitConfig {
+    private static final String EXCHANGE = "smart.church.events";
+    private static final String PAYMENT_EXCHANGE = "smart.payment.events";
     private static final String ROUTING_KEY = "payment.confirmed.CHURCH_LITE";
 
     @Override
@@ -51,11 +53,16 @@ public class PaymentRabbitConfig extends RabbitConfig {
     }
 
     @Bean
+    public TopicExchange paymentTopicExchange() {
+        return new TopicExchange(PAYMENT_EXCHANGE);
+    }
+
+    @Bean
     public Binding paymentConfirmedBinding(
             Queue paymentConfirmedQueue,
-            TopicExchange appTopicExchange) {
+            @Qualifier("paymentTopicExchange") TopicExchange paymentTopicExchange) {
         return BindingBuilder.bind(paymentConfirmedQueue)
-                .to(appTopicExchange)
+                .to(paymentTopicExchange)
                 .with(ROUTING_KEY);
     }
 }
