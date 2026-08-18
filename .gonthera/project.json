@@ -3617,6 +3617,20 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "Identificador do acesso vinculado ao portal do membro",
+          "fieldName": "accessUserHash",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "uuid",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          }
         }
       ],
       "classExtends": "",

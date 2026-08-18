@@ -243,6 +243,18 @@ Validação realizada com JDK 25:
 JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw clean compile -DskipTests
 ```
 
+## Atualização — Portal do Membro, transparência e aprovação consultiva (18/08/2026)
+
+O acesso diferencia `MEMBER` e `STAFF` no mesmo `user_access`; `XAccessProfile` restringe sessões MEMBER às rotas `/church-lite/member-api/`. O membro é ligado ao acesso por `person_member.access_user_hash`. Autocadastro e ativação individual usam links UUID, confirmação de e-mail e CPF. A estrutura inicial está em `V20260817090000006__create_member_portal_access.sql`.
+
+`GET /member-api/dashboard` retorna apenas nome do próprio membro, eventos futuros e contribuições pessoais recebidas. Os repositories de membro, eventos e contribuições são separados por entidade; não voltar a colocar `@EntityGraph(eventsType)` em repository cuja raiz seja `PersonMemberEntity`.
+
+A transparência é configurada pelos endpoints `/memberPortal/transparency` e persistida por `V20260817090000007__create_member_portal_transparency.sql`. `GET /member-api/transparency` usa movimentações realizadas e aplica `DISABLED`, `FULL` ou `PARTIAL`, além de `HIDDEN`, `TOTAL_ONLY` e `DETAILED` por plano de contas. O contrato não serializa pessoa ou doador.
+
+A aprovação consultiva usa `V20260817090000008__create_member_financial_approval.sql`. Endpoints administrativos `/memberApproval/*` criam prestações com um ou mais `cash_transactions` fechados, publicam e encerram. Endpoints `/member-api/financial-approvals` listam e registram voto. O voto não possui FK para membro/usuário; uma impressão SHA-256 específica da prestação impede duplicidade e a gestão recebe somente agregados. Esse fluxo nunca participa das regras de fechamento ou aprovação administrativa do caixa.
+
+Pendente para a próxima sessão: definir autenticação e projeção de identidade do `church-lite-social`, que possui banco separado. Não replicar credenciais. A alternativa preferida é validação do JWT do Church Lite, com UUID estável do acesso e tenant como claims confiáveis, e perfil social local provisionado sob demanda ou por evento.
+
 
 ## Atualização — traduções customizadas (15/07/2026)
 

@@ -7,6 +7,7 @@ import com.potatotech.authorization.tenant.TenantContext;
 import com.smartverse.churchlitebackend.config.security.model.RegisterDTO;
 import com.smartverse.churchlitebackend.config.security.model.UserSupplierDTO;
 import com.smartverse.churchlitebackend.config.security.model.UserSupplierEntity;
+import com.smartverse.churchlitebackend.config.security.model.AccessProfile;
 import com.smartverse.churchlitebackend.config.security.repository.AuthenticationRepository;
 import com.smartverse.churchlitebackend.repository.userconfirmation.UserConfirmationCustomRepository;
 import com.smartverse.churchlitebackend.service.email.EmailService;
@@ -22,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.HashSet;
 
 @Service
 public class AuthenticationService {
@@ -64,6 +66,7 @@ public class AuthenticationService {
                         user.getId(),
                         user.getName(),
                         user.getTenant(),
+                        user.getAccessProfiles(),
                         authenticate.generateToken(setUserSupplier(user))))
                 .toList();
 
@@ -74,7 +77,8 @@ public class AuthenticationService {
         return authenticatedChurches;
     }
 
-    public record AuthenticatedChurch(UUID userId, String name, String tenant, String accessToken) {}
+    public record AuthenticatedChurch(UUID userId, String name, String tenant,
+                                      java.util.Set<AccessProfile> accessProfiles, String accessToken) {}
 
     public UserSupplier validateToken(String token){
         token = token.replace("Bearer ","");
@@ -120,6 +124,7 @@ public class AuthenticationService {
         user.setName(register.name());
         user.setEmail(normalizedEmail);
         user.setCpf(normalizedCpf);
+        user.setAccessProfiles(new HashSet<>(java.util.Set.of(AccessProfile.STAFF)));
         var pass = new BCryptPasswordEncoder().encode(register.password());
         user.setPassword(pass);
         user.setUserConfirm(false);

@@ -15,6 +15,8 @@ public interface AuthenticationRepository extends JpaRepository<UserSupplierEnti
 
     Optional<UserSupplierEntity> findFirstByEmailIgnoreCaseOrderByIdAsc(String email);
 
+    Optional<UserSupplierEntity> findFirstByEmailIgnoreCaseAndTenant(String email, String tenant);
+
     List<UserSupplierEntity> findAllByEmailOrderByIdAsc(String email);
 
     List<UserSupplierEntity> findAllByCpfOrderByIdAsc(String cpf);
