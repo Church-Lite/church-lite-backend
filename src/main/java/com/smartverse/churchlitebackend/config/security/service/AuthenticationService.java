@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.HashSet;
 
@@ -170,9 +171,8 @@ public class AuthenticationService {
 
     private void sendConfirmationEmail(UserSupplierEntity user, String token) {
         var confirmationUrl = frontendBaseUrl.replaceAll("/+$", "") + "/register-church/" + token;
-        var emailContent = emailService.loadModel("new-churc")
-                .replace("{{name}}", escapeHtml(user.getName()))
-                .replace("{{url}}", confirmationUrl);
+        var emailContent = emailService.renderModel("new-churc",
+                Map.of("name", escapeHtml(user.getName()), "url", confirmationUrl));
         emailService.sendEmail(user.getEmail(), "Confirme sua conta no Church Lite", emailContent, token);
     }
 

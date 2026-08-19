@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EmailService {
@@ -48,6 +49,17 @@ public class EmailService {
 
     public String loadModel(String modelName) {
         return FileCommon.loadMod(modelName);
+    }
+
+    public String renderModel(String modelName, Map<String, String> values) {
+        var content = loadModel(modelName);
+        for (var entry : values.entrySet()) {
+            content = content.replace("{{" + entry.getKey() + "}}", entry.getValue());
+        }
+        if (content.matches("(?s).*\\{\\{[^}]+}}.*")) {
+            throw new IllegalStateException("Email template contains unresolved placeholders: " + modelName);
+        }
+        return content;
     }
 
     private record ResendEmailRequest(String from, List<String> to, String subject, String html) {}

@@ -1,6 +1,6 @@
 # Handoff — Church Lite Backend
 
-> Atualizado em 17/07/2026.
+> Atualizado em 19/08/2026.
 
 > Configuração da igreja e aprovação de fechamento documentadas em `spec/SESSION_2026-07-17_CASH_CLOSING.md` na raiz do workspace.
 
@@ -436,3 +436,59 @@ O endpoint Gonthera autenticado `GET /lookupPostalCode` recebe o CEP, e `PostalC
 - O endpoint HTTP `POST /member-api/profile-image/apply-if-empty` foi removido. A atualização chega exclusivamente pelo evento `social.profile.image.updated`, na fila padrão `smart.church.member-image.church-lite`.
 - O consumidor valida tenant, `accessId`, `memberId` e `personId`; `person.image` só é preenchido quando está nulo ou vazio, portanto uma foto administrativa existente nunca é sobrescrita.
 - O fluxo registra logs de recebimento, aplicação e descarte do evento.
+
+## Atualização — identidade, mensageria e Portal do Membro (19/08/2026)
+
+O Church Lite permanece como autoridade de autenticação, identidade administrativa, associação membro–usuário e armazenamento. O Social recebe somente projeções mínimas e nunca consulta diretamente o banco deste serviço.
+
+### Sincronização com o Social
+
+Todos os eventos usam o exchange `smart.church.events` e classes de contrato geradas pelo Gonthera CLI. O Church Lite publica:
+
+- `tenant.synced` para a fila `smart.church.tenant.social`, na criação e na reconciliação dos tenants existentes;
+- `member.profile.synced` para a fila `smart.church.member-profile.social`, no cadastro/ativação e na reconciliação dos membros existentes.
+
+A reconciliação retroativa repara também `person_member.access_user_hash` quando existe uma correspondência única: primeiro por CPF normalizado e, como fallback, por e-mail exato em minúsculas. Ausência ou ambiguidade não é resolvida por aproximação; o item é ignorado com log de diagnóstico. Isso permite projetar usuários antigos sem alterar silenciosamente vínculos duvidosos.
+
+Consumers assíncronos devem definir explicitamente o `TenantContext` antes de abrir a transação JPA e restaurá-lo em `finally`. Nunca chamar um service `@Transactional` com tenant nulo, pois o provider multi-tenant precisa do schema antes de obter a conexão.
+
+### Foto social refletida no cadastro administrativo
+
+O evento `social.profile.image.updated` é consumido pela fila `smart.church.member-image.church-lite`. O processamento:
+
+1. valida tenant, acesso, membro e pessoa;
+2. recusa combinações inconsistentes;
+3. preenche `person.image` somente quando o cadastro administrativo ainda não possui foto;
+4. cria uma notificação administrativa `MEMBER_PROFILE_IMAGE_UPDATED` para cada destinatário configurado no tenant;
+5. deduplica notificações por evento e destinatário.
+
+O endpoint HTTP que aplicava imagem diretamente foi removido. Esta integração é exclusivamente por mensageria. O fluxo possui logs com identificadores técnicos e resultado, sem JWT, CPF ou conteúdo sensível.
+
+### Storage privado por tenant
+
+Uploads e exclusões feitos pelo perfil `MEMBER` continuam restritos à pasta do próprio UUID de acesso. Para leitura e geração de URL assinada, `StorageImpl` extrai o UUID proprietário da chave e confirma no schema administrativo que ele pertence ao mesmo tenant do solicitante. Assim, membros da mesma igreja podem visualizar avatares e imagens de posts uns dos outros, enquanto o acesso entre tenants permanece negado.
+
+Objetos não são públicos e exigem token para solicitar a URL temporária. Novas chaves sociais seguem `accessUuid/imageUuid.ext`; chaves legadas sem proprietário identificável não devem ser liberadas automaticamente. Decisões de autorização e recusas possuem logs próprios.
+
+### Portal do Membro
+
+`/member-api/dashboard` exige vínculo válido entre o acesso autenticado e `person_member`; `member_portal_access_not_linked` indica ausência desse relacionamento, não falta de permissão administrativa. Rotas `/member-api/**` são reconhecidas pelo interceptor como portal de membro, enquanto rotas gerenciais continuam sujeitas ao perfil administrativo.
+
+O dashboard do membro fornece agenda e histórico/resumo das próprias contribuições. Transparência e aprovações permanecem sob as configurações da igreja e nunca ampliam o acesso aos dados de outro tenant.
+
+### Templates de e-mail
+
+Os e-mails usam modelos HTML em `src/main/resources/models/email/`:
+
+- `new-churc.mo`: confirmação da igreja/conta;
+- `member-access-invitation.mo`: convite de acesso do membro;
+- `member-access-confirmation.mo`: confirmação do acesso do membro.
+
+`EmailService.renderModel` substitui placeholders a partir de um mapa e falha quando resta placeholder obrigatório sem valor. Não voltar a montar esses e-mails por concatenação de HTML em Java. `POST /resendConfirmation` continua sendo a rota anônima e neutra para reenvio.
+
+### Próximas evoluções relacionadas
+
+- publicar evento de remoção física de objetos quando conteúdo social for excluído;
+- ampliar testes de contrato e idempotência RabbitMQ;
+- criar métricas/alertas para eventos falhos além dos logs;
+- manter grupos da comunidade no Social, sem confundi-los com grupos administrativos de permissão deste backend.

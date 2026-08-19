@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -176,9 +177,9 @@ public class MemberPortalAccessService {
         if (email == null || email.isBlank()) throw error(HttpStatus.UNPROCESSABLE_ENTITY, "member_portal_email_required");
         var path = memberLink(memberId);
         var url = frontendBaseUrl.replaceAll("/+$", "") + path;
-        emailService.sendEmail(email, "Ative seu acesso ao portal do membro",
-                "<h2>Portal do membro</h2><p>Olá, " + escapeHtml(member.getPerson().getName()) +
-                        ".</p><p>Use o link abaixo para confirmar seus dados e criar sua senha:</p><p><a href=\"" + url + "\">Criar meu acesso</a></p>",
+        var content = emailService.renderModel("member-access-invitation",
+                Map.of("name", escapeHtml(member.getPerson().getName()), "url", url));
+        emailService.sendEmail(email, "Ative seu acesso ao portal do membro", content,
                 "member-link-" + UUID.randomUUID());
     }
 
@@ -269,9 +270,9 @@ public class MemberPortalAccessService {
         confirmation.setHash(UUID.randomUUID().toString());
         confirmationRepository.saveAndFlush(confirmation);
         var url = frontendBaseUrl.replaceAll("/+$", "") + "/member-access/confirm/" + confirmation.getHash();
-        emailService.sendEmail(access.getEmail(), "Confirme seu acesso ao portal do membro",
-                "<h2>Confirme seu acesso</h2><p>Olá, " + escapeHtml(access.getName()) +
-                        ".</p><p><a href=\"" + url + "\">Confirmar meu e-mail</a></p>", confirmation.getHash());
+        var content = emailService.renderModel("member-access-confirmation",
+                Map.of("name", escapeHtml(access.getName()), "url", url));
+        emailService.sendEmail(access.getEmail(), "Confirme seu acesso ao portal do membro", content, confirmation.getHash());
     }
 
     private String resolveTenant(UUID churchId) {
