@@ -19,6 +19,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Component
@@ -79,10 +80,55 @@ public class MemberProfileReconciliationPublisher {
     private PersonMemberEntity loadMember(UserSupplierEntity access) {
         migration.loadMigrateTenants(access.getTenant());
         TenantContext.setCurrentTenant(access.getTenant());
-        return transactions.execute(status -> memberRepository.findAll().stream()
-                .filter(member -> access.getId().equals(member.getAccessUserHash()))
-                .findFirst()
-                .orElse(null));
+        return transactions.execute(status -> {
+            var members = memberRepository.findAll();
+            var linked = members.stream()
+                    .filter(member -> access.getId().equals(member.getAccessUserHash()))
+                    .findFirst().orElse(null);
+            if (linked != null) return linked;
+
+            var candidates = members.stream()
+                    .filter(member -> member.getAccessUserHash() == null)
+                    .filter(member -> matchesIdentity(access, member))
+                    .toList();
+            if (candidates.size() != 1) {
+                log.warn("member_profile_reconciliation_link_failed tenant={} accessId={} candidateCount={} reason={}",
+                        access.getTenant(), access.getId(), candidates.size(),
+                        candidates.isEmpty() ? "identity_not_found" : "identity_ambiguous");
+                return null;
+            }
+
+            var member = candidates.getFirst();
+            member.setAccessUserHash(access.getId());
+            memberRepository.saveAndFlush(member);
+            log.info("member_profile_reconciliation_link_repaired tenant={} accessId={} memberId={} match={}",
+                    access.getTenant(), access.getId(), member.getId(), matchType(access, member));
+            return member;
+        });
+    }
+
+    private boolean matchesIdentity(UserSupplierEntity access, PersonMemberEntity member) {
+        var person = member.getPerson();
+        var accessCpf = digits(access.getCpf());
+        var memberCpf = person.getPersonalDocs() == null ? null : digits(person.getPersonalDocs().getCpf());
+        if (accessCpf != null) return accessCpf.equals(memberCpf);
+        var accessEmail = normalizeEmail(access.getEmail());
+        var memberEmail = person.getPersonalEmail() == null ? null : normalizeEmail(person.getPersonalEmail().getEmail());
+        return accessEmail != null && accessEmail.equals(memberEmail);
+    }
+
+    private String matchType(UserSupplierEntity access, PersonMemberEntity member) {
+        return digits(access.getCpf()) != null ? "cpf" : "email";
+    }
+
+    private String digits(String value) {
+        if (value == null || value.isBlank()) return null;
+        var normalized = value.replaceAll("\\D", "");
+        return normalized.isBlank() ? null : normalized;
+    }
+
+    private String normalizeEmail(String value) {
+        return value == null || value.isBlank() ? null : value.trim().toLowerCase(Locale.ROOT);
     }
 
     private MemberProfileSyncedEventDTO event(UserSupplierEntity access, PersonMemberEntity member) {

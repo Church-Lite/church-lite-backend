@@ -51,8 +51,10 @@ public class CashTransactionsCustomController implements GetIDCashTransaction, G
 
     @Override
     public ResponseEntity<GetBalanceBankAccountOutput> getBalanceBankAccount(UUID bankAccount) {
+
         var output = new GetBalanceBankAccountOutput();
         var values = cashTransactionsCustomRepository.getbalanceBankAccount(bankAccount);
+
         values.ifPresent(item -> item.forEach(e -> {
             if(e.get("type_financial").equals("0")){
                 output.revenues = Double.parseDouble(e.get("valor").toString());

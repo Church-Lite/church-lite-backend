@@ -7354,6 +7354,25 @@
       "controllerAbstract": false,
       "serviceAbstract": false,
       "onlyDTO": false
+    },
+    {
+      "comment": "Evento de atualizacao da imagem do membro originado pelo Social",
+      "entityName": "socialProfileImageUpdatedEvent",
+      "tableName": "social_profile_image_updated_event_dto",
+      "classExtends": "",
+      "entityFields": [
+        {"comment":"Identificador idempotente","fieldName":"eventId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Identificador do acesso","fieldName":"accessId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Identificador do membro","fieldName":"memberId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Identificador da pessoa","fieldName":"personId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Tenant da igreja","fieldName":"tenant","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Chave da imagem no storage","fieldName":"image","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Data da alteracao","fieldName":"occurredAt","list":false,"fieldProperties":{"fieldType":"datetime","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}}
+      ],
+      "generateDefaultControllers": false,
+      "controllerAbstract": false,
+      "serviceAbstract": false,
+      "onlyDTO": true
     }
   ],
   "endpoints": [
@@ -8156,7 +8175,7 @@
     },
     {
       "enumName": "notificationType",
-      "values": ["APPOINTMENT_24_HOURS", "APPOINTMENT_1_HOUR", "CASH_PENDING_APPROVAL", "CASH_APPROVED", "CASH_REJECTED"]
+      "values": ["APPOINTMENT_24_HOURS", "APPOINTMENT_1_HOUR", "CASH_PENDING_APPROVAL", "CASH_APPROVED", "CASH_REJECTED", "MEMBER_PROFILE_IMAGE_UPDATED"]
     },
     {
       "enumName": "appointmentStatus",
@@ -8337,6 +8356,10 @@
         {
           "name":"paymentConfirmed",
           "queue":"${PAYMENT_CONFIRMED_QUEUE:smart.payment.confirmed.church-lite}"
+        },
+        {
+          "name":"socialProfileImageUpdated",
+          "queue":"${CHURCH_MEMBER_IMAGE_QUEUE:smart.church.member-image.church-lite}"
         }
       ]
     }

@@ -13,6 +13,8 @@ import com.smartverse.churchlitebackend_gen.repositories.AppointmentsRepository;
 import com.smartverse.churchlitebackend_gen.repositories.UserConfigurationRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -23,6 +25,7 @@ import java.util.UUID;
 
 @Service
 public class NotificationBusinessService {
+    private static final Logger log = LoggerFactory.getLogger(NotificationBusinessService.class);
     private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
     private static final String PUBLIC_FIELDS = "id,type,title,message,createdAt,readAt,referenceType,referenceId,actionUrl";
 
@@ -79,7 +82,14 @@ public class NotificationBusinessService {
     @Transactional
     public void create(UserConfigurationEntity recipient, NotificationType type, String title, String message,
                        String referenceType, UUID referenceId, String actionUrl, String deduplicationKey) {
-        if (recipient == null || repository.existsByDeduplicationKey(deduplicationKey)) return;
+        if (recipient == null) {
+            log.warn("notification_skipped type={} referenceType={} referenceId={} reason=recipient_missing", type, referenceType, referenceId);
+            return;
+        }
+        if (repository.existsByDeduplicationKey(deduplicationKey)) {
+            log.info("notification_skipped recipientId={} type={} referenceType={} referenceId={} reason=duplicate", recipient.getId(), type, referenceType, referenceId);
+            return;
+        }
         var notification = new NotificationEntity();
         notification.setRecipient(recipient);
         notification.setType(type);
@@ -91,6 +101,8 @@ public class NotificationBusinessService {
         notification.setActionUrl(actionUrl);
         notification.setDeduplicationKey(deduplicationKey);
         repository.save(notification);
+        log.info("notification_created notificationId={} recipientId={} type={} referenceType={} referenceId={} deduplicationKey={}",
+                notification.getId(), recipient.getId(), type, referenceType, referenceId, deduplicationKey);
     }
 
     private UserConfigurationEntity currentUser() {

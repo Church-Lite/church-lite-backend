@@ -49,5 +49,7 @@ public class MemberDashboardService {
         return new Dashboard(person.getName(), value(monthTotal), value(yearTotal), events, contributions);
     }
 
-    private double value(Double value) { return value == null ? 0 : value; }
+    private double value(Double value) {
+        return value == null ? 0 : value;
+    }
 }

@@ -431,3 +431,8 @@ A migration `V20260815090000006__seed_standard_screen_reports.sql` cadastra em c
 ## Atualização — consulta de CEP via ViaCEP (17/08/2026)
 
 O endpoint Gonthera autenticado `GET /lookupPostalCode` recebe o CEP, e `PostalCodeLookupService` chama o ViaCEP por OpenFeign. A cidade é obrigatoriamente resolvida por nome e sigla da UF no schema do tenant antes da resposta; o IBGE externo é ignorado. O contrato retorna CEP formatado, logradouro, bairro, complemento e `CityDTO`; o frontend nunca conhece o payload externo. Configure `VIA_CEP_BASE_URL` quando necessário; os timeouts são 3s para conexão e 5s para leitura.
+## Integração da foto do perfil social (2026-08-18)
+
+- O endpoint HTTP `POST /member-api/profile-image/apply-if-empty` foi removido. A atualização chega exclusivamente pelo evento `social.profile.image.updated`, na fila padrão `smart.church.member-image.church-lite`.
+- O consumidor valida tenant, `accessId`, `memberId` e `personId`; `person.image` só é preenchido quando está nulo ou vazio, portanto uma foto administrativa existente nunca é sobrescrita.
+- O fluxo registra logs de recebimento, aplicação e descarte do evento.

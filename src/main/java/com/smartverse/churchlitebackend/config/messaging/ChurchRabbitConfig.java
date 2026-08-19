@@ -23,6 +23,7 @@ public class ChurchRabbitConfig extends RabbitConfig {
     private static final String EXCHANGE = "smart.church.events";
     private static final String PAYMENT_EXCHANGE = "smart.payment.events";
     private static final String ROUTING_KEY = "payment.confirmed.CHURCH_LITE";
+    private static final String MEMBER_IMAGE_ROUTING_KEY = "social.profile.image.updated";
 
     @Override
     protected String resolveExchangeName() {
@@ -64,5 +65,20 @@ public class ChurchRabbitConfig extends RabbitConfig {
         return BindingBuilder.bind(paymentConfirmedQueue)
                 .to(paymentTopicExchange)
                 .with(ROUTING_KEY);
+    }
+
+    @Bean
+    public Queue socialProfileImageUpdatedQueue(
+            @Value("${CHURCH_MEMBER_IMAGE_QUEUE:smart.church.member-image.church-lite}") String queueName) {
+        return new Queue(queueName, true);
+    }
+
+    @Bean
+    public Binding socialProfileImageUpdatedBinding(
+            Queue socialProfileImageUpdatedQueue,
+            TopicExchange appTopicExchange) {
+        return BindingBuilder.bind(socialProfileImageUpdatedQueue)
+                .to(appTopicExchange)
+                .with(MEMBER_IMAGE_ROUTING_KEY);
     }
 }
