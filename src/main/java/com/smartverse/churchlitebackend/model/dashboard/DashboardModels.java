@@ -14,7 +14,8 @@ public final class DashboardModels {
                                   UUID centroCustoId, UUID planoContaId) {
     }
 
-    public record Indicator(double valorTotal, double valorPeriodoAnterior, Double percentualVariacao) {
+    public record Indicator(double valorTotal, double valorPeriodoAnterior, Double percentualVariacao,
+                            double valorPrevisto) {
     }
 
     public record Result(double valorResultado, String situacao) {

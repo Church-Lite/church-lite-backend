@@ -56,17 +56,21 @@ public class DashboardService {
         double expense = total(current, TypeFinancial.EXPENSE);
         double previousRevenue = total(previous, TypeFinancial.REVENUE);
         double previousExpense = total(previous, TypeFinancial.EXPENSE);
+        List<FinancialEntity> pending = allFinancials.stream()
+                .filter(f -> pendingMatches(f, filter, openCashIds))
+                .toList();
+        double plannedRevenue = pending.stream().filter(f -> f.getTypeFinancial() == TypeFinancial.REVENUE)
+                .mapToDouble(f -> number(f.getValue())).sum();
+        double plannedExpense = pending.stream().filter(f -> f.getTypeFinancial() == TypeFinancial.EXPENSE)
+                .mapToDouble(f -> number(f.getValue())).sum();
         Balances balances = balances(allTransactions, sessions, filter, openCashIds);
         FinancialSummary summary = new FinancialSummary(
-                new Indicator(revenue, previousRevenue, variation(revenue, previousRevenue)),
-                new Indicator(expense, previousExpense, variation(expense, previousExpense)),
+                new Indicator(revenue, previousRevenue, variation(revenue, previousRevenue), plannedRevenue),
+                new Indicator(expense, previousExpense, variation(expense, previousExpense), plannedExpense),
                 new Result(revenue - expense, situation(revenue - expense)),
                 new AvailableBalance(balances.saldoTotal(), balances.saldoContasBancarias(), balances.saldoCaixas(),
                         balances.contasBancarias().size(), balances.caixas().size()));
 
-        List<FinancialEntity> pending = allFinancials.stream()
-                .filter(f -> pendingMatches(f, filter, openCashIds))
-                .toList();
         return new FinancialSnapshot(summary, evolution(current, pending, start, end), costCenters(current, expense),
                 planAccounts(current, expense), balances, recent(current), alerts(current, sessions), filters());
     }

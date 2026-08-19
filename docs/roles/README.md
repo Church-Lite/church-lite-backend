@@ -21,6 +21,11 @@ corrigir ou revisar qualquer funcionalidade.
 
 ## Gonthera é a fonte dos contratos
 
+O projeto deve ser construído orientado ao contrato: tudo que puder ser representado pelo Gonthera deve ser declarado
+nele — entidades, campos, enums, DTOs, repositories, endpoints e mensageria. O código manual apenas implementa as
+regras específicas sobre essa base gerada. Assim, uma alteração de modelo ou uma futura geração para outra linguagem
+fica concentrada no contrato, reduzindo mudanças espalhadas pelo projeto.
+
 - Entidades, DTOs, enums, endpoints e mensageria compatíveis com o gerador devem ser declarados primeiro em
   `.gonthera/project.json`.
 - Todo endpoint HTTP de negócio deve ser gerado pelo Gonthera.
@@ -74,6 +79,11 @@ JAVA_HOME=/home/geovane/.jdks/ms-25.0.3 ./mvnw gonthera-cli:generate-sources
 - Consultas de relatório ou projeção devem retornar DTOs/projections tipados, não `Map<String, Object>` ou arrays de
   `Object` quando houver alternativa clara.
 - Repositories não devem conter regra de negócio; apenas persistência e consultas.
+- Quando o Gonthera já gerar o repository da entidade, reutilizá-lo diretamente ou criar uma extensão dele para
+  consultas customizadas; não criar interfaces manuais paralelas estendendo apenas `Repository<Entity, UUID>`.
+- Enums gerados pelo contrato devem respeitar o mapeamento persistente produzido pelo gerador; neste projeto JPA usa
+  ordinal (`integer`) para campos enum. Migrations não devem criar esses campos como `varchar` sem uma decisão explícita
+  e compatível no contrato/gerador.
 
 ## Modelagem e migrations
 

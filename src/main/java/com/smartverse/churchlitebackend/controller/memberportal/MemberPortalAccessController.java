@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @RestController
 public class MemberPortalAccessController implements GetMemberPortalLink, GetMemberPortalMemberLink,
-        SendMemberPortalLink, GetMemberRegistrationContext, RegisterMemberAccess {
+        GetMemberPortalUserLink, SendMemberPortalLink, LinkMemberPortalUser, GetMemberRegistrationContext, RegisterMemberAccess {
     private final MemberPortalAccessService service;
     private final ObjectMapper objectMapper;
 
@@ -38,10 +38,27 @@ public class MemberPortalAccessController implements GetMemberPortalLink, GetMem
     }
 
     @Override
+    public ResponseEntity<GetMemberPortalUserLinkOutput> getMemberPortalUserLink(UUID userId) {
+        var link = service.linkedMemberByUser(userId);
+        var output = new GetMemberPortalUserLinkOutput();
+        output.memberId = link.memberId();
+        output.personId = link.personId();
+        return ResponseEntity.ok(output);
+    }
+
+    @Override
     public ResponseEntity<SendMemberPortalLinkOutput> sendMemberPortalLink(SendMemberPortalLinkInput input) {
         service.sendMemberLink(input.memberId);
         var output = new SendMemberPortalLinkOutput();
         output.sent = true;
+        return ResponseEntity.ok(output);
+    }
+
+    @Override
+    public ResponseEntity<LinkMemberPortalUserOutput> linkMemberPortalUser(LinkMemberPortalUserInput input) {
+        service.linkExistingUser(input.memberId, input.userId);
+        var output = new LinkMemberPortalUserOutput();
+        output.linked = true;
         return ResponseEntity.ok(output);
     }
 

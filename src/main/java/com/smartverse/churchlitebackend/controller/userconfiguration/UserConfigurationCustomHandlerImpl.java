@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-public class UserConfigurationCustomHandlerImpl implements GetUser, CreateChurchUser {
+public class UserConfigurationCustomHandlerImpl implements GetUser, CreateChurchUser, PromoteMemberPortalUser, DeleteChurchUser {
 
     private final UserConfigurationCustomRepository userConfigurationRepository;
     private final UserConfigurationDTOConverter userConfigurationDTOConverter;
@@ -41,6 +41,21 @@ public class UserConfigurationCustomHandlerImpl implements GetUser, CreateChurch
     public ResponseEntity<CreateChurchUserOutput> createChurchUser(CreateChurchUserInput input) {
         var output = new CreateChurchUserOutput();
         output.user = userConfigurationService.createChurchUser(input);
+        return ResponseEntity.ok(output);
+    }
+
+    @Override
+    public ResponseEntity<PromoteMemberPortalUserOutput> promoteMemberPortalUser(PromoteMemberPortalUserInput input) {
+        var output = new PromoteMemberPortalUserOutput();
+        output.user = userConfigurationService.promoteMember(input.memberId);
+        return ResponseEntity.ok(output);
+    }
+
+    @Override
+    public ResponseEntity<DeleteChurchUserOutput> deleteChurchUser(DeleteChurchUserInput input) {
+        userConfigurationService.deleteChurchUser(input.userConfigurationId);
+        var output = new DeleteChurchUserOutput();
+        output.deleted = true;
         return ResponseEntity.ok(output);
     }
 }

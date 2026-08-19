@@ -2926,6 +2926,29 @@
             "reference": "",
             "enableFieldsFilter": true
           }
+        },
+        {
+          "comment": "CPF do usuário",
+          "fieldName": "cpf",
+          "list": false,
+          "fieldProperties": {
+            "fieldType": "string",
+            "required": false,
+            "valueDefault": ""
+          },
+          "metadata": {
+            "nullable": true,
+            "key": false
+          },
+          "frontendProperties": {
+            "label": "CPF",
+            "size": 6,
+            "hidden": false,
+            "order": 5,
+            "guidance": "",
+            "reference": "",
+            "enableFieldsFilter": true
+          }
         }
       ],
       "classExtends": "",
@@ -7872,6 +7895,11 @@
             "list": false
           },
           {
+            "parameterName": "cpf",
+            "parameterType": "string",
+            "list": false
+          },
+          {
             "parameterName": "password",
             "parameterType": "password",
             "list": false
@@ -8195,9 +8223,29 @@
       "permissions":{"description":"Gerenciar acesso ao Portal do Membro","resource":"memberPortalAccess","premissions":["VIEW"],"permissionDefault":false}
     },
     {
+      "comment":"Retorna o membro vinculado a um acesso de usuario","methodName":"getMemberPortalUserLink","httpMethod":"GET","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"userId","parameterType":"uuid","list":false}],"output":[{"parameterName":"memberId","parameterType":"uuid","list":false},{"parameterName":"personId","parameterType":"uuid","list":false}]},
+      "permissions":{"description":"Consultar vinculo do usuario ao Portal do Membro","resource":"memberPortalAccess","premissions":["VIEW"],"permissionDefault":false}
+    },
+    {
       "comment":"Envia o link de ativacao ao membro","methodName":"sendMemberPortalLink","httpMethod":"POST","grouper":"memberPortal",
       "metadata":{"anonymous":false,"input":[{"parameterName":"memberId","parameterType":"uuid","list":false}],"output":[{"parameterName":"sent","parameterType":"boolean","list":false}]},
       "permissions":{"description":"Enviar acesso ao Portal do Membro","resource":"memberPortalAccess","premissions":["CREATE"],"permissionDefault":false}
+    },
+    {
+      "comment":"Vincula um usuario existente a um membro sem convite","methodName":"linkMemberPortalUser","httpMethod":"POST","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"memberId","parameterType":"uuid","list":false},{"parameterName":"userId","parameterType":"uuid","list":false}],"output":[{"parameterName":"linked","parameterType":"boolean","list":false}]},
+      "permissions":{"description":"Vincular usuario ao Portal do Membro","resource":"memberPortalAccess","premissions":["UPDATE"],"permissionDefault":false}
+    },
+    {
+      "comment":"Promove o acesso de um membro existente para usuario administrativo","methodName":"promoteMemberPortalUser","httpMethod":"POST","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"memberId","parameterType":"uuid","list":false}],"output":[{"parameterName":"user","parameterType":"userConfiguration","list":false}]},
+      "permissions":{"description":"Promover membro para usuario administrativo","resource":"memberPortalAccess","premissions":["UPDATE"],"permissionDefault":false}
+    },
+    {
+      "comment":"Remove o acesso administrativo preservando o acesso de membro quando existir","methodName":"deleteChurchUser","httpMethod":"POST","grouper":"userConfiguration",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"userConfigurationId","parameterType":"uuid","list":false}],"output":[{"parameterName":"deleted","parameterType":"boolean","list":false}]},
+      "permissions":{"description":"Excluir usuario administrativo","resource":"userConfiguration","premissions":["DELETE"],"permissionDefault":false}
     },
     {
       "comment":"Consulta o contexto publico de ativacao","methodName":"getMemberRegistrationContext","httpMethod":"GET","grouper":"memberPortal",

@@ -27,4 +27,7 @@ public final class MemberPortalModels {
 
     public record RegistrationResponse(boolean accepted, boolean existingAccess) {
     }
+
+    public record LinkedMember(UUID memberId, UUID personId) {
+    }
 }

@@ -4,6 +4,7 @@ import com.potatotech.authorization.exception.ServiceException;
 import com.potatotech.authorization.tenant.TenantContext;
 import com.smartverse.churchlitebackend.config.database.TenantSchemaInterceptor;
 import com.smartverse.churchlitebackend.config.security.model.UserSupplierEntity;
+import com.smartverse.churchlitebackend.config.security.model.AccessProfile;
 import com.smartverse.churchlitebackend.config.security.repository.AuthenticationRepository;
 import com.smartverse.churchlitebackend_gen.enums.SubscriptionResource;
 import com.smartverse.churchlitebackend.service.subscription.SubscriptionService;
@@ -14,7 +15,9 @@ import com.smartverse.churchlitebackend_gen.endpoints.CreateChurchUserInput;
 import com.smartverse.churchlitebackend_gen.entities.UserConfigurationEntity;
 import com.smartverse.churchlitebackend_gen.enums.Language;
 import com.smartverse.churchlitebackend_gen.enums.Theme;
-import com.smartverse.churchlitebackend_gen.repositories.UserConfigurationRepository;
+import com.smartverse.churchlitebackend.repository.userconfiguration.UserConfigurationCustomRepository;
+import com.smartverse.churchlitebackend.repository.memberportal.MemberDashboardRepository;
+import com.smartverse.churchlitebackend_gen.entities.PersonMemberEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,22 +33,25 @@ public class UserConfigurationService {
 
     private final TenantSchemaInterceptor tenantSchemaInterceptor;
     private final AuthenticationRepository authenticationRepository;
-    private final UserConfigurationRepository userConfigurationRepository;
+    private final UserConfigurationCustomRepository userConfigurationRepository;
     private final UserConfigurationDTOConverter userConfigurationDTOConverter;
     private final SubscriptionService subscriptionService;
+    private final MemberDashboardRepository memberDashboardRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UserConfigurationService(
             TenantSchemaInterceptor tenantSchemaInterceptor,
             AuthenticationRepository authenticationRepository,
-            UserConfigurationRepository userConfigurationRepository,
+            UserConfigurationCustomRepository userConfigurationRepository,
             UserConfigurationDTOConverter userConfigurationDTOConverter,
-            SubscriptionService subscriptionService) {
+            SubscriptionService subscriptionService,
+            MemberDashboardRepository memberDashboardRepository) {
         this.tenantSchemaInterceptor = tenantSchemaInterceptor;
         this.authenticationRepository = authenticationRepository;
         this.userConfigurationRepository = userConfigurationRepository;
         this.userConfigurationDTOConverter = userConfigurationDTOConverter;
         this.subscriptionService = subscriptionService;
+        this.memberDashboardRepository = memberDashboardRepository;
     }
 
     @Transactional
@@ -59,6 +65,10 @@ public class UserConfigurationService {
         subscriptionService.requireAvailable(SubscriptionResource.ADMIN_USER);
 
         String normalizedEmail = input.email.trim().toLowerCase(Locale.ROOT);
+        String normalizedCpf = normalizeCpf(input.cpf);
+        if (normalizedCpf.length() != 11) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST, "CPF inválido");
+        }
         UserSupplierEntity accessUser;
 
         try {
@@ -72,6 +82,7 @@ public class UserConfigurationService {
             accessUser = new UserSupplierEntity();
             accessUser.setName(input.name.trim());
             accessUser.setEmail(normalizedEmail);
+            accessUser.setCpf(normalizedCpf);
             accessUser.setPhone(normalizeOptional(input.phone));
             accessUser.setPassword(passwordEncoder.encode(input.password));
             accessUser.setTenant(churchTenant);
@@ -85,12 +96,96 @@ public class UserConfigurationService {
             configuration.setName(accessUser.getName());
             configuration.setEmail(accessUser.getEmail());
             configuration.setPhone(accessUser.getPhone());
+            configuration.setCpf(accessUser.getCpf());
             configuration.setHash(accessUser.getId());
             configuration.setLang(Language.PORTUGUESE);
             configuration.setTheme(Theme.LIGHT);
             configuration = userConfigurationRepository.saveAndFlush(configuration);
 
             return userConfigurationDTOConverter.toDTO(configuration, null);
+        } finally {
+            switchSchema(churchTenant);
+        }
+    }
+
+    @Transactional
+    public UserConfigurationDTO promoteMember(UUID memberId) {
+        String churchTenant = TenantContext.getCurrentTenant();
+        if (churchTenant == null || churchTenant.isBlank() || ADMIN_TENANT.equalsIgnoreCase(churchTenant)) {
+            throw new ServiceException(HttpStatus.FORBIDDEN, "Tenant da igreja não identificado");
+        }
+
+        UUID accessId;
+        try {
+            switchSchema(churchTenant);
+            PersonMemberEntity member = memberDashboardRepository.findById(memberId)
+                    .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND, "Membro não encontrado"));
+            accessId = member.getAccessUserHash();
+            if (accessId == null) {
+                throw new ServiceException(HttpStatus.CONFLICT, "Este membro ainda não possui acesso ao portal");
+            }
+
+            switchSchema(ADMIN_TENANT);
+            UserSupplierEntity accessUser = authenticationRepository.findById(accessId)
+                    .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND, "Usuário de acesso não encontrado"));
+            if (!churchTenant.equals(accessUser.getTenant())) {
+                throw new ServiceException(HttpStatus.CONFLICT, "O usuário não pertence a esta igreja");
+            }
+            if (!sameIdentity(member, accessUser)) {
+                throw new ServiceException(HttpStatus.UNPROCESSABLE_ENTITY, "Os dados do membro e do usuário não conferem");
+            }
+            var profiles = accessUser.getAccessProfiles() == null ? new java.util.HashSet<AccessProfile>()
+                    : new java.util.HashSet<>(accessUser.getAccessProfiles());
+            profiles.add(AccessProfile.STAFF);
+            accessUser.setAccessProfiles(profiles);
+            accessUser.setActive(true);
+            accessUser.setUserConfirm(true);
+            authenticationRepository.saveAndFlush(accessUser);
+
+            switchSchema(churchTenant);
+            UserConfigurationEntity configuration = userConfigurationRepository.findByHash(accessId)
+                    .orElseGet(UserConfigurationEntity::new);
+            configuration.setHash(accessId);
+            configuration.setName(accessUser.getName());
+            configuration.setEmail(accessUser.getEmail());
+            configuration.setPhone(accessUser.getPhone());
+            configuration.setCpf(accessUser.getCpf());
+            if (configuration.getLang() == null) configuration.setLang(Language.PORTUGUESE);
+            if (configuration.getTheme() == null) configuration.setTheme(Theme.LIGHT);
+            configuration = userConfigurationRepository.saveAndFlush(configuration);
+            return userConfigurationDTOConverter.toDTO(configuration, null);
+        } finally {
+            switchSchema(churchTenant);
+        }
+    }
+
+    @Transactional
+    public void deleteChurchUser(UUID userConfigurationId) {
+        String churchTenant = TenantContext.getCurrentTenant();
+        try {
+            switchSchema(churchTenant);
+            UserConfigurationEntity configuration = userConfigurationRepository.findById(userConfigurationId)
+                    .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+            UUID accessId = configuration.getHash();
+            switchSchema(ADMIN_TENANT);
+            UserSupplierEntity accessUser = authenticationRepository.findById(accessId).orElse(null);
+            if (accessUser != null) {
+                var profiles = accessUser.getAccessProfiles() == null ? new java.util.HashSet<AccessProfile>()
+                        : new java.util.HashSet<>(accessUser.getAccessProfiles());
+                profiles.remove(AccessProfile.STAFF);
+                if (profiles.contains(AccessProfile.MEMBER)) {
+                    accessUser.setAccessProfiles(profiles);
+                    accessUser.setActive(true);
+                    accessUser.setUserConfirm(true);
+                    authenticationRepository.saveAndFlush(accessUser);
+                } else {
+                    authenticationRepository.delete(accessUser);
+                    authenticationRepository.flush();
+                }
+            }
+            switchSchema(churchTenant);
+            userConfigurationRepository.deleteById(userConfigurationId);
+            userConfigurationRepository.flush();
         } finally {
             switchSchema(churchTenant);
         }
@@ -112,6 +207,7 @@ public class UserConfigurationService {
             configuration.setName(accessUser.getName());
             configuration.setEmail(accessUser.getEmail());
             configuration.setPhone(accessUser.getPhone());
+            configuration.setCpf(accessUser.getCpf());
             configuration.setLang(Language.PORTUGUESE);
             configuration.setTheme(Theme.LIGHT);
             configuration = userConfigurationRepository.saveAndFlush(configuration);
@@ -138,6 +234,7 @@ public class UserConfigurationService {
                 accessUser.setName(entity.getName());
                 accessUser.setEmail(normalizedEmail);
                 accessUser.setPhone(normalizeOptional(entity.getPhone()));
+                accessUser.setCpf(normalizeCpf(entity.getCpf()));
                 authenticationRepository.saveAndFlush(accessUser);
             });
         } finally {
@@ -187,5 +284,27 @@ public class UserConfigurationService {
 
     private String normalizeOptional(String value) {
         return value == null || value.isBlank() ? null : value.trim();
+    }
+
+    private String normalizeCpf(String value) {
+        return value == null ? "" : value.replaceAll("\\D", "");
+    }
+
+    private String normalizePhone(String value) {
+        return value == null ? "" : value.replaceAll("\\D", "");
+    }
+
+    private boolean sameIdentity(PersonMemberEntity member, UserSupplierEntity access) {
+        String memberEmail = member.getPerson().getPersonalEmail() == null ? "" : member.getPerson().getPersonalEmail().getEmail();
+        String memberPhone = member.getPerson().getPersonalTelphone() == null ? "" : member.getPerson().getPersonalTelphone().getCellPhone();
+        String memberCpf = member.getPerson().getPersonalDocs() == null ? "" : member.getPerson().getPersonalDocs().getCpf();
+        String accessEmail = access.getEmail() == null ? "" : access.getEmail().trim();
+        String accessPhone = normalizePhone(access.getPhone());
+        String accessCpf = normalizeCpf(access.getCpf());
+        return !memberEmail.isBlank() && !memberPhone.isBlank() && !memberCpf.isBlank()
+                && !accessEmail.isBlank() && !accessPhone.isBlank() && !accessCpf.isBlank()
+                && memberEmail.trim().equalsIgnoreCase(accessEmail)
+                && normalizePhone(memberPhone).equals(accessPhone)
+                && normalizeCpf(memberCpf).equals(accessCpf);
     }
 }

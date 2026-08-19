@@ -245,6 +245,18 @@ Ponto de evolução: o repository atual monta o snapshot usando `findAll()` dent
 evolução também `receitasPrevistas` e `despesasPrevistas`. O previsto é composto por `financial` ainda não liquidado
 (`paymentReceiptDate IS NULL`), agrupado pela `dueDate`, respeitando os mesmos filtros de banco, conta, caixa, caixa
 aberto, centro de custo e plano de contas. A liquidação move o valor naturalmente da série prevista para a realizada.
+Os indicadores de receitas e despesas também devolvem `valorPrevisto`, usado como linha secundária nos cards do dashboard.
+
+### Vínculo manual de usuário com membro (19/08/2026)
+
+Os endpoints gerados `linkMemberPortalUser` e `promoteMemberPortalUser` permitem vincular ou promover um usuário sem
+criar acesso duplicado. Se o membro já possuir `accessUserHash`, a promoção reutiliza esse mesmo acesso, adiciona o
+perfil `STAFF` e preserva `MEMBER`; nenhum vínculo diferente pode substituí-lo. A exclusão administrativa usa
+`deleteChurchUser`: remove `STAFF` e a configuração administrativa, mas preserva o acesso `MEMBER` quando existir.
+O vínculo só é aceito quando CPF, e-mail e telefone normalizados do membro e do usuário forem iguais. CPF também foi
+incluído em `user_configuration`, sincronizado com `user_access` e persistido pela migration incremental correspondente.
+O endpoint gerado `getMemberPortalUserLink` permite que a edição de usuário recupere o membro vinculado pelo acesso,
+retornando os identificadores de membro e pessoa para repopular o formulário.
 
 Validação realizada com JDK 25:
 

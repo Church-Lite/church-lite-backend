@@ -11,6 +11,7 @@ import com.smartverse.churchlitebackend.config.security.repository.Authenticatio
 import com.smartverse.churchlitebackend.config.security.repository.MemberPortalChurchLinkRepository;
 import com.smartverse.churchlitebackend.model.memberportal.MemberPortalModels.*;
 import com.smartverse.churchlitebackend.repository.userconfirmation.UserConfirmationCustomRepository;
+import com.smartverse.churchlitebackend.repository.memberportal.MemberDashboardRepository;
 import com.smartverse.churchlitebackend.service.email.EmailService;
 import com.smartverse.churchlitebackend.messaging.social.MemberProfileEventDispatcher;
 import com.smartverse.churchlitebackend_gen.entities.*;
@@ -41,6 +42,7 @@ public class MemberPortalAccessService {
     private final AuthenticationRepository authenticationRepository;
     private final UserConfirmationCustomRepository confirmationRepository;
     private final PersonMemberRepository memberRepository;
+    private final MemberDashboardRepository memberDashboardRepository;
     private final PersonRepository personRepository;
     private final ChurchConfigurationRepository churchRepository;
     private final TenantSchemaInterceptor schemaInterceptor;
@@ -54,6 +56,7 @@ public class MemberPortalAccessService {
                                      AuthenticationRepository authenticationRepository,
                                      UserConfirmationCustomRepository confirmationRepository,
                                      PersonMemberRepository memberRepository,
+                                     MemberDashboardRepository memberDashboardRepository,
                                      PersonRepository personRepository,
                                      ChurchConfigurationRepository churchRepository,
                                      TenantSchemaInterceptor schemaInterceptor,
@@ -66,6 +69,7 @@ public class MemberPortalAccessService {
         this.authenticationRepository = authenticationRepository;
         this.confirmationRepository = confirmationRepository;
         this.memberRepository = memberRepository;
+        this.memberDashboardRepository = memberDashboardRepository;
         this.personRepository = personRepository;
         this.churchRepository = churchRepository;
         this.schemaInterceptor = schemaInterceptor;
@@ -181,6 +185,68 @@ public class MemberPortalAccessService {
                 Map.of("name", escapeHtml(member.getPerson().getName()), "url", url));
         emailService.sendEmail(email, "Ative seu acesso ao portal do membro", content,
                 "member-link-" + UUID.randomUUID());
+    }
+
+    @Transactional
+    public void linkExistingUser(UUID memberId, UUID userId) {
+        String churchTenant = TenantContext.getCurrentTenant();
+        if (churchTenant == null || churchTenant.isBlank() || ADMIN_TENANT.equalsIgnoreCase(churchTenant)) {
+            throw error(HttpStatus.FORBIDDEN, "member_portal_tenant_not_found");
+        }
+
+        PersonMemberEntity member;
+        try {
+            switchSchema(churchTenant);
+            member = memberDashboardRepository.findById(memberId)
+                    .orElseThrow(() -> error(HttpStatus.NOT_FOUND, "member_portal_member_not_found"));
+
+            if (member.getAccessUserHash() != null && !member.getAccessUserHash().equals(userId)) {
+                throw error(HttpStatus.CONFLICT, "member_portal_member_access_already_linked");
+            }
+            if (member.getAccessUserHash() == null && memberDashboardRepository.findByAccessUserHash(userId).isPresent()) {
+                throw error(HttpStatus.CONFLICT, "member_portal_user_access_already_linked");
+            }
+
+            switchSchema(ADMIN_TENANT);
+            var access = authenticationRepository.findById(userId)
+                    .orElseThrow(() -> error(HttpStatus.NOT_FOUND, "member_portal_user_not_found"));
+            if (!churchTenant.equals(access.getTenant())) {
+                throw error(HttpStatus.CONFLICT, "member_portal_user_tenant_mismatch");
+            }
+            if (!sameIdentity(member.getPerson(), access)) {
+                throw error(HttpStatus.UNPROCESSABLE_ENTITY, "member_portal_identity_mismatch");
+            }
+            var profiles = access.getAccessProfiles() == null ? new HashSet<AccessProfile>()
+                    : new HashSet<>(access.getAccessProfiles());
+            profiles.add(AccessProfile.MEMBER);
+            access.setAccessProfiles(profiles);
+            access.setActive(true);
+            access.setUserConfirm(true);
+            access = authenticationRepository.saveAndFlush(access);
+
+            switchSchema(churchTenant);
+            member.setAccessUserHash(access.getId());
+            memberDashboardRepository.saveAndFlush(member);
+            memberProfileEventDispatcher.schedule(access, member);
+        } finally {
+            switchSchema(churchTenant);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public LinkedMember linkedMemberByUser(UUID userId) {
+        String churchTenant = TenantContext.getCurrentTenant();
+        if (churchTenant == null || churchTenant.isBlank() || ADMIN_TENANT.equalsIgnoreCase(churchTenant)) {
+            throw error(HttpStatus.FORBIDDEN, "member_portal_tenant_not_found");
+        }
+        try {
+            switchSchema(churchTenant);
+            var member = memberDashboardRepository.findByAccessUserHash(userId)
+                    .orElseThrow(() -> error(HttpStatus.NOT_FOUND, "member_portal_member_link_not_found"));
+            return new LinkedMember(member.getId(), member.getPerson().getId());
+        } finally {
+            switchSchema(churchTenant);
+        }
     }
 
     public void scheduleProfileSync(UserSupplierEntity access) {
@@ -299,9 +365,24 @@ public class MemberPortalAccessService {
     }
 
     private String normalizeCpf(String cpf) { return cpf == null ? "" : cpf.replaceAll("\\D", ""); }
+    private String normalizePhone(String phone) { return phone == null ? "" : phone.replaceAll("\\D", ""); }
     private String normalizeOptional(String value) { return isBlank(value) ? null : value.trim(); }
     private boolean isBlank(String value) { return value == null || value.isBlank(); }
     private ServiceException error(HttpStatus status, String message) { return new ServiceException(status, message); }
+
+    private boolean sameIdentity(PersonEntity person, UserSupplierEntity access) {
+        String memberEmail = person.getPersonalEmail() == null ? "" : person.getPersonalEmail().getEmail();
+        String memberPhone = person.getPersonalTelphone() == null ? "" : person.getPersonalTelphone().getCellPhone();
+        String memberCpf = person.getPersonalDocs() == null ? "" : person.getPersonalDocs().getCpf();
+        String accessEmail = access.getEmail() == null ? "" : access.getEmail().trim();
+        String accessPhone = normalizePhone(access.getPhone());
+        String accessCpf = normalizeCpf(access.getCpf());
+        return !memberEmail.isBlank() && !memberPhone.isBlank() && !memberCpf.isBlank()
+                && !accessEmail.isBlank() && !accessPhone.isBlank() && !accessCpf.isBlank()
+                && memberEmail.trim().equalsIgnoreCase(accessEmail)
+                && normalizePhone(memberPhone).equals(accessPhone)
+                && normalizeCpf(memberCpf).equals(accessCpf);
+    }
 
     private boolean isValidCpf(String cpf) {
         if (cpf.length() != 11 || cpf.chars().distinct().count() == 1) return false;
