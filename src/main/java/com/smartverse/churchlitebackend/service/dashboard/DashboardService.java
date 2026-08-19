@@ -39,6 +39,7 @@ public class DashboardService {
                 requested.caixaId(), requested.somenteCaixasAbertos(), requested.centroCustoId(), requested.planoContaId());
 
         List<TransactionsEntity> allTransactions = repository.transactions();
+        List<FinancialEntity> allFinancials = repository.financials();
         List<CashTransactionsEntity> sessions = repository.cashTransactions();
         Set<UUID> openCashIds = sessions.stream().filter(s -> s.getEndDate() == null && s.getCash() != null)
                 .map(s -> s.getCash().getId()).collect(Collectors.toSet());
@@ -63,7 +64,10 @@ public class DashboardService {
                 new AvailableBalance(balances.saldoTotal(), balances.saldoContasBancarias(), balances.saldoCaixas(),
                         balances.contasBancarias().size(), balances.caixas().size()));
 
-        return new FinancialSnapshot(summary, evolution(current, start, end), costCenters(current, expense),
+        List<FinancialEntity> pending = allFinancials.stream()
+                .filter(f -> pendingMatches(f, filter, openCashIds))
+                .toList();
+        return new FinancialSnapshot(summary, evolution(current, pending, start, end), costCenters(current, expense),
                 planAccounts(current, expense), balances, recent(current), alerts(current, sessions), filters());
     }
 
@@ -100,6 +104,21 @@ public class DashboardService {
         return f.planoContaId() == null || (financial.getPlanAccount() != null && f.planoContaId().equals(financial.getPlanAccount().getId()));
     }
 
+    private boolean pendingMatches(FinancialEntity financial, FinancialFilter f, Set<UUID> openCashIds) {
+        if (financial == null || financial.getPaymentReceiptDate() != null || financial.getDueDate() == null
+                || financial.getCash() == null) return false;
+        if (!between(financial.getDueDate(), f.dataInicial(), f.dataFinal())) return false;
+        CashEntity cash = financial.getCash();
+        if (f.bancoId() != null && (cash.getBank() == null || !f.bancoId().equals(cash.getBank().getId()))) return false;
+        if (f.contaBancariaId() != null && !f.contaBancariaId().equals(cash.getId())) return false;
+        if (f.caixaId() != null && !f.caixaId().equals(cash.getId())) return false;
+        if (f.somenteCaixasAbertos() && cash.getTypeCash() == TypeCash.CASH && !openCashIds.contains(cash.getId())) return false;
+        if (f.centroCustoId() != null && (financial.getCostCenter() == null
+                || !f.centroCustoId().equals(financial.getCostCenter().getId()))) return false;
+        return f.planoContaId() == null || (financial.getPlanAccount() != null
+                && f.planoContaId().equals(financial.getPlanAccount().getId()));
+    }
+
     private Balances balances(List<TransactionsEntity> all, List<CashTransactionsEntity> sessions,
                               FinancialFilter filter, Set<UUID> openCashIds) {
         Map<UUID, List<TransactionsEntity>> byCash = all.stream().filter(t -> t.getFinancial() != null && t.getFinancial().getCash() != null)
@@ -134,15 +153,24 @@ public class DashboardService {
         return !f.somenteCaixasAbertos() || c.getTypeCash() != TypeCash.CASH || open.contains(c.getId());
     }
 
-    private List<EvolutionPoint> evolution(List<TransactionsEntity> values, LocalDate start, LocalDate end) {
+    private List<EvolutionPoint> evolution(List<TransactionsEntity> values, List<FinancialEntity> pending,
+                                           LocalDate start, LocalDate end) {
         long days = Duration.between(start.atStartOfDay(), end.plusDays(1).atStartOfDay()).toDays();
         Function<LocalDate, String> key = days <= 31 ? LocalDate::toString
                 : days <= 120 ? d -> d.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).toString()
                   : d -> String.format("%04d-%02d", d.getYear(), d.getMonthValue());
         Map<String, List<TransactionsEntity>> grouped = values.stream().collect(Collectors.groupingBy(t -> key.apply(t.getDateTransaction()), TreeMap::new, Collectors.toList()));
-        return grouped.entrySet().stream().map(e -> {
-            double r = total(e.getValue(), TypeFinancial.REVENUE), x = total(e.getValue(), TypeFinancial.EXPENSE);
-            return new EvolutionPoint(e.getKey(), r, x, r - x);
+        Map<String, List<FinancialEntity>> pendingGrouped = pending.stream().collect(Collectors.groupingBy(f -> key.apply(f.getDueDate()), TreeMap::new, Collectors.toList()));
+        Set<String> periods = new TreeSet<>();
+        periods.addAll(grouped.keySet());
+        periods.addAll(pendingGrouped.keySet());
+        return periods.stream().map(period -> {
+            List<TransactionsEntity> realized = grouped.getOrDefault(period, List.of());
+            List<FinancialEntity> planned = pendingGrouped.getOrDefault(period, List.of());
+            double r = total(realized, TypeFinancial.REVENUE), x = total(realized, TypeFinancial.EXPENSE);
+            double plannedRevenue = planned.stream().filter(f -> f.getTypeFinancial() == TypeFinancial.REVENUE).mapToDouble(f -> number(f.getValue())).sum();
+            double plannedExpense = planned.stream().filter(f -> f.getTypeFinancial() == TypeFinancial.EXPENSE).mapToDouble(f -> number(f.getValue())).sum();
+            return new EvolutionPoint(period, r, x, plannedRevenue, plannedExpense, r - x);
         }).toList();
     }
 

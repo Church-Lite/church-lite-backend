@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public class DashboardRepository {
     private final TransactionsRepository transactions;
+    private final FinancialRepository financials;
     private final CashRepository cash;
     private final CashTransactionsRepository cashTransactions;
     private final BankRepository banks;
@@ -16,11 +17,12 @@ public class DashboardRepository {
     private final PlanAccountRepository planAccounts;
     private final AppointmentsRepository appointments;
 
-    public DashboardRepository(TransactionsRepository transactions, CashRepository cash,
+    public DashboardRepository(TransactionsRepository transactions, FinancialRepository financials, CashRepository cash,
             CashTransactionsRepository cashTransactions, BankRepository banks,
             CostCenterRepository costCenters, PlanAccountRepository planAccounts,
             AppointmentsRepository appointments) {
         this.transactions = transactions;
+        this.financials = financials;
         this.cash = cash;
         this.cashTransactions = cashTransactions;
         this.banks = banks;
@@ -30,6 +32,7 @@ public class DashboardRepository {
     }
 
     public List<TransactionsEntity> transactions() { return transactions.findAll(); }
+    public List<FinancialEntity> financials() { return financials.findAll(); }
     public List<CashEntity> cashes() { return cash.findAll(); }
     public List<CashTransactionsEntity> cashTransactions() { return cashTransactions.findAll(); }
     public List<BankEntity> banks() { return banks.findAll(); }

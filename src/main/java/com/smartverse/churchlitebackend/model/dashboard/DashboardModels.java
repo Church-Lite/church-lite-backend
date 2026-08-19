@@ -28,7 +28,8 @@ public final class DashboardModels {
                                    Result resultadoPeriodo, AvailableBalance saldoDisponivel) {
     }
 
-    public record EvolutionPoint(String periodo, double receitas, double despesas, double resultado) {
+    public record EvolutionPoint(String periodo, double receitas, double despesas, double receitasPrevistas,
+                                 double despesasPrevistas, double resultado) {
     }
 
     public record CostCenterExpense(UUID centroCustoId, String descricao, double valorTotal, double percentual) {
