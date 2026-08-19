@@ -69,6 +69,7 @@ public class MemberProfileReconciliationPublisher {
     }
 
     private List<UserSupplierEntity> loadMemberAccesses() {
+        migration.loadMigrateTenants(ADMIN_TENANT);
         TenantContext.setCurrentTenant(ADMIN_TENANT);
         return transactions.execute(status -> authenticationRepository.findAll().stream()
                 .filter(access -> access.getTenant() != null && !access.getTenant().isBlank())
