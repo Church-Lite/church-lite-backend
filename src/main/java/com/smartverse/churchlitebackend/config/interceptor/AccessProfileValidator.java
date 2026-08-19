@@ -19,7 +19,11 @@ public class AccessProfileValidator {
     private static final String ACCESS_PROFILE_HEADER = "XAccessProfile";
     private static final String MEMBER_PROFILE = "MEMBER";
     private static final String STAFF_PROFILE = "STAFF";
-    private static final String MEMBER_API_SEGMENT = "/member-api/";
+    private static final Set<String> MEMBER_API_ROUTES = Set.of(
+            "/getMemberDashboard",
+            "/getMemberTransparency",
+            "/getMemberFinancialApprovals",
+            "/voteMemberFinancialApproval");
     private static final Set<String> MEMBER_STORAGE_ROUTES = Set.of(
             "/requestUpload", "/requestUrl", "/deleteObject");
 
@@ -51,7 +55,7 @@ public class AccessProfileValidator {
 
         var uri = request.getRequestURI();
         if (MEMBER_PROFILE.equals(requestedProfile)
-                && !uri.contains(MEMBER_API_SEGMENT)
+                && MEMBER_API_ROUTES.stream().noneMatch(uri::endsWith)
                 && MEMBER_STORAGE_ROUTES.stream().noneMatch(uri::endsWith)) {
             log.warn("access_profile_denied uri={} requestedProfile={} availableProfiles={} userId={} reason=member_on_administrative_route",
                     uri, requestedProfile, profiles, userId);

@@ -44,16 +44,22 @@ public class CellMeetingWorkflowHandlerImpl implements SubmitCellMeeting, Review
     public ResponseEntity<ReviewCellMeetingOutput> reviewCellMeeting(ReviewCellMeetingInput input) {
         if (input == null || input.meetingId == null)
             throw new ServiceException(HttpStatus.BAD_REQUEST, "A reunião é obrigatória");
+
         var meeting = repository.findById(input.meetingId).orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND, "Reunião não encontrada"));
+
         if (meeting.getStatus() != CellMeetingStatus.SUBMITTED)
             throw new ServiceException(HttpStatus.CONFLICT, "Somente reuniões submetidas podem ser revisadas");
+
         if (!input.approved && (input.reason == null || input.reason.isBlank()))
             throw new ServiceException(HttpStatus.BAD_REQUEST, "Informe o motivo da rejeição");
+
         meeting.setStatus(input.approved ? CellMeetingStatus.APPROVED : CellMeetingStatus.REJECTED);
         meeting.setReviewedAt(LocalDateTime.now());
         meeting.setReviewReason(input.reason == null ? null : input.reason.trim());
+
         var output = new ReviewCellMeetingOutput();
         output.meeting = converter.toDTO(meeting, null);
+
         return ResponseEntity.ok(output);
     }
 }

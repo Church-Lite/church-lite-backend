@@ -36,17 +36,21 @@ public class DashboardHandlerImpl implements GetDashboardFinancial, GetDashboard
 
     @Override
     public ResponseEntity<GetDashboardFinancialOutput> getDashboardFinancial(UUID planoContaId, UUID centroCustoId, boolean somenteCaixasAbertos, UUID caixaId, UUID contaBancariaId, UUID bancoId, LocalDate dataFinal, LocalDate dataInicial) {
+
         subscriptionService.requireFeature(SubscriptionFeature.EXECUTIVE_DASHBOARD);
         var output = new GetDashboardFinancialOutput();
         output.data = objectMapper.convertValue(dashboardService.financial(new FinancialFilter(dataInicial, dataFinal, bancoId, contaBancariaId, caixaId, somenteCaixasAbertos, centroCustoId, planoContaId)), MAP_TYPE);
+
         return ResponseEntity.ok(output);
     }
 
     @Override
     public ResponseEntity<GetDashboardAgendaOutput> getDashboardAgenda() {
+
         subscriptionService.requireFeature(SubscriptionFeature.EXECUTIVE_DASHBOARD);
         var output = new GetDashboardAgendaOutput();
         output.data = objectMapper.convertValue(dashboardService.agenda(), MAP_TYPE);
+
         return ResponseEntity.ok(output);
     }
 }

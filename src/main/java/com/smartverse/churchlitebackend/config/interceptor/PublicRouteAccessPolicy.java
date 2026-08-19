@@ -14,12 +14,12 @@ public class PublicRouteAccessPolicy {
             "/church-lite/authenticate",
             "/church-lite/register",
             "/church-lite/verifyURL",
-            "/church-lite/resendConfirmation"
+            "/church-lite/resendConfirmation",
+            "/church-lite/getMemberRegistrationContext",
+            "/church-lite/registerMemberAccess"
     );
 
-    private static final List<String> ADMIN_PUBLIC_PREFIXES = List.of(
-            "/church-lite/member-access/"
-    );
+    private static final List<String> ADMIN_PUBLIC_PREFIXES = List.of();
 
     private static final List<String> INFRASTRUCTURE_PUBLIC_ROUTES = List.of(
             "/church-lite/swagger-ui/",

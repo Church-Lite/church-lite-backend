@@ -9,7 +9,7 @@ import com.smartverse.churchlitebackend.config.security.model.MemberPortalChurch
 import com.smartverse.churchlitebackend.config.security.model.UserSupplierEntity;
 import com.smartverse.churchlitebackend.config.security.repository.AuthenticationRepository;
 import com.smartverse.churchlitebackend.config.security.repository.MemberPortalChurchLinkRepository;
-import com.smartverse.churchlitebackend.controller.memberportal.MemberPortalModels.*;
+import com.smartverse.churchlitebackend.model.memberportal.MemberPortalModels.*;
 import com.smartverse.churchlitebackend.repository.userconfirmation.UserConfirmationCustomRepository;
 import com.smartverse.churchlitebackend.service.email.EmailService;
 import com.smartverse.churchlitebackend.messaging.social.MemberProfileEventDispatcher;

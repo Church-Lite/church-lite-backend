@@ -1,7 +1,7 @@
 package com.smartverse.churchlitebackend.service.memberportal;
 
 import com.smartverse.churchlitebackend.config.context.RequestUserContext;
-import com.smartverse.churchlitebackend.controller.memberportal.MemberDashboardModels.*;
+import com.smartverse.churchlitebackend.model.memberportal.MemberDashboardModels.*;
 import com.smartverse.churchlitebackend.repository.memberportal.MemberDashboardRepository;
 import com.smartverse.churchlitebackend.repository.memberportal.MemberContributionRepository;
 import com.smartverse.churchlitebackend.repository.memberportal.MemberEventRepository;

@@ -2,6 +2,8 @@
 
 > Atualizado em 19/08/2026.
 
+> Regras arquiteturais obrigatórias e centralizadas: `docs/roles/README.md`.
+
 > Configuração da igreja e aprovação de fechamento documentadas em `spec/SESSION_2026-07-17_CASH_CLOSING.md` na raiz do workspace.
 
 ## Visão do produto
@@ -236,6 +238,13 @@ Regras adotadas:
 - o tenant continua vindo exclusivamente do JWT/interceptor.
 
 Ponto de evolução: o repository atual monta o snapshot usando `findAll()` dentro de transação read-only. Para tenants com alto volume, substituir por consultas agregadas/paginadas preservando os mesmos DTOs e regras de fechamento dos agrupamentos.
+
+### Evolução — realizado e previsto no gráfico financeiro (19/08/2026)
+
+`GET /getDashboardFinancial` mantém os cards e resumos baseados no realizado (`transactions`) e passou a devolver na
+evolução também `receitasPrevistas` e `despesasPrevistas`. O previsto é composto por `financial` ainda não liquidado
+(`paymentReceiptDate IS NULL`), agrupado pela `dueDate`, respeitando os mesmos filtros de banco, conta, caixa, caixa
+aberto, centro de custo e plano de contas. A liquidação move o valor naturalmente da série prevista para a realizada.
 
 Validação realizada com JDK 25:
 
@@ -492,3 +501,21 @@ Os e-mails usam modelos HTML em `src/main/resources/models/email/`:
 - ampliar testes de contrato e idempotência RabbitMQ;
 - criar métricas/alertas para eventos falhos além dos logs;
 - manter grupos da comunidade no Social, sem confundi-los com grupos administrativos de permissão deste backend.
+
+## Correção arquitetural — Portal do Membro (19/08/2026)
+
+Todos os contratos HTTP do Portal do Membro estão declarados em `.gonthera/project.json`. DTOs, enums, modelos de
+entrada/saída e interfaces com os mappings são gerados em `_gen`; os controllers manuais possuem somente
+`@RestController`, implementam essas interfaces e delegam aos services. Não declarar mappings Spring manualmente neste
+módulo.
+
+As rotas geradas são planas, como `getMemberDashboard`, `getMemberTransparency`, `registerMemberAccess` e
+`voteMemberFinancialApproval`. `AccessProfileValidator` mantém o catálogo explícito das operações acessíveis ao perfil
+`MEMBER`, enquanto `PublicRouteAccessPolicy` reconhece os contratos anônimos de consulta de contexto e registro. O
+frontend consome os envelopes gerados e não depende mais das rotas legadas `/member-api/**`, `/memberPortal/**`,
+`/memberApproval/**` ou `/member-access/**` da API.
+
+Os services de transparência e aprovação financeira não executam SQL diretamente. Consultas e comandos ficam em
+`MemberTransparencyRepository` e `MemberFinancialApprovalRepository`; os services mantêm validações, transações,
+transições de estado, anonimização do voto e composição das respostas. Ao evoluir o módulo, começar sempre no contrato
+Gonthera, regenerar e somente depois implementar a interface produzida.

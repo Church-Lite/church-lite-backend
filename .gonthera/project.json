@@ -7373,6 +7373,128 @@
       "controllerAbstract": false,
       "serviceAbstract": false,
       "onlyDTO": true
+    },
+    {
+      "comment":"Link publico do Portal do Membro","entityName":"memberPortalLink","tableName":"member_portal_link_dto","classExtends":"","entityFields":[
+        {"comment":"Identificador da igreja","fieldName":"churchId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Caminho publico","fieldName":"path","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
+    },
+    {
+      "comment":"Contexto publico de ativacao do membro","entityName":"memberRegistrationContext","tableName":"member_registration_context_dto","classExtends":"","entityFields":[
+        {"comment":"Identificador apenas do contrato","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":true}},
+        {"comment":"Nome da igreja","fieldName":"churchName","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Identificador do membro","fieldName":"memberId","list":false,"fieldProperties":{"fieldType":"uuid","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Nome do membro","fieldName":"memberName","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Email mascarado","fieldName":"maskedEmail","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Indica membro existente","fieldName":"existingMember","list":false,"fieldProperties":{"fieldType":"boolean","required":true,"valueDefault":"false"},"metadata":{"nullable":false,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
+    },
+    {
+      "comment":"Evento exibido no painel do membro","entityName":"memberDashboardEvent","tableName":"member_dashboard_event_dto","classExtends":"","entityFields":[
+        {"comment":"Identificador","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Nome","fieldName":"name","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Cor","fieldName":"color","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Inicio","fieldName":"initialDate","list":false,"fieldProperties":{"fieldType":"datetime","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Fim","fieldName":"finalDate","list":false,"fieldProperties":{"fieldType":"datetime","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Local","fieldName":"local","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
+    },
+    {
+      "comment":"Contribuicao exibida ao membro","entityName":"memberContribution","tableName":"member_contribution_dto","classExtends":"","entityFields":[
+        {"comment":"Identificador","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Descricao","fieldName":"description","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Plano de contas","fieldName":"planAccount","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Data","fieldName":"date","list":false,"fieldProperties":{"fieldType":"date","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Valor","fieldName":"value","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
+    },
+    {
+      "comment":"Resumo do painel do membro","entityName":"memberDashboard","tableName":"member_dashboard_dto","classExtends":"","entityFields":[
+        {"comment":"Identificador apenas do contrato","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":true}},
+        {"comment":"Nome do membro","fieldName":"memberName","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Total mensal","fieldName":"monthTotal","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Total anual","fieldName":"yearTotal","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Proximos eventos","fieldName":"upcomingEvents","list":true,"fieldProperties":{"fieldType":"memberDashboardEvent","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Contribuicoes recentes","fieldName":"recentContributions","list":true,"fieldProperties":{"fieldType":"memberContribution","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
+    },
+    {
+      "comment":"Visibilidade financeira de um plano","entityName":"memberPlanAccountVisibility","tableName":"member_plan_account_visibility_dto","classExtends":"","entityFields":[
+        {"comment":"Plano de contas","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Codigo","fieldName":"codeTree","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Descricao","fieldName":"description","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Natureza","fieldName":"financialNature","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Visibilidade","fieldName":"visibility","list":false,"fieldProperties":{"fieldType":"memberPortalPlanVisibility","required":true,"valueDefault":"HIDDEN"},"metadata":{"nullable":false,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
+    },
+    {
+      "comment":"Configuracao de transparencia do membro","entityName":"memberTransparencyConfiguration","tableName":"member_transparency_configuration_dto","classExtends":"","entityFields":[
+        {"comment":"Identificador apenas do contrato","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":true}},
+        {"comment":"Modo","fieldName":"mode","list":false,"fieldProperties":{"fieldType":"memberPortalTransparencyMode","required":true,"valueDefault":"DISABLED"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Aprovacao habilitada","fieldName":"memberApprovalEnabled","list":false,"fieldProperties":{"fieldType":"boolean","required":true,"valueDefault":"false"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Visibilidades","fieldName":"planAccounts","list":true,"fieldProperties":{"fieldType":"memberPlanAccountVisibility","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
+    },
+    {
+      "comment":"Resumo financeiro por plano","entityName":"memberAccountSummary","tableName":"member_account_summary_dto","classExtends":"","entityFields":[
+        {"comment":"Plano de contas","fieldName":"planAccountId","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Codigo","fieldName":"codeTree","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Descricao","fieldName":"description","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Natureza","fieldName":"financialNature","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Visibilidade","fieldName":"visibility","list":false,"fieldProperties":{"fieldType":"memberPortalPlanVisibility","required":true,"valueDefault":"HIDDEN"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Total","fieldName":"total","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
+    },
+    {
+      "comment":"Detalhe de despesa visivel ao membro","entityName":"memberExpenseDetail","tableName":"member_expense_detail_dto","classExtends":"","entityFields":[
+        {"comment":"Identificador","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Data","fieldName":"date","list":false,"fieldProperties":{"fieldType":"date","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Descricao","fieldName":"description","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Plano de contas","fieldName":"planAccountId","list":false,"fieldProperties":{"fieldType":"uuid","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Nome do plano","fieldName":"planAccount","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Valor","fieldName":"value","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
+    },
+    {
+      "comment":"Transparencia financeira do Portal do Membro","entityName":"memberFinancialPortal","tableName":"member_financial_portal_dto","classExtends":"","entityFields":[
+        {"comment":"Identificador apenas do contrato","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":true}},
+        {"comment":"Habilitado","fieldName":"enabled","list":false,"fieldProperties":{"fieldType":"boolean","required":true,"valueDefault":"false"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Modo","fieldName":"mode","list":false,"fieldProperties":{"fieldType":"memberPortalTransparencyMode","required":true,"valueDefault":"DISABLED"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Inicio","fieldName":"startDate","list":false,"fieldProperties":{"fieldType":"date","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Fim","fieldName":"endDate","list":false,"fieldProperties":{"fieldType":"date","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Receitas","fieldName":"revenueTotal","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Despesas","fieldName":"expenseTotal","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Contas","fieldName":"accounts","list":true,"fieldProperties":{"fieldType":"memberAccountSummary","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Detalhes","fieldName":"expenses","list":true,"fieldProperties":{"fieldType":"memberExpenseDetail","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
+    },
+    {
+      "comment":"Fechamento associado a prestacao consultiva","entityName":"memberApprovalCashClosing","tableName":"member_approval_cash_closing_dto","classExtends":"","entityFields":[
+        {"comment":"Identificador","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Caixa","fieldName":"cash","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Inicio","fieldName":"startDate","list":false,"fieldProperties":{"fieldType":"date","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Fim","fieldName":"endDate","list":false,"fieldProperties":{"fieldType":"date","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Saldo final","fieldName":"finalBalance","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
+    },
+    {
+      "comment":"Prestacao financeira consultiva","entityName":"memberFinancialStatement","tableName":"member_financial_statement_dto","classExtends":"","entityFields":[
+        {"comment":"Identificador","fieldName":"id","list":false,"fieldProperties":{"fieldType":"uuid","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":true}},
+        {"comment":"Titulo","fieldName":"title","list":false,"fieldProperties":{"fieldType":"string","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Descricao","fieldName":"description","list":false,"fieldProperties":{"fieldType":"string","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Situacao","fieldName":"status","list":false,"fieldProperties":{"fieldType":"memberFinancialStatementStatus","required":true,"valueDefault":"DRAFT"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Publicacao","fieldName":"publishedAt","list":false,"fieldProperties":{"fieldType":"datetime","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Encerramento","fieldName":"closedAt","list":false,"fieldProperties":{"fieldType":"datetime","required":false,"valueDefault":""},"metadata":{"nullable":true,"key":false}},
+        {"comment":"Fechamentos","fieldName":"cashClosings","list":true,"fieldProperties":{"fieldType":"memberApprovalCashClosing","required":true,"valueDefault":""},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Receitas","fieldName":"revenue","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Despesas","fieldName":"expense","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Aprovacoes","fieldName":"approvals","list":false,"fieldProperties":{"fieldType":"long","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Rejeicoes","fieldName":"rejections","list":false,"fieldProperties":{"fieldType":"long","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Votos","fieldName":"votes","list":false,"fieldProperties":{"fieldType":"long","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Percentual","fieldName":"approvalPercentage","list":false,"fieldProperties":{"fieldType":"decimal","required":true,"valueDefault":"0"},"metadata":{"nullable":false,"key":false}},
+        {"comment":"Ja votou","fieldName":"alreadyVoted","list":false,"fieldProperties":{"fieldType":"boolean","required":true,"valueDefault":"false"},"metadata":{"nullable":false,"key":false}}
+      ],"generateDefaultControllers":false,"controllerAbstract":false,"serviceAbstract":false,"onlyDTO":true
     }
   ],
   "endpoints": [
@@ -8061,6 +8183,86 @@
         ],
         "permissionDefault": false
       }
+    },
+    {
+      "comment":"Cria ou retorna o link publico da igreja","methodName":"getMemberPortalLink","httpMethod":"GET","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[],"output":[{"parameterName":"churchId","parameterType":"uuid","list":false},{"parameterName":"path","parameterType":"string","list":false}]},
+      "permissions":{"description":"Gerenciar acesso ao Portal do Membro","resource":"memberPortalAccess","premissions":["VIEW"],"permissionDefault":false}
+    },
+    {
+      "comment":"Retorna o link de ativacao de um membro","methodName":"getMemberPortalMemberLink","httpMethod":"GET","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"memberId","parameterType":"uuid","list":false}],"output":[{"parameterName":"path","parameterType":"string","list":false}]},
+      "permissions":{"description":"Gerenciar acesso ao Portal do Membro","resource":"memberPortalAccess","premissions":["VIEW"],"permissionDefault":false}
+    },
+    {
+      "comment":"Envia o link de ativacao ao membro","methodName":"sendMemberPortalLink","httpMethod":"POST","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"memberId","parameterType":"uuid","list":false}],"output":[{"parameterName":"sent","parameterType":"boolean","list":false}]},
+      "permissions":{"description":"Enviar acesso ao Portal do Membro","resource":"memberPortalAccess","premissions":["CREATE"],"permissionDefault":false}
+    },
+    {
+      "comment":"Consulta o contexto publico de ativacao","methodName":"getMemberRegistrationContext","httpMethod":"GET","grouper":"memberPortal",
+      "metadata":{"anonymous":true,"input":[{"parameterName":"churchId","parameterType":"uuid","list":false},{"parameterName":"memberId","parameterType":"uuid","list":false}],"output":[{"parameterName":"context","parameterType":"memberRegistrationContext","list":false}]},
+      "permissions":{"description":"Consultar contexto publico do membro","resource":"memberPortalRegistration","premissions":["VIEW"],"permissionDefault":true}
+    },
+    {
+      "comment":"Cadastra ou ativa o acesso de um membro","methodName":"registerMemberAccess","httpMethod":"POST","grouper":"memberPortal",
+      "metadata":{"anonymous":true,"input":[{"parameterName":"churchId","parameterType":"uuid","list":false},{"parameterName":"memberId","parameterType":"uuid","list":false},{"parameterName":"name","parameterType":"string","list":false},{"parameterName":"email","parameterType":"string","list":false},{"parameterName":"cpf","parameterType":"string","list":false},{"parameterName":"phone","parameterType":"string","list":false},{"parameterName":"password","parameterType":"password","list":false},{"parameterName":"passwordConfirmation","parameterType":"password","list":false}],"output":[{"parameterName":"accepted","parameterType":"boolean","list":false},{"parameterName":"existingAccess","parameterType":"boolean","list":false}]},
+      "permissions":{"description":"Ativar acesso ao Portal do Membro","resource":"memberPortalRegistration","premissions":["CREATE"],"permissionDefault":true}
+    },
+    {
+      "comment":"Retorna o painel do membro autenticado","methodName":"getMemberDashboard","httpMethod":"GET","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[],"output":[{"parameterName":"dashboard","parameterType":"memberDashboard","list":false}]},
+      "permissions":{"description":"Visualizar o proprio painel","resource":"memberPortalDashboard","premissions":["VIEW"],"permissionDefault":true}
+    },
+    {
+      "comment":"Consulta a configuracao administrativa de transparencia","methodName":"getMemberTransparencyConfiguration","httpMethod":"GET","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[],"output":[{"parameterName":"configuration","parameterType":"memberTransparencyConfiguration","list":false}]},
+      "permissions":{"description":"Visualizar configuracao do Portal do Membro","resource":"memberPortalTransparency","premissions":["VIEW"],"permissionDefault":false}
+    },
+    {
+      "comment":"Atualiza a configuracao administrativa de transparencia","methodName":"updateMemberTransparencyConfiguration","httpMethod":"POST","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"configuration","parameterType":"memberTransparencyConfiguration","list":false}],"output":[{"parameterName":"configuration","parameterType":"memberTransparencyConfiguration","list":false}]},
+      "permissions":{"description":"Atualizar configuracao do Portal do Membro","resource":"memberPortalTransparency","premissions":["UPDATE"],"permissionDefault":false}
+    },
+    {
+      "comment":"Retorna a transparencia financeira permitida ao membro","methodName":"getMemberTransparency","httpMethod":"GET","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"startDate","parameterType":"date","list":false},{"parameterName":"endDate","parameterType":"date","list":false}],"output":[{"parameterName":"transparency","parameterType":"memberFinancialPortal","list":false}]},
+      "permissions":{"description":"Visualizar transparencia financeira","resource":"memberPortalFinancialTransparency","premissions":["VIEW"],"permissionDefault":true}
+    },
+    {
+      "comment":"Lista fechamentos disponiveis para prestacao consultiva","methodName":"getMemberApprovalCashClosings","httpMethod":"GET","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[],"output":[{"parameterName":"cashClosings","parameterType":"memberApprovalCashClosing","list":true}]},
+      "permissions":{"description":"Gerenciar prestacoes consultivas","resource":"memberFinancialApproval","premissions":["VIEW"],"permissionDefault":false}
+    },
+    {
+      "comment":"Lista prestacoes consultivas para a gestao","methodName":"getMemberFinancialStatements","httpMethod":"GET","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[],"output":[{"parameterName":"statements","parameterType":"memberFinancialStatement","list":true}]},
+      "permissions":{"description":"Gerenciar prestacoes consultivas","resource":"memberFinancialApproval","premissions":["VIEW"],"permissionDefault":false}
+    },
+    {
+      "comment":"Cria ou altera uma prestacao consultiva","methodName":"saveMemberFinancialStatement","httpMethod":"POST","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"id","parameterType":"uuid","list":false},{"parameterName":"title","parameterType":"string","list":false},{"parameterName":"description","parameterType":"string","list":false},{"parameterName":"cashClosingIds","parameterType":"uuid","list":true}],"output":[{"parameterName":"statement","parameterType":"memberFinancialStatement","list":false}]},
+      "permissions":{"description":"Salvar prestacao consultiva","resource":"memberFinancialApproval","premissions":["CREATE","UPDATE"],"permissionDefault":false}
+    },
+    {
+      "comment":"Publica uma prestacao consultiva","methodName":"publishMemberFinancialStatement","httpMethod":"POST","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"id","parameterType":"uuid","list":false}],"output":[{"parameterName":"statement","parameterType":"memberFinancialStatement","list":false}]},
+      "permissions":{"description":"Publicar prestacao consultiva","resource":"memberFinancialApproval","premissions":["UPDATE"],"permissionDefault":false}
+    },
+    {
+      "comment":"Encerra uma prestacao consultiva","methodName":"closeMemberFinancialStatement","httpMethod":"POST","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"id","parameterType":"uuid","list":false}],"output":[{"parameterName":"statement","parameterType":"memberFinancialStatement","list":false}]},
+      "permissions":{"description":"Encerrar prestacao consultiva","resource":"memberFinancialApproval","premissions":["UPDATE"],"permissionDefault":false}
+    },
+    {
+      "comment":"Lista prestacoes disponiveis ao membro","methodName":"getMemberFinancialApprovals","httpMethod":"GET","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[],"output":[{"parameterName":"statements","parameterType":"memberFinancialStatement","list":true}]},
+      "permissions":{"description":"Visualizar prestacoes consultivas","resource":"memberPortalFinancialApproval","premissions":["VIEW"],"permissionDefault":true}
+    },
+    {
+      "comment":"Registra o voto consultivo anonimo do membro","methodName":"voteMemberFinancialApproval","httpMethod":"POST","grouper":"memberPortal",
+      "metadata":{"anonymous":false,"input":[{"parameterName":"id","parameterType":"uuid","list":false},{"parameterName":"approved","parameterType":"boolean","list":false}],"output":[{"parameterName":"statement","parameterType":"memberFinancialStatement","list":false}]},
+      "permissions":{"description":"Votar em prestacao consultiva","resource":"memberPortalFinancialApproval","premissions":["UPDATE"],"permissionDefault":true}
     }
   ],
   "enums": [
@@ -8176,6 +8378,18 @@
     {
       "enumName": "notificationType",
       "values": ["APPOINTMENT_24_HOURS", "APPOINTMENT_1_HOUR", "CASH_PENDING_APPROVAL", "CASH_APPROVED", "CASH_REJECTED", "MEMBER_PROFILE_IMAGE_UPDATED"]
+    },
+    {
+      "enumName": "memberPortalTransparencyMode",
+      "values": ["DISABLED", "FULL", "PARTIAL"]
+    },
+    {
+      "enumName": "memberPortalPlanVisibility",
+      "values": ["HIDDEN", "TOTAL_ONLY", "DETAILED"]
+    },
+    {
+      "enumName": "memberFinancialStatementStatus",
+      "values": ["DRAFT", "OPEN", "CLOSED"]
     },
     {
       "enumName": "appointmentStatus",

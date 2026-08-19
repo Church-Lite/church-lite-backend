@@ -1,31 +1,27 @@
 package com.smartverse.churchlitebackend.controller.memberportal;
 
-import com.smartverse.churchlitebackend.controller.memberportal.MemberDashboardModels.Dashboard;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartverse.churchlitebackend.service.memberportal.MemberDashboardService;
-import com.smartverse.churchlitebackend.service.memberportal.MemberTransparencyService;
-import com.smartverse.churchlitebackend.controller.memberportal.MemberTransparencyModels.FinancialPortal;
+import com.smartverse.churchlitebackend_gen.dtos.MemberDashboardDTO;
+import com.smartverse.churchlitebackend_gen.endpoints.GetMemberDashboard;
+import com.smartverse.churchlitebackend_gen.endpoints.GetMemberDashboardOutput;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
-import java.time.LocalDate;
 
 @RestController
-public class MemberDashboardController {
+public class MemberDashboardController implements GetMemberDashboard {
     private final MemberDashboardService service;
-    private final MemberTransparencyService transparencyService;
+    private final ObjectMapper objectMapper;
 
-    public MemberDashboardController(MemberDashboardService service, MemberTransparencyService transparencyService) {
+    public MemberDashboardController(MemberDashboardService service, ObjectMapper objectMapper) {
         this.service = service;
-        this.transparencyService = transparencyService;
+        this.objectMapper = objectMapper;
     }
 
-    @GetMapping("/member-api/dashboard")
-    public ResponseEntity<Dashboard> dashboard() { return ResponseEntity.ok(service.dashboard()); }
-
-    @GetMapping("/member-api/transparency")
-    public ResponseEntity<FinancialPortal> transparency(@RequestParam(required = false) LocalDate startDate,
-                                                         @RequestParam(required = false) LocalDate endDate) {
-        return ResponseEntity.ok(transparencyService.financial(startDate, endDate));
+    @Override
+    public ResponseEntity<GetMemberDashboardOutput> getMemberDashboard() {
+        var output = new GetMemberDashboardOutput();
+        output.dashboard = objectMapper.convertValue(service.dashboard(), MemberDashboardDTO.class);
+        return ResponseEntity.ok(output);
     }
 }
