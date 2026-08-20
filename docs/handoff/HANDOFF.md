@@ -531,3 +531,22 @@ Os services de transparência e aprovação financeira não executam SQL diretam
 `MemberTransparencyRepository` e `MemberFinancialApprovalRepository`; os services mantêm validações, transações,
 transições de estado, anonimização do voto e composição das respostas. Ao evoluir o módulo, começar sempre no contrato
 Gonthera, regenerar e somente depois implementar a interface produzida.
+
+## Fechamento do dia — grupos da comunidade (19/08/2026)
+
+O Social iniciou os grupos da comunidade usando exclusivamente contratos, entidades, DTOs, enums, endpoints e
+repositórios gerados pelo Gonthera. Foram adicionados `socialGroup`, `socialGroupMember`, `socialGroupMemberView` e o
+vínculo opcional `socialPost.groupId`; não existe uma segunda tabela de posts. Publicações gerais continuam no feed de
+todos os membros, enquanto publicações de grupo só são retornadas para participantes ativos.
+
+Grupos suportam visibilidade `PUBLIC`/`PRIVATE`, papéis `MEMBER`/`MODERATOR`/`ADMIN`, entrada, aprovação e saída. Como o
+JPA do projeto persiste enums gerados por ordinal, as migrations incrementais convertem visibilidade, papel e status para
+colunas `integer`; não alterar esses campos para texto. Consultas específicas permanecem em repositories com `@Query`.
+
+No frontend, `/member/groups` lista/cria grupos e `/member/groups/:id` exibe detalhes, membros acessíveis e posts do grupo,
+reutilizando o feed e os componentes compartilhados. O detalhe não fica vazio quando uma consulta secundária falha:
+restrições de membros, feed indisponível ou imagem sem URL assinada deixam somente a seção correspondente vazia.
+
+Correções de infraestrutura registradas: consumers do Social carregam as migrations do tenant antes de acessar
+`social_profile`, e a projeção faz `flush/clear` antes de alternar o schema. Validações do encerramento: geração/validação
+Gonthera, compilação Social com `mvnw -DskipTests compile` e build frontend com `npm run build` concluídos com sucesso.

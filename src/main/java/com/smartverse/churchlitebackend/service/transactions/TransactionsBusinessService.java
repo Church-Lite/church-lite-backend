@@ -7,6 +7,7 @@ import com.smartverse.churchlitebackend_gen.entities.CashEntity;
 import com.smartverse.churchlitebackend_gen.entities.FinancialEntity;
 import com.smartverse.churchlitebackend_gen.entities.TransactionsEntity;
 import com.smartverse.churchlitebackend_gen.enums.TransactionOperation;
+import com.smartverse.churchlitebackend_gen.enums.TypeCash;
 import com.smartverse.churchlitebackend_gen.enums.TypeFinancial;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class TransactionsBusinessService {
             var transaction = new TransactionsEntity();
             transaction.setPerson(entity.getPerson());
             transaction.setFinancial(entity);
-            transaction.setDescription("LANÇAMENTO DE DUPLICATA - " + entity.getPlanAccount().getDescription().toUpperCase());
+            transaction.setDescription("LANÇAMENTO: " + entity.getPlanAccount().getDescription().toUpperCase());
             transaction.setDateTransaction(entity.getIssueDate());
             transaction.setValue(entity.getValue());
 
@@ -70,7 +71,7 @@ public class TransactionsBusinessService {
     }
 
     private void verifyStatusCash(CashEntity cashEntity){
-        if(cashEntity.getStatus() != TransactionOperation.OPEN_CASH){
+        if(cashEntity.getTypeCash() == TypeCash.CASH && cashEntity.getStatus() != TransactionOperation.OPEN_CASH){
             throw new ServiceException(HttpStatus.BAD_REQUEST, cashEntity.getStatus() == TransactionOperation.PENDING_APPROVAL ? "cash_pending_approval" : "Caixa selecionado está fechado");
         }
     }
