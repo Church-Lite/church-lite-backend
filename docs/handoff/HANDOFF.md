@@ -550,3 +550,15 @@ restrições de membros, feed indisponível ou imagem sem URL assinada deixam so
 Correções de infraestrutura registradas: consumers do Social carregam as migrations do tenant antes de acessar
 `social_profile`, e a projeção faz `flush/clear` antes de alternar o schema. Validações do encerramento: geração/validação
 Gonthera, compilação Social com `mvnw -DskipTests compile` e build frontend com `npm run build` concluídos com sucesso.
+## Transferências de saldos — 02/09/2026
+
+- Contratos canônicos: entidade `transactions`, enum `transactionOperation` e endpoints `createBalanceTransfer`,
+  `getBalanceTransfers` e `reverseBalanceTransfer` em `.gonthera/project.json`.
+- Persistência: duas linhas em `transactions`, operações `TRANSFER_OUT` e `TRANSFER_IN`, mesmo `transfer_id`, referência
+  direta obrigatória a `cash`; `cash_transaction` permanece sendo o UUID da sessão física.
+- Concorrência: contas e sessões físicas são bloqueadas pessimisticamente na criação e no estorno.
+- Estorno: exclusão atômica do par, condicionada ao saldo do destino e à permanência da sessão física original aberta.
+- Segurança: `TransactionsBusinessService.delete(UUID)` responde `405`; exclusão direta nunca é um endpoint válido de
+  negócio. O serviço de transferência usa o repository internamente.
+- Migration: `V20260902090000001__add_balance_transfers.sql` faz backfill de `transactions.cash`, cria restrições/índices
+  do par e atualiza o trigger de saldo para considerar transferências.

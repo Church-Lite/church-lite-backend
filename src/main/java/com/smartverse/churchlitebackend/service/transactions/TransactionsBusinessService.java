@@ -12,9 +12,12 @@ import com.smartverse.churchlitebackend_gen.enums.TypeFinancial;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.smartverse.churchlitebackend_gen.services.TransactionsService;
+import java.util.UUID;
 
 @Service
-public class TransactionsBusinessService {
+public class TransactionsBusinessService extends TransactionsService {
 
     @Autowired
     private TransactionsCustomRepository transactionsRepository;
@@ -29,6 +32,7 @@ public class TransactionsBusinessService {
             var transaction = new TransactionsEntity();
             transaction.setPerson(entity.getPerson());
             transaction.setFinancial(entity);
+            transaction.setCash(entity.getCash());
             transaction.setDescription("LANÇAMENTO: " + entity.getPlanAccount().getDescription().toUpperCase());
             transaction.setDateTransaction(entity.getIssueDate());
             transaction.setValue(entity.getValue());
@@ -54,6 +58,8 @@ public class TransactionsBusinessService {
                 verifyStatusCash(entity.getCash());
                 transaction.setPerson(entity.getPerson());
                 transaction.setFinancial(entity);
+                transaction.setCash(entity.getCash());
+                transaction.setCashTransaction(cashTransactionsCustomRepository.getLastOpeningId(entity.getCash().getId()));
                 transaction.setValue(entity.getValue());
                 transactionsRepository.save(transaction);
             } else {
@@ -68,6 +74,12 @@ public class TransactionsBusinessService {
     public void delete(FinancialEntity entity) {
         if (entity != null && entity.getCash() != null) verifyStatusCash(entity.getCash());
         transactionsRepository.findByFinancial(entity).ifPresent(transaction -> transactionsRepository.delete(transaction));
+    }
+
+    @Override
+    @Transactional
+    public void delete(UUID id) {
+        throw new ServiceException(HttpStatus.METHOD_NOT_ALLOWED, "A exclusão direta de movimentações não é permitida");
     }
 
     private void verifyStatusCash(CashEntity cashEntity){
