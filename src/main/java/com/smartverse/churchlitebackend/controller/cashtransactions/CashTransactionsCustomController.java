@@ -39,9 +39,9 @@ public class CashTransactionsCustomController implements GetIDCashTransaction, G
         var output = new GetSumValuesCashOutput();
         var values = cashTransactionsCustomRepository.getValuesCash(cashTransaction);
         values.ifPresent(item -> item.forEach(e -> {
-            if(e.get("type_financial").equals("0")){
+            if(e.get("type_financial").equals(0)){
                 output.revenues = Double.parseDouble(e.get("valor").toString());
-            } else if(e.get("type_financial").equals("1")){
+            } else if(e.get("type_financial").equals(1)){
                 output.expenses = Double.parseDouble(e.get("valor").toString());
             }
         }));
@@ -56,9 +56,9 @@ public class CashTransactionsCustomController implements GetIDCashTransaction, G
         var values = cashTransactionsCustomRepository.getbalanceBankAccount(bankAccount);
 
         values.ifPresent(item -> item.forEach(e -> {
-            if(e.get("type_financial").equals("0")){
+            if(e.get("type_financial").equals(0)){
                 output.revenues = Double.parseDouble(e.get("valor").toString());
-            } else if(e.get("type_financial").equals("1")){
+            } else if(e.get("type_financial").equals(1)){
                 output.expenses = Double.parseDouble(e.get("valor").toString());
             }
         }));
