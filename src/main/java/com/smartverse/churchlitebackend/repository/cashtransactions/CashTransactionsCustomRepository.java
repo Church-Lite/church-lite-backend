@@ -5,6 +5,9 @@ import com.smartverse.churchlitebackend_gen.entities.CashTransactionsEntity;
 import com.smartverse.churchlitebackend_gen.repositories.CashTransactionsRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -41,4 +44,9 @@ public interface CashTransactionsCustomRepository extends CashTransactionsReposi
     Optional<List<Map<String, Object>>> getbalanceBankAccount(UUID cashTransaction);
 
     Optional<CashTransactionsEntity> findByCashAndEndDate(CashEntity cash, Date endDate);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select session from CashTransactionsEntity session where session.cash.id = :cashId and session.endDate is null")
+    Optional<CashTransactionsEntity> findOpenForUpdate(@Param("cashId") UUID cashId);
+    Optional<CashTransactionsEntity> findTopByCashOrderByStartDateDesc(CashEntity cash);
 }

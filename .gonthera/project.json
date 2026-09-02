@@ -2569,7 +2569,7 @@
             "valueDefault": ""
           },
           "metadata": {
-            "nullable": false,
+            "nullable": true,
             "key": false
           },
           "relationShips": {
@@ -2599,7 +2599,7 @@
             "valueDefault": ""
           },
           "metadata": {
-            "nullable": false,
+            "nullable": true,
             "key": false
           },
           "relationShips": {
@@ -2647,7 +2647,7 @@
           "fieldName": "cashTransaction",
           "fieldProperties": {
             "fieldType": "uuid",
-            "required": true,
+            "required": false,
             "valueDefault": ""
           },
           "metadata": {
@@ -2664,11 +2664,34 @@
             "reference": "",
             "enableFieldsFilter": false
           }
+        },
+        {
+          "comment": "Caixa ou conta bancária movimentada",
+          "fieldName": "cash",
+          "list": false,
+          "fieldProperties": { "fieldType": "cash", "required": true, "valueDefault": "" },
+          "metadata": { "nullable": false, "key": false },
+          "relationShips": { "fetchType": "LAZY", "relationShip": "ManyToOne", "mappedBy": "", "bidirectional": false, "reference": true }
+        },
+        {
+          "comment": "Identificador que agrupa as duas pontas da transferência",
+          "fieldName": "transferId",
+          "list": false,
+          "fieldProperties": { "fieldType": "uuid", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false }
+        },
+        {
+          "comment": "Observações da transferência",
+          "fieldName": "observation",
+          "list": false,
+          "fieldProperties": { "fieldType": "string", "required": false, "valueDefault": "" },
+          "metadata": { "nullable": true, "key": false }
         }
       ],
       "classExtends": "",
       "generateDefaultControllers": true,
       "controllerAbstract": true,
+      "serviceAbstract": true,
       "comment": "Movimentações financeiras realizadas"
     },
     {
@@ -7923,6 +7946,52 @@
       }
     },
     {
+      "comment": "Realiza uma transferência atômica entre contas",
+      "methodName": "createBalanceTransfer",
+      "httpMethod": "POST",
+      "grouper": "balanceTransfer",
+      "metadata": {
+        "anonymous": false,
+        "input": [
+          { "parameterName": "sourceId", "parameterType": "uuid", "list": false },
+          { "parameterName": "destinationId", "parameterType": "uuid", "list": false },
+          { "parameterName": "value", "parameterType": "decimal", "list": false },
+          { "parameterName": "dateTransaction", "parameterType": "date", "list": false },
+          { "parameterName": "description", "parameterType": "string", "list": false },
+          { "parameterName": "observation", "parameterType": "string", "list": false }
+        ],
+        "output": [{ "parameterName": "transfer", "parameterType": "map", "list": false }]
+      },
+      "permissions": { "description": "Permite transferir saldos entre contas", "resource": "balanceTransfer", "premissions": ["CREATE"], "permissionDefault": false }
+    },
+    {
+      "comment": "Lista saldos e histórico das transferências",
+      "methodName": "getBalanceTransfers",
+      "httpMethod": "GET",
+      "grouper": "balanceTransfer",
+      "metadata": {
+        "anonymous": false,
+        "input": [],
+        "output": [
+          { "parameterName": "accounts", "parameterType": "map", "list": true },
+          { "parameterName": "transfers", "parameterType": "map", "list": true }
+        ]
+      },
+      "permissions": { "description": "Permite visualizar saldos e transferências", "resource": "balanceTransfer", "premissions": ["VIEW"], "permissionDefault": false }
+    },
+    {
+      "comment": "Estorna uma transferência removendo suas duas movimentações",
+      "methodName": "reverseBalanceTransfer",
+      "httpMethod": "POST",
+      "grouper": "balanceTransfer",
+      "metadata": {
+        "anonymous": false,
+        "input": [{ "parameterName": "transferId", "parameterType": "uuid", "list": false }],
+        "output": [{ "parameterName": "reversed", "parameterType": "boolean", "list": false }]
+      },
+      "permissions": { "description": "Permite estornar transferências", "resource": "balanceTransfer", "premissions": ["DELETE"], "permissionDefault": false }
+    },
+    {
       "comment": "Retorna o snapshot financeiro completo do dashboard",
       "methodName": "getDashboardFinancial",
       "httpMethod": "GET",
@@ -8394,7 +8463,9 @@
         "CLOSE_CASH",
         "REVENUE",
         "EXPENSE",
-        "PENDING_APPROVAL"
+        "PENDING_APPROVAL",
+        "TRANSFER_OUT",
+        "TRANSFER_IN"
       ]
     },
     {

@@ -125,8 +125,8 @@ public class DashboardService {
 
     private Balances balances(List<TransactionsEntity> all, List<CashTransactionsEntity> sessions,
                               FinancialFilter filter, Set<UUID> openCashIds) {
-        Map<UUID, List<TransactionsEntity>> byCash = all.stream().filter(t -> t.getFinancial() != null && t.getFinancial().getCash() != null)
-                .collect(Collectors.groupingBy(t -> t.getFinancial().getCash().getId()));
+        Map<UUID, List<TransactionsEntity>> byCash = all.stream().filter(t -> t.getCash() != null)
+                .collect(Collectors.groupingBy(t -> t.getCash().getId()));
         List<CashEntity> cashes = repository.cashes().stream().filter(c -> balanceCashMatches(c, filter, openCashIds)).toList();
         List<BankBalance> banks = cashes.stream().filter(c -> c.getTypeCash() == TypeCash.BANK).map(c -> {
             double value = signedTotal(byCash.getOrDefault(c.getId(), List.of()));
@@ -255,7 +255,11 @@ public class DashboardService {
     }
 
     private double signedTotal(List<TransactionsEntity> values) {
-        return values.stream().mapToDouble(t -> type(t) == TypeFinancial.EXPENSE ? -number(t.getValue()) : number(t.getValue())).sum();
+        return values.stream().mapToDouble(t -> switch (t.getTransactionOperation()) {
+            case EXPENSE, TRANSFER_OUT -> -number(t.getValue());
+            case REVENUE, TRANSFER_IN -> number(t.getValue());
+            default -> 0;
+        }).sum();
     }
 
     private TypeFinancial type(TransactionsEntity t) {
